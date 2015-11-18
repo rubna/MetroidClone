@@ -31,13 +31,6 @@ namespace MetroidClone.Engine
         {
             base.Update(gameTime);
 
-            //move around
-            if (Input.KeyboardCheckDown(Keys.Left))
-                Speed.X -= 0.5f;
-            if (Input.KeyboardCheckDown(Keys.Right))
-                Speed.X += 0.5f;
-            if (Input.KeyboardCheckPressed(Keys.Up))
-                Speed.Y = -4.5f;
 
             Speed.X *= xFriction;
 
