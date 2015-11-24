@@ -80,6 +80,7 @@
     <Compile Include="Engine\PhysicsObject.cs" />
     <Compile Include="Engine\VectorExtensions.cs" />
     <Compile Include="Engine\World.cs" />
+    <Compile Include="Metroid\Bullet.cs" />
     <Compile Include="Metroid\Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -17,7 +17,7 @@ namespace MetroidClone.Engine
             { true, false, false, true, false, false, false, false, true, true },
             { true, false, true, true, true, false, false, false, false, true },
             { true, true, true, true, true, true, true, true, true, true }};
-        public Point TileSize = new Point(24, 20);
+        public Point TileSize = new Point(32, 22);
 
         public Point LevelDimensions
         {

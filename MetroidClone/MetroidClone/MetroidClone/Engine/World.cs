@@ -9,6 +9,7 @@ namespace MetroidClone.Engine
     class World
     {
         public List<GameObject> GameObjects;
+        List<GameObject> newGameObjects;
         
         public DrawWrapper DrawWrapper { get; set; }
         public Level Level;
@@ -17,6 +18,7 @@ namespace MetroidClone.Engine
         public World()
         {
             GameObjects = new List<GameObject>();
+            newGameObjects = new List<GameObject>();
         }
 
         public void Initialize()
@@ -24,8 +26,7 @@ namespace MetroidClone.Engine
             Level = new Level();
             AddObject(Level);
             Player = new Player();
-            Player.Position = new Vector2(50, 50);
-            AddObject(Player);
+            AddObject(Player, 50, 50);
 
             foreach (GameObject gameObject in GameObjects)
                 gameObject.Create();
@@ -33,15 +34,37 @@ namespace MetroidClone.Engine
 
         public void AddObject(GameObject gameObject)
         {
+            AddObject(gameObject, Vector2.Zero);
+        }
+
+        public void AddObject(GameObject gameObject, float x, float y)
+        {
+            AddObject(gameObject, new Vector2(x, y));
+        }
+
+        public void AddObject(GameObject gameObject, Vector2 position)
+        {
             gameObject.World = this;
             gameObject.Drawing = DrawWrapper;
-            GameObjects.Add(gameObject);
+            gameObject.Position = position;
+            newGameObjects.Add(gameObject);
+        }
+
+        public void RemoveObject(GameObject gameObject)
+        {
+            newGameObjects.Remove(gameObject);
         }
 
         public void Update(GameTime gameTime)
         {
             foreach (GameObject gameObject in GameObjects)
                 gameObject.Update(gameTime);
+
+            List<GameObject> addedObjects = newGameObjects.Select(x => x).ToList();
+            addedObjects = addedObjects.Except(GameObjects).ToList();
+            foreach (GameObject gameObject in addedObjects)
+                gameObject.Create();
+            GameObjects = newGameObjects.Select(x => x).ToList();
         }
 
         public void Draw()
@@ -50,7 +73,5 @@ namespace MetroidClone.Engine
                 gameObject.Draw();
             DrawWrapper.EndOfDraw();
         }
-
-
     }
 }

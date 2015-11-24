@@ -10,21 +10,33 @@ namespace MetroidClone.Metroid
 {
     class Player : PhysicsObject
     {
+        float bulletSpeed = 5;
+
         public override void Create()
         {
             base.Create();
-            OriginalBoundingBox = new Rectangle(0, 0, 16, 16);
+            BoundingBox = new Rectangle(-8, -8, 16, 16);
         }
 
         public override void Update(GameTime gameTime)
         {
             //move around
             if (Input.KeyboardCheckDown(Keys.Left))
+            {
                 Speed.X -= 0.5f;
+                FlipX = true;
+            }
             if (Input.KeyboardCheckDown(Keys.Right))
+            {
                 Speed.X += 0.5f;
-            if (Input.KeyboardCheckPressed(Keys.Up))
+                FlipX = false;
+            }
+            if (Input.KeyboardCheckPressed(Keys.Up) && InsideWall(Position.X, Position.Y + 1, BoundingBox))
                 Speed.Y = -4.5f;
+
+            //shoot
+            if (Input.KeyboardCheckPressed(Keys.X))
+                Shoot(GetFlip);
 
             base.Update(gameTime);
         }
@@ -32,9 +44,12 @@ namespace MetroidClone.Metroid
         public override void Draw()
         {
             base.Draw();
-            //Rectangle translatedBoundingBox = BoundingBox;
-            //translatedBoundingBox.Offset(Position.ToPoint());
-            Drawing.DrawRectangle(BoundingBox, Color.Red);
+            Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
+        }
+
+        void Shoot(int direction)
+        {
+            World.AddObject(new Bullet() { Speed = new Vector2(direction * bulletSpeed, 0) }, Position);
         }
     }
 }
