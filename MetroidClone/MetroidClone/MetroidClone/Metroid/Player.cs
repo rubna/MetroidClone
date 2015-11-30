@@ -44,7 +44,8 @@ namespace MetroidClone.Metroid
         public override void Draw()
         {
             base.Draw();
-            Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
+            //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
+            Drawing.DrawCircle(new Vector2(TranslatedBoundingBox.Center.X, TranslatedBoundingBox.Center.Y), BoundingBox.Width / 2, Color.Red);
         }
 
         void Shoot(int direction)

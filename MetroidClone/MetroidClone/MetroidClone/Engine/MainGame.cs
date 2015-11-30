@@ -11,6 +11,7 @@ namespace MetroidClone.Engine
     class MainGame : Game
     {
         GraphicsDeviceManager graphics;
+        AssetManager assets;
         SpriteBatch spriteBatch;
 
         private DrawWrapper drawWrapper;
@@ -26,6 +27,7 @@ namespace MetroidClone.Engine
         public MainGame()
         {
             graphics = new GraphicsDeviceManager(this);
+            assets = new AssetManager(Content);
         }
 
         protected override void Initialize()
