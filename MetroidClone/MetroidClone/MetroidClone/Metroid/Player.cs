@@ -32,9 +32,7 @@ namespace MetroidClone.Metroid
         public override void Draw()
         {
             base.Draw();
-            //Rectangle translatedBoundingBox = BoundingBox;
-            //translatedBoundingBox.Offset(Position.ToPoint());
-            Drawing.DrawRectangle(BoundingBox, Color.Red);
+            Drawing.DrawCircle(new Vector2(BoundingBox.Center.X, BoundingBox.Center.Y), BoundingBox.Width / 2, Color.Red);
         }
     }
 }

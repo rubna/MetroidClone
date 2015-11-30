@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
 using MetroidClone.Engine.Asset;
+using System.IO;
 
 namespace MetroidClone.Engine
 {
@@ -14,11 +15,27 @@ namespace MetroidClone.Engine
     {
         Dictionary<string, IAsset> assets;
         ContentManager content;
-        
+        Dictionary<string, Dictionary<string, Vector2>> spriteInfo;
+
         public AssetManager(ContentManager content)
         {
             this.content = content;
             assets = new Dictionary<string, IAsset>();
+
+            string spriteInfoData = File.ReadAllText("Content/SpriteInfo.txt");
+            string[] spriteInfoDataLines = spriteInfoData.Split('\n');
+
+            foreach (string spriteInfoDataLine in spriteInfoDataLines)
+            {
+                var spriteInfoDataParts = spriteInfoDataLine.Split(' ');
+                if (spriteInfoDataParts.Length >= 3)
+                {
+                    if (! spriteInfoDataParts[0].StartsWith("//"))
+                    {
+
+                    }
+                }
+            }
         }
 
         public Sprite GetSprite(string name)

@@ -76,6 +76,7 @@
     <Compile Include="Engine\AssetManager.cs" />
     <Compile Include="Engine\Asset\Sound.cs" />
     <Compile Include="Engine\Asset\Sprite.cs" />
+    <Compile Include="Engine\AudioWrapper.cs" />
     <Compile Include="Engine\DrawWrapper.cs" />
     <Compile Include="Engine\GameObject.cs" />
     <Compile Include="Engine\InputHelper.cs" />

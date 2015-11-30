@@ -58,13 +58,27 @@ namespace MetroidClone.Engine
         {
             var verts = new List<Vector2>
             {
-                new Vector2(rectangle.X, rectangle.Y + rectangle.Height),
+                new Vector2(rectangle.X, rectangle.Bottom),
                 new Vector2(rectangle.X, rectangle.Y),
-                new Vector2(rectangle.X + rectangle.Width, rectangle.Y + rectangle.Height),
-                new Vector2(rectangle.X + rectangle.Width, rectangle.Y)
+                new Vector2(rectangle.Right, rectangle.Bottom),
+                new Vector2(rectangle.Right, rectangle.Y)
             };
 
+            DrawPrimitive(PrimitiveType.TriangleStrip, verts, color);
+        }
 
+        public void DrawCircle(Vector2 position, float radius, Color color, int precision = 24)
+        {
+            if (precision <= 0)
+                return;
+            List<Vector2> verts = new List<Vector2>();
+            double circleStep = 1f / precision * 2f * Math.PI;
+            for (int i = 0; i <= precision; i++)
+            {
+                verts.Add(position); //Add the center
+                //Add the point on the circle
+                verts.Add(position + radius * new Vector2((float)Math.Cos(i * circleStep), (float)Math.Sin(i * circleStep)));
+            }
             DrawPrimitive(PrimitiveType.TriangleStrip, verts, color);
         }
 
@@ -112,5 +126,7 @@ namespace MetroidClone.Engine
             var halfPixelOffset = Matrix.CreateTranslation(-0.5f, -0.5f, 0);
             basicEffect.Projection = halfPixelOffset * projection;
         }
+
+        
     }
 }
