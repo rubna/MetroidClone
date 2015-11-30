@@ -4,6 +4,7 @@ using System.Timers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using MetroidClone.Engine.Asset;
 
 namespace MetroidClone.Engine
 {
@@ -82,10 +83,15 @@ namespace MetroidClone.Engine
             DrawPrimitive(PrimitiveType.TriangleStrip, verts, color);
         }
 
-        public void DrawSprite()
+        public void DrawSprite(Sprite sprite, Vector2 position, Vector2? subimage = null, Color? color = null)
         {
-
+            spriteBatch.Draw(sprite.Texture, position, sprite.GetImageRectangle(subimage ?? new Vector2(0f, 0f)), color ?? Color.White);
         }
+
+        /*public void DrawSprite(string sprite, Vector2 position, )
+        {
+            DrawSprite(sprite, );
+        }*/
 
         private void BeginSpriteBatch()
         {

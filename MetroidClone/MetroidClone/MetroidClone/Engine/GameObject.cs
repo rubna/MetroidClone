@@ -12,6 +12,7 @@ namespace MetroidClone.Engine
 
         public World World;
         public DrawWrapper Drawing;
+        public AssetManager Assets;
         protected InputHelper Input;
 
         public virtual void Create()

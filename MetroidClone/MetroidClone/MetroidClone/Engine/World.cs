@@ -11,6 +11,7 @@ namespace MetroidClone.Engine
         public List<GameObject> GameObjects;
         
         public DrawWrapper DrawWrapper { get; set; }
+        public AssetManager AssetManager { get; set; }
         public Level Level;
         public Player Player;
 
@@ -35,6 +36,7 @@ namespace MetroidClone.Engine
         {
             gameObject.World = this;
             gameObject.Drawing = DrawWrapper;
+            gameObject.Assets = AssetManager;
             GameObjects.Add(gameObject);
         }
 

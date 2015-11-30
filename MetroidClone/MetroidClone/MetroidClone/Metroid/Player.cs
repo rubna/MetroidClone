@@ -1,4 +1,5 @@
 ﻿using MetroidClone.Engine;
+using MetroidClone.Engine.Asset;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -32,7 +33,9 @@ namespace MetroidClone.Metroid
         public override void Draw()
         {
             base.Draw();
-            Drawing.DrawCircle(new Vector2(BoundingBox.Center.X, BoundingBox.Center.Y), BoundingBox.Width / 2, Color.Red);
+            //Drawing.DrawCircle(new Vector2(BoundingBox.Center.X, BoundingBox.Center.Y), BoundingBox.Width / 2, Color.Red);
+
+            Sprite sprite = ;
         }
     }
 }

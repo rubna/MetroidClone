@@ -6,7 +6,7 @@ using System.Text;
 
 namespace MetroidClone.Engine.Asset
 {
-    class Sound : IAsset
+    public class Sound : IAsset
     {
         public SoundEffect SoundEffect { get; protected set; }
         public float Volume { get; protected set; }
