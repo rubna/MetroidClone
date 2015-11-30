@@ -24,6 +24,7 @@ namespace MetroidClone.Engine
         public World World;
         public DrawWrapper Drawing;
         protected InputHelper Input;
+        public bool Visible = true;
 
         public virtual void Create()
         {
@@ -37,6 +38,11 @@ namespace MetroidClone.Engine
         public virtual void Draw()
         {
 
+        }
+
+        public virtual void Destroy()
+        {
+            World.RemoveObject(this);
         }
     }
 }

@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace MetroidClone.Metroid
 {
-    class Bullet : PhysicsObject
+    class PlayerBullet : PhysicsObject
     {
         public override void Create()
         {
@@ -21,7 +21,7 @@ namespace MetroidClone.Metroid
         {
             base.Update(gameTime);
             if (InsideWall(TranslatedBoundingBox))
-                World.RemoveObject(this);
+                Destroy();
         }
 
         public override void Draw()

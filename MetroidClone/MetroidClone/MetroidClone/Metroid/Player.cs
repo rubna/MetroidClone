@@ -11,6 +11,7 @@ namespace MetroidClone.Metroid
     class Player : PhysicsObject
     {
         float bulletSpeed = 5;
+        float blinkTimer = 0;
 
         public override void Create()
         {
@@ -39,18 +40,49 @@ namespace MetroidClone.Metroid
                 Shoot(GetFlip);
 
             base.Update(gameTime);
+
+            //check for getting hurt
+            if (blinkTimer == 0)
+            {
+                foreach (Monster monster in World.GameObjects.OfType<Monster>().ToList())
+                    if (TranslatedBoundingBox.Intersects(monster.TranslatedBoundingBox))
+                        Hurt(Math.Sign(Position.X - monster.Position.X));
+            }
+
+            //blink
+            if (blinkTimer > 0)
+            {
+                blinkTimer -= 0.01f;
+                if (blinkTimer % 0.05f < 0.0001f)
+                {
+                    Visible = !Visible;
+                }
+                if (blinkTimer<=0)
+                {
+                    blinkTimer = 0;
+                    Visible = true;
+                }
+            }
         }
 
         public override void Draw()
         {
             base.Draw();
             //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
-            Drawing.DrawCircle(new Vector2(TranslatedBoundingBox.Center.X, TranslatedBoundingBox.Center.Y), BoundingBox.Width / 2, Color.Red);
+            if (Visible)
+                Drawing.DrawCircle(new Vector2(TranslatedBoundingBox.Center.X, TranslatedBoundingBox.Center.Y), BoundingBox.Width / 2, Color.Red);
         }
 
-        void Shoot(int direction)
+        void Shoot(int xDirection)
         {
-            World.AddObject(new Bullet() { Speed = new Vector2(direction * bulletSpeed, 0) }, Position);
+            World.AddObject(new PlayerBullet() { Speed = new Vector2(xDirection * bulletSpeed, 0) }, Position);
+        }
+
+        void Hurt(int xDirection)
+        {
+            blinkTimer = 1;
+            Visible = false;
+            Speed = new Vector2(xDirection * 3, -2);
         }
     }
 }
