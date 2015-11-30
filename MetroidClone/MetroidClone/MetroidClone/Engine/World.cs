@@ -28,8 +28,8 @@ namespace MetroidClone.Engine
             Player = new Player();
             AddObject(Player, 50, 50);
 
-            foreach (GameObject gameObject in GameObjects)
-                gameObject.Create();
+           // foreach (GameObject gameObject in GameObjects)
+                //gameObject.Create();
         }
 
         public void AddObject(GameObject gameObject)
