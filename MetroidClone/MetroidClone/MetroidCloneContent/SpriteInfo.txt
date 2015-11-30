@@ -1,3 +1,8 @@
 //Information about sprites is stored here.
-//sprite origin sheetsize
+//Format: sprite origin sheetsize
+//Example: player bottommiddle 5x1
+//All parts but the sprite name are optional.
+//Default: <name> middle 1x1
+//For a sprite strip, the sheet size can be a single number.
+//Example: player bottomcenter 3
 player middle 1x1

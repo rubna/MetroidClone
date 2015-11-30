@@ -11,11 +11,13 @@ namespace MetroidClone.Engine.Asset
     {
         public Texture2D Texture { get; protected set; }
         public Vector2 Origin { get; protected set; }
+        public Vector2 SheetSize { get; protected set; }
 
-        public Sprite(Texture2D texture, Vector2 origin)
+        public Sprite(Texture2D texture, Vector2? origin = null, Vector2? sheetsize = null)
         {
             Texture = texture;
-            Origin = origin;
+            Origin = origin ?? new Vector2(0.5f, 0.5f);
+            SheetSize = sheetsize ?? new Vector2(1f, 1f);
         }
     }
 }

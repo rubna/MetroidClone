@@ -82,6 +82,11 @@ namespace MetroidClone.Engine
             DrawPrimitive(PrimitiveType.TriangleStrip, verts, color);
         }
 
+        public void DrawSprite()
+        {
+
+        }
+
         private void BeginSpriteBatch()
         {
             if (!BeginSpriteBatchCalled)
@@ -90,6 +95,7 @@ namespace MetroidClone.Engine
                 spriteBatch.Begin();
             }
         }
+
         private void EndSpriteBatch()
         {
             if (BeginSpriteBatchCalled)
