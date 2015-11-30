@@ -83,9 +83,13 @@ namespace MetroidClone.Engine
             DrawPrimitive(PrimitiveType.TriangleStrip, verts, color);
         }
 
-        public void DrawSprite(Sprite sprite, Vector2 position, Vector2? subimage = null, Color? color = null)
+        public void DrawSprite(Sprite sprite, Vector2 position, Vector2? subimage = null, Vector2? size = null, Color? color = null, float rotation = 0f)
         {
-            spriteBatch.Draw(sprite.Texture, position, sprite.GetImageRectangle(subimage ?? new Vector2(0f, 0f)), color ?? Color.White);
+            BeginSpriteBatch();
+            Vector2 usedSize = size ?? sprite.Size;
+            //Draw the given subimage of the sprite with the given parameters.
+            spriteBatch.Draw(sprite.Texture, GlobalScale * (position - sprite.Origin * usedSize), sprite.GetImageRectangle(subimage ?? new Vector2(0f, 0f)),
+                color ?? Color.White, rotation, new Vector2(0f), usedSize / sprite.Size * GlobalScale, SpriteEffects.None, 0f);
         }
 
         /*public void DrawSprite(string sprite, Vector2 position, )

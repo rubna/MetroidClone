@@ -113,7 +113,7 @@ namespace MetroidClone.Engine
         {
             if (! assets.ContainsKey(name))
             {
-                assets[name] = new Sprite(content.Load<Texture2D>(name), spriteInfo[name]["origin"], spriteInfo[name]["sheetsize"]);
+                assets[name] = new Sprite(content.Load<Texture2D>("Content/" + name), spriteInfo[name]["origin"], spriteInfo[name]["sheetsize"]);
             }
             return assets[name] as Sprite;
         }

@@ -33,9 +33,9 @@ namespace MetroidClone.Metroid
         public override void Draw()
         {
             base.Draw();
-            //Drawing.DrawCircle(new Vector2(BoundingBox.Center.X, BoundingBox.Center.Y), BoundingBox.Width / 2, Color.Red);
 
-            Sprite sprite = ;
+            Sprite sprite = Assets.GetSprite("youSpriteWowCoderArt");
+            Drawing.DrawSprite(sprite, new Vector2(BoundingBox.Center.X, BoundingBox.Center.Y), size: new Vector2(BoundingBox.Width, BoundingBox.Height));
         }
     }
 }
