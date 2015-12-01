@@ -15,6 +15,8 @@ namespace MetroidClone.Metroid
         {
             base.Create();
             OriginalBoundingBox = new Rectangle(0, 0, 16, 16);
+
+            AnimationFinished += WhenAnimationEnds;
         }
 
         public override void Update(GameTime gameTime)
@@ -33,9 +35,11 @@ namespace MetroidClone.Metroid
         public override void Draw()
         {
             base.Draw();
+        }
 
-            Sprite sprite = Assets.GetSprite("youSpriteWowCoderArt");
-            Drawing.DrawSprite(sprite, new Vector2(BoundingBox.Center.X, BoundingBox.Center.Y), size: new Vector2(BoundingBox.Width, BoundingBox.Height));
+        private void WhenAnimationEnds(object sender, EventArgs e)
+        {
+            Console.WriteLine("The animation ended!");
         }
     }
 }

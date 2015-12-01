@@ -36,8 +36,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="youSpriteWowCoderArt.png">
-      <Name>youSpriteWowCoderArt</Name>
+    <Compile Include="tempplayer.png">
+      <Name>tempplayer</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

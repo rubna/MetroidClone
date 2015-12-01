@@ -49,7 +49,7 @@ namespace MetroidClone.Engine
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            drawWrapper = new DrawWrapper(spriteBatch, GraphicsDevice);
+            drawWrapper = new DrawWrapper(spriteBatch, GraphicsDevice, assetManager);
 
             world.DrawWrapper = drawWrapper;
             world.AssetManager = assetManager;

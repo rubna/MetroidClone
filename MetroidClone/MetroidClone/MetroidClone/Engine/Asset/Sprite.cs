@@ -12,6 +12,7 @@ namespace MetroidClone.Engine.Asset
         public Texture2D Texture { get; protected set; }
         public Vector2 Origin { get; protected set; }
         public Vector2 SheetSize { get; protected set; }
+        public int ImageNumber { get { return (int) SheetSize.X + (int) SheetSize.Y; } }
         public Vector2 Size { get { return new Vector2(Width, Height); } }
         public float Width { get { return Texture.Width / SheetSize.X; } } //The width of a subimage.
         public float Height { get { return Texture.Height / SheetSize.Y; } } //The height of a subimage.
@@ -29,8 +30,7 @@ namespace MetroidClone.Engine.Asset
         public Rectangle GetImageRectangle(Vector2 subimage)
         {
 
-            return new Rectangle((int) (Width * subimage.X), (int) (Height * subimage.Y),
-                (int) (Width * (subimage.X + 1)), (int) (Height * (subimage.Y + 1)));
+            return new Rectangle((int) (Width * subimage.X), (int) (Height * subimage.Y), (int) Width, (int) Height);
         }
     }
 }
