@@ -8,6 +8,17 @@ namespace MetroidClone.Engine
     class GameObject
     {
         public Vector2 Position = Vector2.Zero;
+        public bool FlipX = false;
+        public int GetFlip
+        {
+            get
+            {
+                if (FlipX)
+                    return -1;
+                else
+                    return 1;
+            }
+        }
 
         public float Depth = 0;
 

@@ -11,10 +11,12 @@ namespace MetroidClone.Metroid
 {
     class Player : PhysicsObject
     {
+        float bulletSpeed = 5;
+
         public override void Create()
         {
             base.Create();
-            OriginalBoundingBox = new Rectangle(0, 0, 11, 16);
+            BoundingBox = new Rectangle(-8, -8, 16, 16);
 
             PlayAnimation("tempplayer", speed: 0f);
         }
@@ -25,15 +27,21 @@ namespace MetroidClone.Metroid
             if (Input.KeyboardCheckDown(Keys.Left))
             {
                 Speed.X -= 0.5f;
+                FlipX = true;
                 PlayAnimation("tempplayer", Direction.Left, speed: 0.2f);
             }
             if (Input.KeyboardCheckDown(Keys.Right))
             {
                 Speed.X += 0.5f;
+                FlipX = true;
                 PlayAnimation("tempplayer", Direction.Right, speed: 0.2f);
             }
             if (Input.KeyboardCheckPressed(Keys.Up))
                 Speed.Y = -4.5f;
+
+            //shoot
+            if (Input.KeyboardCheckPressed(Keys.X))
+                Shoot(GetFlip);
 
             base.Update(gameTime);
         }
@@ -41,6 +49,11 @@ namespace MetroidClone.Metroid
         public override void Draw()
         {
             base.Draw();
+        }
+
+        void Shoot(int direction)
+        {
+            World.AddObject(new Bullet() { Speed = new Vector2(direction * bulletSpeed, 0) }, Position);
         }
     }
 }

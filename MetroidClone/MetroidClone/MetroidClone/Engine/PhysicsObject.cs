@@ -9,13 +9,12 @@ namespace MetroidClone.Engine
 {
     class PhysicsObject : GameObject
     {
-        protected Rectangle OriginalBoundingBox;
-
-        public Rectangle BoundingBox
+        public Rectangle BoundingBox { get; protected set; }
+        public Rectangle TranslatedBoundingBox
         {
             get
             {
-                Rectangle translatedBoundingBox = OriginalBoundingBox;
+                Rectangle translatedBoundingBox = BoundingBox;
                 translatedBoundingBox.Offset(Position.ToPoint());
                 return translatedBoundingBox;
             }
@@ -24,23 +23,23 @@ namespace MetroidClone.Engine
         public Vector2 Speed = Vector2.Zero;
         Vector2 subPixelSpeed = Vector2.Zero;
         public Vector2 PositionPrevious = Vector2.Zero;
-        float xFriction = 0.8f;
-        float gravity = 0.2f;
+        protected float XFriction = 0.8f;
+        protected float Gravity = 0.2f;
 
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
 
 
-            Speed.X *= xFriction;
+            Speed.X *= XFriction;
 
             //resolve speeds
-            Speed.Y += gravity;
+            Speed.Y += Gravity;
             PositionPrevious = Position;
 
             //check collision
             if (CollideWithWalls)
-                CheckWallCollision();
+                MoveCheckingWallCollision();
             else
                 Position += Speed;
 
@@ -52,7 +51,7 @@ namespace MetroidClone.Engine
                 Drawing.DrawSprite(CurrentSprite, new Vector2(BoundingBox.Center.X, BoundingBox.Center.Y), (int)CurrentImage, ImageScaling * new Vector2(BoundingBox.Width, BoundingBox.Height)); //Draw the current image of the sprite.
         }
 
-        void CheckWallCollision()
+        void MoveCheckingWallCollision()
         {
             //subPixelSpeed saved for the next frame
             Point roundedSpeed;
@@ -63,9 +62,7 @@ namespace MetroidClone.Engine
             //move for X until collision
             for (int i = 0; i < Math.Abs(roundedSpeed.X); i++)
             {
-                Rectangle nextBoundingBox = BoundingBox;
-                nextBoundingBox.Offset(new Point(Math.Sign(roundedSpeed.X), 0));
-                if (InsideWall(nextBoundingBox))
+                if (InsideWall(Position.X + Math.Sign(roundedSpeed.X), Position.Y, BoundingBox))
                 {
                     Speed.X = 0;
                     break;
@@ -77,9 +74,7 @@ namespace MetroidClone.Engine
             //move for Y until collision
             for (int i = 0; i < Math.Abs(roundedSpeed.Y); i++)
             {
-                Rectangle nextBoundingBox = BoundingBox;
-                nextBoundingBox.Offset(new Point(0, Math.Sign(roundedSpeed.Y)));
-                if (InsideWall(nextBoundingBox))
+                if (InsideWall(Position.X, Position.Y + Math.Sign(roundedSpeed.Y), BoundingBox))
                 {
                     Speed.Y = 0;
                     break;
@@ -89,7 +84,7 @@ namespace MetroidClone.Engine
             }
         }
 
-        bool InsideWall(Rectangle boundingbox)
+        protected bool InsideWall(Rectangle boundingbox)
         {
             Level level = World.Level;
 
@@ -110,6 +105,23 @@ namespace MetroidClone.Engine
                     }
 
             return false;
+        }
+
+        protected bool InsideWall(Point position, Rectangle boundingbox)
+        {
+            Rectangle box = boundingbox;
+            box.Offset(position);
+            return InsideWall(box);
+        }
+
+        protected bool InsideWall(Vector2 position, Rectangle boundingbox)
+        {
+            return InsideWall(position.ToPoint(), boundingbox);
+        }
+
+        protected bool InsideWall(float x, float y, Rectangle boundingbox)
+        {
+            return InsideWall(new Point((int)x, (int)y), boundingbox);
         }
     }
 }
