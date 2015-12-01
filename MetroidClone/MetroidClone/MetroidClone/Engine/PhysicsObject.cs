@@ -30,7 +30,6 @@ namespace MetroidClone.Engine
         {
             base.Update(gameTime);
 
-
             Speed.X *= XFriction;
 
             //resolve speeds
@@ -48,7 +47,7 @@ namespace MetroidClone.Engine
         public override void Draw()
         {
             if (CurrentSprite != null)
-                Drawing.DrawSprite(CurrentSprite, new Vector2(BoundingBox.Center.X, BoundingBox.Center.Y), (int)CurrentImage, ImageScaling * new Vector2(BoundingBox.Width, BoundingBox.Height)); //Draw the current image of the sprite.
+                Drawing.DrawSprite(CurrentSprite, Position, (int)CurrentImage, ImageScaling * new Vector2(BoundingBox.Width, BoundingBox.Height)); //Draw the current image of the sprite.
         }
 
         void MoveCheckingWallCollision()

@@ -16,7 +16,7 @@ namespace MetroidClone.Metroid
         public override void Create()
         {
             base.Create();
-            BoundingBox = new Rectangle(-8, -8, 16, 16);
+            BoundingBox = new Rectangle(-6, -8, 12, 16);
 
             PlayAnimation("tempplayer", speed: 0f);
         }
