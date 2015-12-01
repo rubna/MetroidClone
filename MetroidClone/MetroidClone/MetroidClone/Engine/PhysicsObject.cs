@@ -46,7 +46,7 @@ namespace MetroidClone.Engine
 
         public override void Draw()
         {
-            if (CurrentSprite != null)
+            if (CurrentSprite != null && Visible)
                 Drawing.DrawSprite(CurrentSprite, Position, (int)CurrentImage, ImageScaling * new Vector2(BoundingBox.Width, BoundingBox.Height)); //Draw the current image of the sprite.
         }
 

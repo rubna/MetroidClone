@@ -74,7 +74,6 @@ namespace MetroidClone.Metroid
         {
             base.Draw();
             //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
-            Drawing.DrawCircle(new Vector2(TranslatedBoundingBox.Center.X, TranslatedBoundingBox.Center.Y), BoundingBox.Width / 2, Color.Red);
         }
 
         void Shoot(int xDirection)

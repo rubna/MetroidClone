@@ -71,8 +71,8 @@ namespace MetroidClone.Engine
 
         public virtual void Draw()
         {
-            if (CurrentSprite != null)
-                 Drawing.DrawSprite(CurrentSprite, Position, (int) CurrentImage, ImageScaling); //Draw the current image of the sprite.
+            if (CurrentSprite != null && Visible)
+                Drawing.DrawSprite(CurrentSprite, Position, (int) CurrentImage, ImageScaling); //Draw the current image of the sprite.
         }
 
         //Plays an animation. 
