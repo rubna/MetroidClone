@@ -33,7 +33,7 @@ namespace MetroidClone.Metroid
             if (Input.KeyboardCheckDown(Keys.Right))
             {
                 Speed.X += 0.5f;
-                FlipX = true;
+                FlipX = false;
                 PlayAnimation("tempplayer", Direction.Right, speed: 0.2f);
             }
             if (Input.KeyboardCheckPressed(Keys.Up))
