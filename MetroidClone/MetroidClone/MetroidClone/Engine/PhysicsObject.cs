@@ -46,6 +46,12 @@ namespace MetroidClone.Engine
 
         }
 
+        public override void Draw()
+        {
+            if (CurrentSprite != null)
+                Drawing.DrawSprite(CurrentSprite, new Vector2(BoundingBox.Center.X, BoundingBox.Center.Y), (int)CurrentImage, ImageScaling * new Vector2(BoundingBox.Width, BoundingBox.Height)); //Draw the current image of the sprite.
+        }
+
         void CheckWallCollision()
         {
             //subPixelSpeed saved for the next frame

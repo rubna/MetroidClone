@@ -14,18 +14,24 @@ namespace MetroidClone.Metroid
         public override void Create()
         {
             base.Create();
-            OriginalBoundingBox = new Rectangle(0, 0, 16, 16);
+            OriginalBoundingBox = new Rectangle(0, 0, 11, 16);
 
-            AnimationFinished += WhenAnimationEnds;
+            PlayAnimation("tempplayer", speed: 0f);
         }
 
         public override void Update(GameTime gameTime)
         {
             //move around
             if (Input.KeyboardCheckDown(Keys.Left))
+            {
                 Speed.X -= 0.5f;
+                PlayAnimation("tempplayer", Direction.Left, speed: 0.2f);
+            }
             if (Input.KeyboardCheckDown(Keys.Right))
+            {
                 Speed.X += 0.5f;
+                PlayAnimation("tempplayer", Direction.Right, speed: 0.2f);
+            }
             if (Input.KeyboardCheckPressed(Keys.Up))
                 Speed.Y = -4.5f;
 
@@ -35,11 +41,6 @@ namespace MetroidClone.Metroid
         public override void Draw()
         {
             base.Draw();
-        }
-
-        private void WhenAnimationEnds(object sender, EventArgs e)
-        {
-            Console.WriteLine("The animation ended!");
         }
     }
 }
