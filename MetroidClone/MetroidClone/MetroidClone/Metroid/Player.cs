@@ -1,4 +1,5 @@
 ﻿using MetroidClone.Engine;
+using MetroidClone.Engine.Asset;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -16,7 +17,9 @@ namespace MetroidClone.Metroid
         public override void Create()
         {
             base.Create();
-            BoundingBox = new Rectangle(-8, -8, 16, 16);
+            BoundingBox = new Rectangle(-6, -8, 12, 16);
+
+            PlayAnimation("tempplayer", speed: 0f);
         }
 
         public override void Update(GameTime gameTime)
@@ -26,13 +29,15 @@ namespace MetroidClone.Metroid
             {
                 Speed.X -= 0.5f;
                 FlipX = true;
+                PlayAnimation("tempplayer", Direction.Left, speed: 0.2f);
             }
             if (Input.KeyboardCheckDown(Keys.Right))
             {
                 Speed.X += 0.5f;
                 FlipX = false;
+                PlayAnimation("tempplayer", Direction.Right, speed: 0.2f);
             }
-            if (Input.KeyboardCheckPressed(Keys.Up) && InsideWall(Position.X, Position.Y + 1, BoundingBox))
+            if (Input.KeyboardCheckPressed(Keys.Up))
                 Speed.Y = -4.5f;
 
             //shoot
@@ -62,15 +67,14 @@ namespace MetroidClone.Metroid
                     blinkTimer = 0;
                     Visible = true;
                 }
-            }
+        }
         }
 
         public override void Draw()
         {
             base.Draw();
             //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
-            if (Visible)
-                Drawing.DrawCircle(new Vector2(TranslatedBoundingBox.Center.X, TranslatedBoundingBox.Center.Y), BoundingBox.Width / 2, Color.Red);
+            Drawing.DrawCircle(new Vector2(TranslatedBoundingBox.Center.X, TranslatedBoundingBox.Center.Y), BoundingBox.Width / 2, Color.Red);
         }
 
         void Shoot(int xDirection)

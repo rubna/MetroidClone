@@ -4,6 +4,7 @@ using System.Timers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using MetroidClone.Engine.Asset;
 
 namespace MetroidClone.Engine
 {
@@ -11,6 +12,7 @@ namespace MetroidClone.Engine
     {
         private SpriteBatch spriteBatch;
         private GraphicsDevice graphicsDevice;
+        
         public Vector2 ScreenSize { get; private set; }
         public bool BeginSpriteBatchCalled { get; private set; }
 
@@ -20,13 +22,17 @@ namespace MetroidClone.Engine
 
         private int deviceWidth, lastDeviceWidth;
 
-        public DrawWrapper(SpriteBatch batch, GraphicsDevice device)
+        public AssetManager Assets;
+
+        public DrawWrapper(SpriteBatch batch, GraphicsDevice device, AssetManager assetsManager)
         {
             GlobalScale = 2f;
 
             spriteBatch = batch;
             graphicsDevice = device;
             deviceWidth = graphicsDevice.Viewport.Width;
+
+            Assets = assetsManager;
 
             basicEffect = new BasicEffect(device)
             {
@@ -82,9 +88,46 @@ namespace MetroidClone.Engine
             DrawPrimitive(PrimitiveType.TriangleStrip, verts, color);
         }
 
-        public void DrawSprite()
+        public void DrawSprite(Sprite sprite, Vector2 position, Vector2? subimage = null, Vector2? size = null, Color? color = null, float rotation = 0f)
         {
+            BeginSpriteBatch();
 
+            Vector2 usedSize = size ?? sprite.Size; //The used size is either the specified size or the default size of the sprite.
+
+            //Make it possible to mirror or flip the sprite by using a negative size.
+            SpriteEffects usedSpriteEffect = SpriteEffects.None;
+            if (usedSize.X < 0)
+            {
+                usedSize.X = Math.Abs(usedSize.X);
+                usedSpriteEffect = usedSpriteEffect | SpriteEffects.FlipHorizontally;
+            }
+            if (usedSize.Y < 0)
+            {
+                usedSize.Y = Math.Abs(usedSize.Y);
+                usedSpriteEffect = usedSpriteEffect | SpriteEffects.FlipVertically;
+            }
+
+            //Draw the given subimage of the sprite with the given parameters.
+            //The position and scaling are affected by the global scaling.
+            //Some parameters are optional, so they are set to the default if not specified.
+            spriteBatch.Draw(sprite.Texture, GlobalScale * position, sprite.GetImageRectangle(subimage ?? new Vector2(0f, 0f)),
+                color ?? Color.White, rotation, sprite.Origin * sprite.Size, usedSize / sprite.Size * GlobalScale, usedSpriteEffect, 0f);
+        }
+
+        public void DrawSprite(string sprite, Vector2 position, Vector2? subimage = null, Vector2? size = null, Color? color = null, float rotation = 0f)
+        {
+            DrawSprite(Assets.GetSprite(sprite), position, subimage, size, color, rotation);
+        }
+
+        public void DrawSprite(Sprite sprite, Vector2 position, float subimage, Vector2? size = null, Color? color = null, float rotation = 0f)
+        {
+            DrawSprite(sprite, position, new Vector2(subimage % sprite.SheetSize.X, (int) subimage / (int) sprite.SheetSize.X), size, color, rotation);
+        }
+
+        public void DrawSprite(string sprite, Vector2 position, float subimage, Vector2? size = null, Color? color = null, float rotation = 0f)
+        {
+            Sprite drawSprite = Assets.GetSprite(sprite);
+            DrawSprite(drawSprite, position, new Vector2(subimage % drawSprite.SheetSize.X, (int)subimage / (int)drawSprite.SheetSize.X), size, color, rotation);
         }
 
         private void BeginSpriteBatch()

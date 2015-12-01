@@ -5,4 +5,4 @@
 //Default: <name> middle 1x1
 //For a sprite strip, the sheet size can be a single number.
 //Example: player bottomcenter 3
-player middle 1x1
+tempplayer middle 4x1

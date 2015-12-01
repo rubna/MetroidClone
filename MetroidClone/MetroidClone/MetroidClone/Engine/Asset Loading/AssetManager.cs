@@ -11,40 +11,24 @@ using System.IO;
 
 namespace MetroidClone.Engine
 {
-    class AssetManager
+    public class AssetManager
     {
         Dictionary<string, IAsset> assets;
         ContentManager content;
         Dictionary<string, Dictionary<string, Vector2>> spriteInfo;
 
-        //Splits text like "1x0.5" into two parts; the 1 and the 0.5.
-        private Vector2 GetSizeVector(string text)
-        {
-            string[] sizeParts = text.Split('x');
-            if (sizeParts.Length == 2)
-            {
-                try
-                {
-                    return new Vector2(float.Parse(sizeParts[0]), float.Parse(sizeParts[1]));
-                }
-                catch (FormatException e)
-                {
-                    throw new InvalidDataException("This string wasn't in the correct format to split into a size vector! The two values should be numbers.", e);
-                }
-            }
-            else
-                throw new InvalidDataException("This string wasn't in the correct format to split into a size vector!");
-        }
-
         public AssetManager(ContentManager content)
         {
             this.content = content;
             assets = new Dictionary<string, IAsset>();
+            spriteInfo = new Dictionary<string, Dictionary<string, Vector2>>();
+            LoadSpriteInfo();
+        }
 
+        private void LoadSpriteInfo()
+        {
             string spriteInfoData = File.ReadAllText("Content/SpriteInfo.txt");
             string[] spriteInfoDataLines = spriteInfoData.Split('\n');
-
-            spriteInfo = new Dictionary<string, Dictionary<string, Vector2>>();
 
             //Check all data lines
             foreach (string spriteInfoDataLine in spriteInfoDataLines)
@@ -98,7 +82,7 @@ namespace MetroidClone.Engine
                                     "It should be formatted as a single number or as 'nxn' where n are numbers.", e);
                             }
                         }
-                            
+
                     }
                     else
                         spriteInfo[spriteName]["sheetsize"] = new Vector2(1f, 1f);
@@ -106,11 +90,30 @@ namespace MetroidClone.Engine
             }
         }
 
+        //Splits text like "1x0.5" into two parts; the 1 and the 0.5.
+        private Vector2 GetSizeVector(string text)
+        {
+            string[] sizeParts = text.Split('x');
+            if (sizeParts.Length == 2)
+            {
+                try
+                {
+                    return new Vector2(float.Parse(sizeParts[0]), float.Parse(sizeParts[1]));
+                }
+                catch (FormatException e)
+                {
+                    throw new InvalidDataException("This string wasn't in the correct format to split into a size vector! The two values should be numbers.", e);
+                }
+            }
+            else
+                throw new InvalidDataException("This string wasn't in the correct format to split into a size vector!");
+        }
+
         public Sprite GetSprite(string name)
         {
             if (! assets.ContainsKey(name))
             {
-                assets[name] = new Sprite(content.Load<Texture2D>(name), spriteInfo[name]["origin"], spriteInfo[name]["sheetsize"]);
+                assets[name] = new Sprite(content.Load<Texture2D>("Content/" + name), spriteInfo[name]["origin"], spriteInfo[name]["sheetsize"]);
             }
             return assets[name] as Sprite;
         }
