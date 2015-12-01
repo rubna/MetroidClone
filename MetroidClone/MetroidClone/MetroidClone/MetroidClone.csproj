@@ -72,11 +72,11 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Engine\Asset\IAsset.cs" />
-    <Compile Include="Engine\AssetManager.cs" />
-    <Compile Include="Engine\Asset\Sound.cs" />
-    <Compile Include="Engine\Asset\Sprite.cs" />
-    <Compile Include="Engine\AudioWrapper.cs" />
+    <Compile Include="Engine\Asset Loading\Asset\IAsset.cs" />
+    <Compile Include="Engine\Asset Loading\AssetManager.cs" />
+    <Compile Include="Engine\Asset Loading\Asset\Sound.cs" />
+    <Compile Include="Engine\Asset Loading\Asset\Sprite.cs" />
+    <Compile Include="Engine\Asset Loading\AudioWrapper.cs" />
     <Compile Include="Engine\DrawWrapper.cs" />
     <Compile Include="Engine\GameObject.cs" />
     <Compile Include="Engine\InputHelper.cs" />
@@ -86,6 +86,8 @@
     <Compile Include="Engine\VectorExtensions.cs" />
     <Compile Include="Engine\World.cs" />
     <Compile Include="Metroid\Bullet.cs" />
+    <Compile Include="Metroid\Abstract\Monster.cs" />
+    <Compile Include="Metroid\Monsters\TestMonster.cs" />
     <Compile Include="Metroid\Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

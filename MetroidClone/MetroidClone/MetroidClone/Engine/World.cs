@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using MetroidClone.Metroid;
+using MetroidClone.Metroid.Monsters;
 
 namespace MetroidClone.Engine
 {
@@ -10,7 +11,7 @@ namespace MetroidClone.Engine
     {
         public List<GameObject> GameObjects;
         List<GameObject> newGameObjects;
-        
+
         public DrawWrapper DrawWrapper { get; set; }
         public AssetManager AssetManager { get; set; }
         public Level Level;
@@ -28,9 +29,10 @@ namespace MetroidClone.Engine
             AddObject(Level);
             Player = new Player();
             AddObject(Player, 50, 50);
+            AddObject(new TestMonster(), 100, 50);
 
-           // foreach (GameObject gameObject in GameObjects)
-                //gameObject.Create();
+            // foreach (GameObject gameObject in GameObjects)
+            //gameObject.Create();
         }
 
         public void AddObject(GameObject gameObject)

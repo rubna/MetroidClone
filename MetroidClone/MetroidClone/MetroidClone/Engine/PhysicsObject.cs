@@ -47,7 +47,7 @@ namespace MetroidClone.Engine
         public override void Draw()
         {
             //Draw the current image of the sprite. By default, the size of the bounding box is used.
-            if (CurrentSprite != null)
+            if (CurrentSprite != null && Visible)
                 Drawing.DrawSprite(CurrentSprite, Position, (int)CurrentImage, ImageScaling * new Vector2(BoundingBox.Width, BoundingBox.Height));
         }
 
