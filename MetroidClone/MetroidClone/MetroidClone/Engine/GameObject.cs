@@ -26,6 +26,7 @@ namespace MetroidClone.Engine
         public DrawWrapper Drawing;
         public AssetManager Assets;
         protected InputHelper Input;
+        public bool Visible = true;
 
         //Information about the sprite. For objects without a sprite, CurrentSprite is null.
         protected Sprite CurrentSprite;
@@ -70,8 +71,8 @@ namespace MetroidClone.Engine
 
         public virtual void Draw()
         {
-            if (CurrentSprite != null)
-                 Drawing.DrawSprite(CurrentSprite, Position, (int) CurrentImage, ImageScaling); //Draw the current image of the sprite.
+            if (CurrentSprite != null && Visible)
+                Drawing.DrawSprite(CurrentSprite, Position, (int) CurrentImage, ImageScaling); //Draw the current image of the sprite.
         }
 
         //Plays an animation. 
@@ -96,6 +97,11 @@ namespace MetroidClone.Engine
         {
             if (AnimationFinished != null)
                 AnimationFinished(this, e);
+        }
+
+        public virtual void Destroy()
+        {
+            World.RemoveObject(this);
         }
     }
 }
