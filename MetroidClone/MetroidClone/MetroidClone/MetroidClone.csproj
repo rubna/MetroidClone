@@ -77,7 +77,11 @@
     <Compile Include="Engine\Asset Loading\Asset\Sound.cs" />
     <Compile Include="Engine\Asset Loading\Asset\Sprite.cs" />
     <Compile Include="Engine\Asset Loading\AudioWrapper.cs" />
-    <Compile Include="Engine\WeightedChanceCollection.cs" />
+    <Compile Include="Engine\Collections\FairRandomCollection.cs" />
+    <Compile Include="Engine\Collections\IRandomCollection.cs" />
+    <Compile Include="Engine\Level Generation\ISpecialTileDefinition.cs" />
+    <Compile Include="Engine\Level Generation\SpecialTileGroupDefinition.cs" />
+    <Compile Include="Engine\Collections\WeightedRandomCollection.cs" />
     <Compile Include="Engine\DrawWrapper.cs" />
     <Compile Include="Engine\GameObject.cs" />
     <Compile Include="Engine\InputHelper.cs" />

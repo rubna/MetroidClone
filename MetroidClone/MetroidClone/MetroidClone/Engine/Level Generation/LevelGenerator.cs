@@ -9,7 +9,7 @@ namespace MetroidClone.Engine
     class LevelGenerator
     {
         List<LevelBlock> levelBlocks;
-        //Map<char, SpecialTileDefinition> specialTiles;
+        Dictionary<char, ISpecialTileDefinition> specialTiles;
 
         public World World { get; protected set; }
         public Level Level { get; protected set; }
@@ -24,14 +24,17 @@ namespace MetroidClone.Engine
             BlockHeight = 5;
 
             levelBlocks = new List<LevelBlock>();
+            specialTiles = new Dictionary<char, ISpecialTileDefinition>();
 
             GetLevelBlocks();
         }
 
-        public Level Generate(World world)
+        public void Generate(World world)
         {
             Level = new Level();
             World = world;
+            World.Level = Level;
+            World.AddObject(Level);
 
             Level.Grid = new bool[Width, Height]; //Clear the level
 
@@ -67,18 +70,19 @@ namespace MetroidClone.Engine
                 }
             }
 
+            specialTiles['a'] = new SpecialTileDefinition();
+            (specialTiles['a'] as SpecialTileDefinition).Add('1', 0.5);
+            (specialTiles['a'] as SpecialTileDefinition).Add('.', 0.5);
             //And place them
             for (int i = 0; i < hBlocks; i++)
             {
                 for (int j = 0; j < vBlocks; j++)
                 {
-                    levelGrid[i, j].Place(Level, World, i * BlockWidth, j * BlockHeight, basicGrid[i, j].LeftSideType == SideType.Wall,
+                    levelGrid[i, j].Place(World, specialTiles, i * BlockWidth, j * BlockHeight, basicGrid[i, j].LeftSideType == SideType.Wall,
                         basicGrid[i, j].RightSideType == SideType.Wall, basicGrid[i, j].TopSideType == SideType.Wall,
                         basicGrid[i, j].BottomSideType == SideType.Wall);
                 }
             }
-
-            return Level;
         }
 
         //Get all the blocks that meet certain requirements.
@@ -113,6 +117,7 @@ namespace MetroidClone.Engine
             for (int i = 0; i < levelBlocksLines.Length; i++)
             {
                 string line = levelBlocksLines[i];
+
                 //IGNORE and ATTENTION can be used if some lines shouldn't be processed.
                 if (line.StartsWith("IGNORE"))
                     totalIgnoreCount++;
@@ -162,7 +167,7 @@ namespace MetroidClone.Engine
                     }
                     else //An empty line means the end of the block definition of this block.
                     {
-                        currentLevelBlock.UpdateLevelInfo();
+                        currentLevelBlock.UpdateLevelInfo(/*TODO: Wall definitions*/);
 
                         currentLevelBlock = null;
                     }
@@ -176,7 +181,18 @@ namespace MetroidClone.Engine
         
         void ParseSpecialTileDefinition(string definition)
         {
+            /*
+            Examples:
+            a AS 50% 1 50% .
+            b AS GROUP OF 50% 1 50% .
+            c AS GROUP OF 1 .*/
+            string[] parts = definition.Split(' ');
+            char character = parts[0][0]; //The character that's used to refer to the definition.
 
+            if (parts[1] == "AS")
+            {
+
+            }
         }
     }
 }

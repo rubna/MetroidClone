@@ -59,14 +59,28 @@ namespace MetroidClone.Engine
         //Place a level block in a level. The preferred walls can be specified. These can only be guaranteed
         // if the level has the wall type (for example, preferLeftWall can be ignored if HasLeftWall is false).
         //If a wall isn't preferred at a position, an exit is used instead if Has*Exit is true.
-        public void Place(Level level, World world, int x, int y, bool preferLeftWall = true, bool preferRightWall = true,
-            bool preferTopWall = true, bool preferBottomWall = true)
+        public void Place(World world, Dictionary<char, ISpecialTileDefinition> specialTiles, int x, int y, bool preferLeftWall = true,
+            bool preferRightWall = true, bool preferTopWall = true, bool preferBottomWall = true)
         {
+            int BlockID = (new Random()).Next(int.MaxValue);
+
+            Level level = world.Level;
             for (int i = x; i < x + Width; i++)
             {
                 for (int j = y; j < y + Height; j++)
                 {
                     char data = Data[i - x, j - y];
+
+                    //Check special tiles until we find a normal tile.
+                    int loopCount = 0;
+                    while (specialTiles.ContainsKey(data))
+                    {
+                        data = specialTiles[data].GetTile(BlockID);
+
+                        if (loopCount > 1000)
+                            throw new Exception("Possible infinite loop detected! Please change the level definition file.");
+                    }
+
                     if (data == '1') //A wall
                         level.Grid[i, j] = true;
                     else if (data == '2') //Might be a wall

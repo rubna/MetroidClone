@@ -6,8 +6,9 @@ using System.Text;
 
 namespace MetroidClone.Engine
 {
-    //A Collection which returns a random item.
-    class WeightedChanceCollection<T> : ICollection<T>
+    //A Collection which can return a random item based on a weighted chance.
+
+    class WeightedRandomCollection<T> : IRandomCollection<T>
     {
         Random random;
 
@@ -17,7 +18,7 @@ namespace MetroidClone.Engine
         List<T> values;
         List<double> chances;
 
-        public WeightedChanceCollection()
+        public WeightedRandomCollection()
         {
             random = new Random();
             values = new List<T>();
@@ -57,7 +58,7 @@ namespace MetroidClone.Engine
                     return values[i];
             }
 
-            throw new Exception("Something's gone seriously wrong in the implementation of WeightedChanceCollection!");
+            throw new Exception("Something's gone wrong in the implementation of Get() from the WeightedChanceCollection!");
         }
 
         public bool Contains(T item)
