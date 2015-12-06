@@ -80,6 +80,7 @@
     <Compile Include="Engine\DrawWrapper.cs" />
     <Compile Include="Engine\GameObject.cs" />
     <Compile Include="Engine\InputHelper.cs" />
+    <Compile Include="Engine\Level Generation\LevelBlockRequirements.cs" />
     <Compile Include="Engine\Level.cs" />
     <Compile Include="Engine\Level Generation\LevelBlock.cs" />
     <Compile Include="Engine\Level Generation\LevelGenerator.cs" />
