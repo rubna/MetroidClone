@@ -1,0 +1,42 @@
+Information about level blocks is stored in this file.
+Start a line with BLOCK to start a level block.
+Then, specify the exits. Use up to four letters for this. U if there's an exit above, D if there's an exit below, L if there's an exit to the left,
+R is there's an exit to the right.
+Then, use the next lines to specify the block. Use a dot for an empty position. Use a 1 for a block. Use a 2 (only on the sides) for a block that can
+be removed if there's an exit or if there are two blocks above each other.
+For exits, always make sure at least the middle block is reachable.
+
+BLOCK UDLR
+12221
+...1.
+..1..
+.....
+12221
+
+BLOCK LR
+11111
+2...2
+2...2
+2...2
+11111
+
+BLOCK UD
+1..11
+1...1
+11..1
+1...1
+1..11
+
+BLOCK UD
+11..1
+1...1
+1..11
+1...1
+11..1
+
+BLOCK UR
+22221
+....2
+....2
+....2
+11111

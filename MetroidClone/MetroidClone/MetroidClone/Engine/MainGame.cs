@@ -35,6 +35,8 @@ namespace MetroidClone.Engine
             world = new World();
             graphics.PreferMultiSampling = true;
             graphics.SynchronizeWithVerticalRetrace = true;
+            graphics.PreferredBackBufferWidth = 24 * 20 * 2;
+            graphics.PreferredBackBufferHeight = 24 * 15 * 2;
 
             graphics.ApplyChanges();
 

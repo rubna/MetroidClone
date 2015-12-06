@@ -25,7 +25,7 @@ namespace MetroidClone.Engine
 
         public void Initialize()
         {
-            Level = new Level();
+            Level = (new LevelGenerator()).Generate();
             AddObject(Level);
             Player = new Player();
             AddObject(Player, 50, 50);
