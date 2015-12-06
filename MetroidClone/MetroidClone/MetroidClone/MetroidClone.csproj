@@ -77,13 +77,16 @@
     <Compile Include="Engine\Asset Loading\Asset\Sound.cs" />
     <Compile Include="Engine\Asset Loading\Asset\Sprite.cs" />
     <Compile Include="Engine\Asset Loading\AudioWrapper.cs" />
+    <Compile Include="Engine\WeightedChanceCollection.cs" />
     <Compile Include="Engine\DrawWrapper.cs" />
     <Compile Include="Engine\GameObject.cs" />
     <Compile Include="Engine\InputHelper.cs" />
     <Compile Include="Engine\Level Generation\LevelBlockRequirements.cs" />
+    <Compile Include="Engine\Level Generation\SpecialTileDefinition.cs" />
     <Compile Include="Engine\Level.cs" />
     <Compile Include="Engine\Level Generation\LevelBlock.cs" />
     <Compile Include="Engine\Level Generation\LevelGenerator.cs" />
+    <Compile Include="Engine\ListExtensions.cs" />
     <Compile Include="Engine\MainGame.cs" />
     <Compile Include="Engine\PhysicsObject.cs" />
     <Compile Include="Engine\VectorExtensions.cs" />

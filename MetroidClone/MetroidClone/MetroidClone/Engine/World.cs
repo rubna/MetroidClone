@@ -25,10 +25,10 @@ namespace MetroidClone.Engine
 
         public void Initialize()
         {
-            Level = (new LevelGenerator()).Generate();
+            Level = (new LevelGenerator()).Generate(this);
             AddObject(Level);
             Player = new Player();
-            AddObject(Player, 50, 50);
+            AddObject(Player, 40, 40);
             AddObject(new TestMonster(), 100, 50);
 
             // foreach (GameObject gameObject in GameObjects)
