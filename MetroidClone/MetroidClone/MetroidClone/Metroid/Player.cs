@@ -17,7 +17,7 @@ namespace MetroidClone.Metroid
 
         public Weapon CurrentWeapon = Weapon.Nothing;
         public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
-        int hitPoints = 100;
+        public int HitPoints = 100;
         public int RocketAmmo = 5;
         public int Score = 0;
 
@@ -77,7 +77,7 @@ namespace MetroidClone.Metroid
                 {
                     if (TranslatedBoundingBox.Intersects(monster.TranslatedBoundingBox))
                     {
-                        hitPoints = hitPoints - monster.Damage;
+                        HitPoints = HitPoints - monster.Damage;
                         Hurt(Math.Sign(Position.X - monster.Position.X));
             }
                 }
@@ -144,7 +144,7 @@ namespace MetroidClone.Metroid
             blinkTimer = 1;
             Visible = false;
             Speed = new Vector2(xDirection * 3, -2);
-            if (hitPoints <= 0)
+            if (HitPoints <= 0)
             Console.Write("You are dead");
         }
 

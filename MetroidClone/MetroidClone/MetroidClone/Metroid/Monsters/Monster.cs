@@ -40,18 +40,31 @@ namespace MetroidClone.Metroid
             if (HitPoints <= 0)
             {
                 Destroy();
-                if (World.Player.UnlockedWeapons.Contains(Weapon.Rocket))
-                {
-                    randomNumber = World.Random.Next(8);
-                    if (randomNumber == 0)
-                        World.AddObject(new RocketAmmo(), Position.X, Position.Y);
-                }
                 if (hitByPlayer)
                 {
                     World.Player.Score = World.Player.Score + ScoreOnKill;
                     Console.Write("Score: ");
                     Console.WriteLine(World.Player.Score);
                 }
+            }
+        }
+        public override void Destroy()
+        {
+            base.Destroy();
+            // When a monster is destroyed, you have a chance that a rocket or a health pack will drop
+            if (World.Player.UnlockedWeapons.Contains(Weapon.Rocket))
+            {
+                randomNumber = World.Random.Next(100);
+                if (randomNumber < 5)
+                    World.AddObject(new RocketAmmo(), Position.X, Position.Y);
+                if (randomNumber > 4 && randomNumber < 10)
+                    World.AddObject(new HealthDrop(), Position.X, Position.Y);
+            }
+            else
+            {
+                randomNumber = World.Random.Next(100);
+                if (randomNumber < 5)
+                    World.AddObject(new HealthDrop(), Position.X, Position.Y);
             }
         }
     }
