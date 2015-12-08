@@ -30,6 +30,7 @@ namespace MetroidClone.Engine
             Player = new Player();
             AddObject(Player, 50, 50);
             AddObject(new TestMonster(), 100, 50);
+            AddObject(new PushableBlock(), 120, 100);
 
             // foreach (GameObject gameObject in GameObjects)
             //gameObject.Create();

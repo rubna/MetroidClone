@@ -77,6 +77,7 @@
     <Compile Include="Engine\Asset Loading\Asset\Sound.cs" />
     <Compile Include="Engine\Asset Loading\Asset\Sprite.cs" />
     <Compile Include="Engine\Asset Loading\AudioWrapper.cs" />
+    <Compile Include="Engine\TileLoading.cs" />
     <Compile Include="Engine\DrawWrapper.cs" />
     <Compile Include="Engine\GameObject.cs" />
     <Compile Include="Engine\InputHelper.cs" />
@@ -85,6 +86,7 @@
     <Compile Include="Engine\PhysicsObject.cs" />
     <Compile Include="Engine\VectorExtensions.cs" />
     <Compile Include="Engine\World.cs" />
+    <Compile Include="Metroid\Abstract\PushableBlock.cs" />
     <Compile Include="Metroid\Bullet.cs" />
     <Compile Include="Metroid\Abstract\Monster.cs" />
     <Compile Include="Metroid\Monsters\TestMonster.cs" />
