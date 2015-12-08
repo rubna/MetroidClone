@@ -12,9 +12,12 @@ namespace MetroidClone.Engine
     {
         WeightedRandomCollection<char> PossibleTiles;
 
+        public bool CanBeWall { get; set; }
+
         public SpecialTileDefinition()
         {
             PossibleTiles = new WeightedRandomCollection<char>();
+            CanBeWall = true;
         }
 
         //Get a tile defined by the definition.

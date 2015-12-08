@@ -16,10 +16,12 @@ namespace MetroidClone.Engine
         WeightedRandomCollection<List<char>> PossibleSubgroups;
         FairRandomCollection<char> CurrentSubGroup;
         int previousBlockID = 0;
+        public bool CanBeWall { get; set; }
 
         public SpecialTileGroupDefinition()
         {
             PossibleSubgroups = new WeightedRandomCollection<List<char>>();
+            CanBeWall = false;
         }
 
         //Get a tile defined by the definition.
@@ -28,9 +30,11 @@ namespace MetroidClone.Engine
             if (blockID != previousBlockID) //Reset the data of the special group if needed.
             {
                 CurrentSubGroup = (FairRandomCollection<char>) PossibleSubgroups.Get();
+                previousBlockID = blockID;
             }
 
-            return CurrentSubGroup.Get();
+            char randomVal = CurrentSubGroup.Get();
+            return randomVal;
         }
 
         //Add a subgroup with the specified chance to the definition.

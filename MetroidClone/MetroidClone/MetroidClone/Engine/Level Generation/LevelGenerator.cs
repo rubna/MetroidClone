@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -57,6 +58,24 @@ namespace MetroidClone.Engine
                 }
             }
 
+            List<Point> roomExits = new List<Point>();
+
+            //The left exit
+            roomExits.Add(new Point(0, 0));
+            basicGrid[0, 2].LeftSideType = SideType.Exit;
+
+            //The right exit
+            roomExits.Add(new Point(hBlocks - 1, 1));
+            basicGrid[hBlocks - 1, 1].RightSideType = SideType.Exit;
+
+            //The top exit
+            roomExits.Add(new Point(2, 0));
+            basicGrid[hBlocks - 1, 0].TopSideType = SideType.Exit;
+
+            //The bottom exit
+            roomExits.Add(new Point(1, vBlocks - 1));
+            basicGrid[1, vBlocks - 1].BottomSideType = SideType.Exit;
+
             //Create the actual level grid
             LevelBlock[,] levelGrid = new LevelBlock[hBlocks, vBlocks];
 
@@ -66,13 +85,17 @@ namespace MetroidClone.Engine
                 for (int j = 0; j < vBlocks; j++)
                 {
                     //Get a block that would fit at this position.
-                    levelGrid[i, j] = GetPossibleLevelBlocks(basicGrid[i, j]).GetRandomItem();
+                    try
+                    {
+                        levelGrid[i, j] = GetPossibleLevelBlocks(basicGrid[i, j]).GetRandomItem();
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Exception("There's no block that would fit here! Please create more blocks and add them to LevelBlocks.txt.", e);
+                    }
                 }
             }
 
-            specialTiles['a'] = new SpecialTileDefinition();
-            (specialTiles['a'] as SpecialTileDefinition).Add('1', 0.5);
-            (specialTiles['a'] as SpecialTileDefinition).Add('.', 0.5);
             //And place them
             for (int i = 0; i < hBlocks; i++)
             {
@@ -128,7 +151,7 @@ namespace MetroidClone.Engine
 
                 if (line.StartsWith("BLOCK"))
                 {
-                    currentLevelBlock = new LevelBlock();
+                    currentLevelBlock = new LevelBlock(BlockWidth, BlockHeight);
                     thisBlockDataHeight = 0;
                     levelBlocks.Add(currentLevelBlock);
 
@@ -167,7 +190,7 @@ namespace MetroidClone.Engine
                     }
                     else //An empty line means the end of the block definition of this block.
                     {
-                        currentLevelBlock.UpdateLevelInfo(/*TODO: Wall definitions*/);
+                        currentLevelBlock.UpdateLevelInfo(GetWallTiles());
 
                         currentLevelBlock = null;
                     }
@@ -181,18 +204,90 @@ namespace MetroidClone.Engine
         
         void ParseSpecialTileDefinition(string definition)
         {
-            /*
-            Examples:
-            a AS 50% 1 50% .
-            b AS GROUP OF 50% 1 50% .
-            c AS GROUP OF 1 .*/
             string[] parts = definition.Split(' ');
-            char character = parts[0][0]; //The character that's used to refer to the definition.
+            int currentPart = 0;
+            char character = parts[currentPart][0]; //The character that's used to refer to the definition.
 
-            if (parts[1] == "AS")
+            if (parts.Length > currentPart && parts[++currentPart] == "AS")
             {
+                ISpecialTileDefinition specialTile = null;
+                bool specialTileIsWall = false;
+                string expectingNext = "";
+                bool hasPreviousPercentage = false;
+                double previousPercentage = 1;
+                
+                while (parts.Length > ++currentPart)
+                {
+                    if (expectingNext != "") //The part is part of a two-word term
+                    {
+                        if (parts[currentPart] != expectingNext)
+                            throw new Exception("Error in levelblocks definition! Expecting " + expectingNext);
+                        expectingNext = "";
+                    }
+                    else if (parts[currentPart] == "WALL") //The part defines that this can be a wall
+                    {
+                        specialTileIsWall = true;
+                        expectingNext = "OR";
+                    }
+                    else if (parts[currentPart] == "GROUP") //The part defines that this is a group
+                    {
+                        specialTile = new SpecialTileGroupDefinition();
+                        expectingNext = "OF";
+                    }
+                    else if (parts[currentPart].Contains("%")) //The part is a percentage
+                    {
+                        string percentageNumber = parts[currentPart].Replace("%", "");
+                        if (!double.TryParse(percentageNumber, out previousPercentage))
+                            throw new Exception("Error in levelblocks definition! Couldn't parse percentage.");
+                        previousPercentage /= 100;
+                        hasPreviousPercentage = true;
+                    }
+                    else if (parts[currentPart].Length == 1) //It is a normal character
+                    {
+                        specialTile = specialTile ?? new SpecialTileDefinition();
+                        if (!hasPreviousPercentage)
+                            previousPercentage = 1;
 
+                        if (specialTile is SpecialTileGroupDefinition)
+                        {
+                            List<char> currentSubgroup = new List<char>();
+                            currentSubgroup.Add(parts[currentPart][0]);
+                            while ((parts.Length > currentPart + 1) && (parts[currentPart + 1].Length == 1))
+                            {
+                                currentSubgroup.Add(parts[++currentPart][0]);
+                            }
+                            (specialTile as SpecialTileGroupDefinition).Add(currentSubgroup, previousPercentage);
+                        }
+                        else if (specialTile is SpecialTileDefinition)
+                        {
+                            (specialTile as SpecialTileDefinition).Add(parts[currentPart][0], previousPercentage);
+                        }
+                        hasPreviousPercentage = false;
+                    }
+                }
+
+                if (specialTileIsWall)
+                    specialTile.CanBeWall = true;
+
+                specialTiles.Add(character, specialTile);
             }
+        }
+
+        //Get all tiles that can be walls. This includes '1', the normal wall character, but also any
+        //special tiles that define that they can be a wall.
+        List<char> GetWallTiles()
+        {
+            List<char> knownWallCharacters = new List<char>();
+
+            knownWallCharacters.Add('1'); //'1' is the normal character for a wall, so this is always a wall.
+
+            foreach (KeyValuePair<char, ISpecialTileDefinition> specialTile in specialTiles)
+            {
+                if (specialTile.Value.CanBeWall)
+                    knownWallCharacters.Add(specialTile.Key);
+            }
+
+            return knownWallCharacters;
         }
     }
 }

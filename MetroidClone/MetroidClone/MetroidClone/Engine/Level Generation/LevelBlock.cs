@@ -13,10 +13,10 @@ namespace MetroidClone.Engine
         public bool HasLeftExit, HasRightExit, HasTopExit, HasBottomExit;
         public bool HasLeftWall, HasRightWall, HasTopWall, HasBottomWall;
 
-        public LevelBlock()
+        public LevelBlock(int width, int height)
         {
-            Width = 5;
-            Height = 5;
+            Width = width;
+            Height = height;
 
             Data = new char[Width, Height];
 
@@ -32,10 +32,9 @@ namespace MetroidClone.Engine
         }
 
         //Updates information about level wall etc.
-        public void UpdateLevelInfo()
+        //knownWallCharacters should contain a list of characters that count as a wall.
+        public void UpdateLevelInfo(List<char> knownWallCharacters)
         {
-            char[] wallChars = { '1', '2' }; //Characters that count as a wall.
-
             //At the beginning, assume that there's a wall on each side.
             HasLeftWall = true;
             HasRightWall = true;
@@ -43,16 +42,22 @@ namespace MetroidClone.Engine
             HasBottomWall = true;
 
             //Then, check if that's true.
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < Math.Max(Width, Height); i++)
             {
-                if (!wallChars.Contains(Data[0, i]))
-                    HasLeftWall = false;
-                if (!wallChars.Contains(Data[4, i]))
-                    HasRightWall = false;
-                if (!wallChars.Contains(Data[i, 0]))
-                    HasTopWall = false;
-                if (!wallChars.Contains(Data[i, 4]))
-                    HasBottomWall = false;
+                if (i < Height)
+                {
+                    if (!knownWallCharacters.Contains(Data[0, i]))
+                        HasLeftWall = false;
+                    if (!knownWallCharacters.Contains(Data[i, Height - 1]))
+                        HasBottomWall = false;
+                }
+                if (i < Width)
+                {
+                    if (!knownWallCharacters.Contains(Data[Width - 1, i]))
+                        HasRightWall = false;
+                    if (!knownWallCharacters.Contains(Data[i, 0]))
+                        HasTopWall = false;
+                }
             }
         }
 
@@ -73,38 +78,49 @@ namespace MetroidClone.Engine
 
                     //Check special tiles until we find a normal tile.
                     int loopCount = 0;
+
+                    //Some tiles can be turned into walls if they end up on the sides of the level.
+                    bool specialTileTurnsIntoWallOnSides = false;
+
                     while (specialTiles.ContainsKey(data))
                     {
+                        specialTileTurnsIntoWallOnSides = specialTileTurnsIntoWallOnSides || specialTiles[data].CanBeWall;
                         data = specialTiles[data].GetTile(BlockID);
 
                         if (loopCount > 1000)
                             throw new Exception("Possible infinite loop detected! Please change the level definition file.");
                     }
 
-                    if (data == '1') //A wall
-                        level.Grid[i, j] = true;
-                    else if (data == '2') //Might be a wall
+                    //If the special tile can be turned into a wall, check if this should happen.
+                    if (specialTileTurnsIntoWallOnSides)
                     {
                         if (i == x) //Left wall
                         {
                             if (preferLeftWall)
-                                level.Grid[i, j] = true;
+                                data = '1';
                         }
                         if (i == x + Width - 1) //Right wall
                         {
                             if (preferRightWall)
-                                level.Grid[i, j] = true;
+                                data = '1';
                         }
                         if (j == y) //Top wall
                         {
                             if (preferTopWall)
-                                level.Grid[i, j] = true;
+                                data = '1';
                         }
                         if (j == y + Height - 1) //Bottom wall
                         {
                             if (preferBottomWall)
-                                level.Grid[i, j] = true;
+                                data = '1';
                         }
+                    }
+
+                    if (data == '1') //A wall
+                        level.Grid[i, j] = true;
+                    else if (data == '.')
+                    {
+                        //Nothing
                     }
                 }
             }

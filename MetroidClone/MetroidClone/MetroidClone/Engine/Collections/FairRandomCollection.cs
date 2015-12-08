@@ -55,6 +55,8 @@ namespace MetroidClone.Engine
             {
                 if (timesReturned[i] <= minimumTimesReturned)
                 {
+                    if (timesReturned[i] < minimumTimesReturned)
+                        possibleItemPositions.Clear();
                     possibleItemPositions.Add(i);
                     minimumTimesReturned = timesReturned[i];
                 }

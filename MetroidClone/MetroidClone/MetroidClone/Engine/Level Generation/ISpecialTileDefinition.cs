@@ -9,5 +9,6 @@ namespace MetroidClone.Engine
     interface ISpecialTileDefinition
     {
         char GetTile(int blockID = 0);
+        bool CanBeWall { get; set; }
     }
 }

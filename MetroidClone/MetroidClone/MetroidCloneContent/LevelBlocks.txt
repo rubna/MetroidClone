@@ -1,4 +1,4 @@
-Information about level blocks is stored in this file.
+﻿Information about level blocks is stored in this file.
 Start a line with BLOCK to start a level block.
 Then, specify the exits. Use up to four letters for this. U if there's an exit above, D if there's an exit below, L if there's an exit to the left,
 R if there's an exit to the right.
@@ -6,73 +6,29 @@ Then, use the next lines to specify the block. Use a dot for an empty position. 
 be removed if there's an exit or if there are two blocks above each other.
 For exits, always make sure at least the middle block is reachable.
 
+DEFINE 2 AS WALL OR .
 DEFINE a AS 50% 1 50% .
 DEFINE b AS GROUP OF 50% 1 50% .
 DEFINE c AS GROUP OF 1 .
+DEFINE α AS WALL OR a
 
 BLOCK UDLR
 22222
 2...2
-2.1.2
+2c1c2
+2...2
+11211
+
+BLOCK DLR
+2...2
 2..a2
-21222
-
-IGNORE
-
-BLOCK UDLR
-12221
-.....
-..1..
-.....
-12221
+2.bb2
+2...2
+11211
 
 BLOCK LR
-11111
-2...2
-2...2
-2...2
-11111
-
-BLOCK UD
-1..11
-1...1
-11..1
-1...1
-1..11
-
-BLOCK UD
-1...1
-1..11
-1.1.1
-1...1
-11..1
-
-BLOCK UR
-22221
-..1.2
-.1..2
-....2
-11111
-
-BLOCK UDLR
-22222
-2...2
-2.1.2
-2...2
-22212
-
-BLOCK LRD
-11111
-2...2
-2.1.1
-1..a1
-11212
-
-BLOCK LR
-11111
-....1
-.11..
-11..1
-1.111
-
-ATTENTION
+1α1α1
+..c..
+..a..
+..c..
+a111a
