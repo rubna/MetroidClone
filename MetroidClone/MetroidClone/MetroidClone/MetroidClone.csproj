@@ -85,10 +85,12 @@
     <Compile Include="Engine\PhysicsObject.cs" />
     <Compile Include="Engine\VectorExtensions.cs" />
     <Compile Include="Engine\World.cs" />
+    <Compile Include="Metroid\Abstract\Collectible.cs" />
     <Compile Include="Metroid\Bullet.cs" />
     <Compile Include="Metroid\Abstract\Monster.cs" />
     <Compile Include="Metroid\Monsters\TestMonster.cs" />
     <Compile Include="Metroid\Player.cs" />
+    <Compile Include="Metroid\Scrap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

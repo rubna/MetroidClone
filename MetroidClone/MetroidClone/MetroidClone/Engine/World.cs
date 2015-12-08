@@ -16,6 +16,7 @@ namespace MetroidClone.Engine
         public AssetManager AssetManager { get; set; }
         public Level Level;
         public Player Player;
+        public Random Random;
 
         public World()
         {
@@ -25,11 +26,13 @@ namespace MetroidClone.Engine
 
         public void Initialize()
         {
+            Random = new Random();
             Level = new Level();
             AddObject(Level);
             Player = new Player();
             AddObject(Player, 50, 50);
             AddObject(new TestMonster(), 100, 50);
+            AddObject(new Scrap(), 149, 187);
 
             // foreach (GameObject gameObject in GameObjects)
             //gameObject.Create();

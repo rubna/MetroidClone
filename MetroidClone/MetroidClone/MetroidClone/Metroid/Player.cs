@@ -13,6 +13,7 @@ namespace MetroidClone.Metroid
     {
         float bulletSpeed = 5;
         float blinkTimer = 0;
+        int collectedScrap = 0;
 
         public override void Create()
         {
@@ -54,6 +55,10 @@ namespace MetroidClone.Metroid
                         Hurt(Math.Sign(Position.X - monster.Position.X));
             }
 
+            foreach (Scrap scrap in World.GameObjects.OfType<Scrap>().ToList())
+                if (TranslatedBoundingBox.Intersects(scrap.TranslatedBoundingBox))
+                    Collect(scrap);
+
             //blink
             if (blinkTimer > 0)
             {
@@ -74,6 +79,7 @@ namespace MetroidClone.Metroid
         {
             base.Draw();
             //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
+            Console.WriteLine(collectedScrap);
         }
 
         void Shoot(int xDirection)
@@ -86,6 +92,12 @@ namespace MetroidClone.Metroid
             blinkTimer = 1;
             Visible = false;
             Speed = new Vector2(xDirection * 3, -2);
+        }
+
+        void Collect(Scrap scrap)
+        {
+            collectedScrap += scrap.ScrapAmount;
+            scrap.Destroy();
         }
     }
 }
