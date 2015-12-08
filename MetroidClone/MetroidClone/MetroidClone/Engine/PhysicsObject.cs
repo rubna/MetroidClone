@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using MetroidClone.Engine.Solids;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -23,14 +24,17 @@ namespace MetroidClone.Engine
         public Vector2 Speed = Vector2.Zero;
         Vector2 subPixelSpeed = Vector2.Zero;
         public Vector2 PositionPrevious = Vector2.Zero;
-        protected float XFriction = 0.8f;
+        protected Vector2 Friction = new Vector2(0.8f, 1);
         protected float Gravity = 0.2f;
+        protected bool OnJumpThrough = false;
+        protected bool OnGround = false;
+        protected Vector2 WallBounce = Vector2.Zero;
 
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
 
-            Speed.X *= XFriction;
+            Speed *= Friction;
 
             //resolve speeds
             Speed.Y += Gravity;
@@ -38,7 +42,10 @@ namespace MetroidClone.Engine
 
             //check collision
             if (CollideWithWalls)
+            {
                 MoveCheckingWallCollision();
+                CheckOnGround();
+            }
             else
                 Position += Speed;
 
@@ -50,12 +57,34 @@ namespace MetroidClone.Engine
                 Drawing.DrawSprite(CurrentSprite, Position, (int)CurrentImage, ImageScaling * new Vector2(BoundingBox.Width, BoundingBox.Height)); //Draw the current image of the sprite.
         }
 
+        void CheckOnGround()
+        {
+            OnJumpThrough = false;
+            OnGround = false;
+            foreach (ISolid solid in World.GameObjects.OfType<ISolid>().ToList())
+            {
+                Rectangle box = TranslatedBoundingBox;
+                box.Offset(0, 1);
+                if (solid.CollidesWith(box))
+                {
+                    OnGround = true;
+                    if (solid is JumpThrough)
+                        OnJumpThrough = true;
+                    else
+                    {
+                        OnJumpThrough = false;
+                        break;
+                    }
+                }
+            }
+        }
+
         void MoveCheckingWallCollision()
         {
             //subPixelSpeed saved for the next frame
             Point roundedSpeed;
             subPixelSpeed += Speed;
-            roundedSpeed = new Point((int)Math.Round(Speed.X), (int)Math.Round(Speed.Y));
+            roundedSpeed = new Point((int)Math.Round(subPixelSpeed.X), (int)Math.Round(subPixelSpeed.Y));
             subPixelSpeed -= roundedSpeed.ToVector2();
 
             //move for X until collision
@@ -63,7 +92,7 @@ namespace MetroidClone.Engine
             {
                 if (InsideWall(Position.X + Math.Sign(roundedSpeed.X), Position.Y, BoundingBox))
                 {
-                    Speed.X = 0;
+                    Speed.X *= -WallBounce.X;
                     break;
                 }
                 else
@@ -75,7 +104,7 @@ namespace MetroidClone.Engine
             {
                 if (InsideWall(Position.X, Position.Y + Math.Sign(roundedSpeed.Y), BoundingBox))
                 {
-                    Speed.Y = 0;
+                    Speed.Y *= -WallBounce.Y;
                     break;
                 }
                 else
@@ -85,24 +114,16 @@ namespace MetroidClone.Engine
 
         protected bool InsideWall(Rectangle boundingbox)
         {
-            Level level = World.Level;
-
-            Point gridPosition = (new Vector2(Position.X / level.TileSize.X, Position.Y / level.TileSize.Y)).ToPoint();
-            Point min = new Point(gridPosition.X - 3, gridPosition.Y - 3);
-            Point max = new Point(gridPosition.X + 3, gridPosition.Y + 3);
-
-            min = min.ClampPoint(Point.Zero, level.LevelDimensions);
-            max = max.ClampPoint(Point.Zero, level.LevelDimensions);
-
-            for (int xp = min.X; xp < max.X; xp++)
-                for (int yp = min.Y; yp < max.Y; yp++)
-                    if (level.Grid[xp, yp])
-                    {
-                        Rectangle tile = new Rectangle(xp * level.TileSize.X, yp * level.TileSize.Y, level.TileSize.X, level.TileSize.Y);
-                        if (boundingbox.Intersects(tile))
-                            return true;
-                    }
-
+            foreach (ISolid solid in World.Solids)
+            {
+                if (solid.CollidesWith(boundingbox))
+                {
+                    if (solid is JumpThrough)
+                        if (Speed.Y < 0)
+                            continue;
+                    return true;
+                }
+            }
             return false;
         }
 
@@ -121,6 +142,23 @@ namespace MetroidClone.Engine
         protected bool InsideWall(float x, float y, Rectangle boundingbox)
         {
             return InsideWall(new Point((int)x, (int)y), boundingbox);
+        }
+
+        protected bool CollidesWith(float x, float y, PhysicsObject obj)
+        {
+            return CollidesWith(new Vector2(x, y).ToPoint(), obj);
+        }
+
+        protected bool CollidesWith(Vector2 position, PhysicsObject obj)
+        {
+            return CollidesWith(position.ToPoint(), obj);
+        }
+
+        protected bool CollidesWith(Point position, PhysicsObject obj)
+        {
+            Rectangle bbox = BoundingBox;
+            bbox.Offset(position);
+            return bbox.Intersects(obj.TranslatedBoundingBox);
         }
     }
 }
