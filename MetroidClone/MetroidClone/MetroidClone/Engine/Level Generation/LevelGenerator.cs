@@ -42,6 +42,9 @@ namespace MetroidClone.Engine
             //Create the basic grid for the level. This will contain the main path through the level.
             int hBlocks = Width / BlockWidth, vBlocks = Height / BlockHeight;
             LevelBlockRequirements[,] basicGrid = new LevelBlockRequirements[hBlocks, vBlocks];
+            bool[,] isOnMainPath = new bool[hBlocks, vBlocks];
+
+            //By default, all sides contain walls.
             for (int i = 0; i < hBlocks; i++)
             {
                 for (int j = 0; j < vBlocks; j++)
@@ -55,6 +58,8 @@ namespace MetroidClone.Engine
                         basicGrid[i, j].TopSideType = SideType.Wall;
                     if (j == vBlocks - 1)
                         basicGrid[i, j].BottomSideType = SideType.Wall;
+
+                    isOnMainPath[i, j] = false;
                 }
             }
 
@@ -75,6 +80,11 @@ namespace MetroidClone.Engine
             //The bottom exit
             roomExits.Add(new Point(1, vBlocks - 1));
             basicGrid[1, vBlocks - 1].BottomSideType = SideType.Exit;
+
+            ConnectExitToMainPath(basicGrid, isOnMainPath, roomExits[0], new Point(1, 0));
+            ConnectExitToMainPath(basicGrid, isOnMainPath, roomExits[0], new Point(1, 0));
+            ConnectExitToMainPath(basicGrid, isOnMainPath, roomExits[0], new Point(1, 0));
+            ConnectExitToMainPath(basicGrid, isOnMainPath, roomExits[0], new Point(1, 0));
 
             //Create the actual level grid
             LevelBlock[,] levelGrid = new LevelBlock[hBlocks, vBlocks];
@@ -106,6 +116,13 @@ namespace MetroidClone.Engine
                         basicGrid[i, j].BottomSideType == SideType.Wall);
                 }
             }
+        }
+
+        void ConnectExitToMainPath(LevelBlockRequirements[,] basicGrid, bool[,] isOnMainPath, Point exit, Point direction)
+        {
+            int hBlocks = Width / BlockWidth, vBlocks = Height / BlockHeight;
+
+
         }
 
         //Get all the blocks that meet certain requirements.
