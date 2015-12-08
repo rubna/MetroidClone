@@ -84,6 +84,8 @@
     <Compile Include="Engine\MainGame.cs" />
     <Compile Include="Engine\PhysicsObject.cs" />
     <Compile Include="Engine\Solids\JumpThrough.cs" />
+    <Compile Include="Engine\Solids\SlopeLeft.cs" />
+    <Compile Include="Engine\Solids\SlopeRight.cs" />
     <Compile Include="Engine\VectorExtensions.cs" />
     <Compile Include="Engine\Solids\ISolid.cs" />
     <Compile Include="Engine\Solids\Wall.cs" />

@@ -91,10 +91,18 @@ namespace MetroidClone.Engine
             //move for X until collision
             for (int i = 0; i < Math.Abs(roundedSpeed.X); i++)
             {
-                if (InsideWall(Position.X + Math.Sign(roundedSpeed.X), Position.Y, BoundingBox))
+                if (InsideWall(Math.Sign(roundedSpeed.X), 0, TranslatedBoundingBox))
                 {
-                    Speed.X *= -WallBounce.X;
-                    break;
+                    if (!InsideWall(Math.Sign(roundedSpeed.X), -1, TranslatedBoundingBox))
+                    {
+                        Position.X += Math.Sign(roundedSpeed.X);
+                        Position.Y--;
+                    }
+                    else
+                    {
+                        Speed.X *= -WallBounce.X;
+                        break;
+                    }
                 }
                 else
                     Position.X += Math.Sign(roundedSpeed.X);
@@ -103,7 +111,7 @@ namespace MetroidClone.Engine
             //move for Y until collision
             for (int i = 0; i < Math.Abs(roundedSpeed.Y); i++)
             {
-                if (InsideWall(Position.X, Position.Y + Math.Sign(roundedSpeed.Y), BoundingBox))
+                if (InsideWall(0, Math.Sign(roundedSpeed.Y), TranslatedBoundingBox))
                 {
                     Speed.Y *= -WallBounce.Y;
                     break;
