@@ -50,6 +50,7 @@ namespace MetroidClone.Engine
             AddObject(new Scrap(), 300, 187);
             AddObject(new Switch(), Level.TileSize.X, 3 * Level.TileSize.Y);
             AddObject(new SlopeRight(new Rectangle(280, 192, 56, 32)));
+            AddObject(new Door(), Level.TileSize.X, 4 * Level.TileSize.Y);
 
             // foreach (GameObject gameObject in GameObjects)
             //gameObject.Create();
