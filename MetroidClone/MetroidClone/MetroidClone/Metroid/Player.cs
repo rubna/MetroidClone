@@ -1,5 +1,6 @@
 ﻿using MetroidClone.Engine;
 using MetroidClone.Engine.Asset;
+using MetroidClone.Metroid.Player_Attacks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -11,14 +12,16 @@ namespace MetroidClone.Metroid
 {
     class Player : PhysicsObject
     {
-        float bulletSpeed = 5;
         float blinkTimer = 0;
         int collectedScrap = 0;
+
+        public Weapon CurrentWeapon = Weapon.Nothing;
+        public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
 
         public override void Create()
         {
             base.Create();
-            BoundingBox = new Rectangle(-6, -8, 12, 16);
+            BoundingBox = new Rectangle(-12, -16, 24, 32);
 
             PlayAnimation("tempplayer", speed: 0f);
         }
@@ -38,12 +41,29 @@ namespace MetroidClone.Metroid
                 FlipX = false;
                 PlayAnimation("tempplayer", Direction.Right, speed: 0.2f);
             }
-            if (Input.KeyboardCheckPressed(Keys.Up))
-                Speed.Y = -4.5f;
 
-            //shoot
+            //jump
+            if (Input.KeyboardCheckPressed(Keys.Up) && OnGround)
+                Speed.Y = -6f;
+            if (Speed.Y < 0 && !Input.KeyboardCheckDown(Keys.Up))
+            {
+                Speed.Y *= 0.9f;
+            }
+
+            //drop through jumpthroughs
+            if (Input.KeyboardCheckPressed(Keys.Down) && OnJumpThrough)
+                Position.Y++;
+
+            //attack
             if (Input.KeyboardCheckPressed(Keys.X))
-                Shoot(GetFlip);
+                Attack();
+
+            //switch weapons
+            if (Input.KeyboardCheckPressed(Keys.C))
+            {
+                NextWeapon();
+                Console.WriteLine(CurrentWeapon);
+            }
 
             base.Update(gameTime);
 
@@ -75,6 +95,7 @@ namespace MetroidClone.Metroid
         }
         }
 
+
         public override void Draw()
         {
             base.Draw();
@@ -82,9 +103,29 @@ namespace MetroidClone.Metroid
             Console.WriteLine(collectedScrap);
         }
 
-        void Shoot(int xDirection)
+        void Attack()
         {
-            World.AddObject(new PlayerBullet() { Speed = new Vector2(xDirection * bulletSpeed, 0) }, Position);
+            switch ((int)CurrentWeapon)
+            {
+                case 0:
+                    break;
+                case 1:
+                {
+                    World.AddObject(new PlayerBullet() { FlipX = FlipX }, Position);
+                    break;
+                }
+                case 2:
+                {
+                    World.AddObject(new PlayerMelee(), Position + GetFlip * Vector2.UnitX * 20);
+                    break;
+                }
+                case 3:
+        {
+                    World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
+                    break;
+                }
+                default: break;
+            }
         }
 
         void Hurt(int xDirection)
@@ -99,5 +140,22 @@ namespace MetroidClone.Metroid
             collectedScrap += scrap.ScrapAmount;
             scrap.Destroy();
         }
+
+        void NextWeapon()
+        {
+            CurrentWeapon++;
+            if ((int)CurrentWeapon > 3)
+            {
+                CurrentWeapon = 0;
+                if (!UnlockedWeapons.Contains(CurrentWeapon))
+                    NextWeapon();
+            }
+            if (!UnlockedWeapons.Contains(CurrentWeapon))
+                NextWeapon();
+        }
+    }
+    public enum Weapon
+    {
+        Nothing, Gun, Wrench, Rocket
     }
 }

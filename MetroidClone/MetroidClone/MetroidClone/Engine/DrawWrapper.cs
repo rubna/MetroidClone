@@ -26,7 +26,7 @@ namespace MetroidClone.Engine
 
         public DrawWrapper(SpriteBatch batch, GraphicsDevice device, AssetManager assetsManager)
         {
-            GlobalScale = 2f;
+            GlobalScale = 1f;
 
             spriteBatch = batch;
             graphicsDevice = device;
@@ -78,12 +78,12 @@ namespace MetroidClone.Engine
             if (precision <= 0)
                 return;
             List<Vector2> verts = new List<Vector2>();
-            double circleStep = 1f / precision * 2f * Math.PI;
+            float circleStep = 1f / precision * 360;
             for (int i = 0; i <= precision; i++)
             {
                 verts.Add(position); //Add the center
                 //Add the point on the circle
-                verts.Add(position + radius * new Vector2((float)Math.Cos(i * circleStep), (float)Math.Sin(i * circleStep)));
+                verts.Add(position + new Vector2(radius, i * circleStep).ToCartesian());
             }
             DrawPrimitive(PrimitiveType.TriangleStrip, verts, color);
         }
