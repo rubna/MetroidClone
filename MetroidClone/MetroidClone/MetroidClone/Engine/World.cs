@@ -49,6 +49,8 @@ namespace MetroidClone.Engine
             AddObject(new GunLock(), 350, 250);
             AddObject(new Scrap(), 300, 187);
 
+            AddObject(new SlopeRight(new Rectangle(280, 192, 56, 32)));
+
             // foreach (GameObject gameObject in GameObjects)
             //gameObject.Create();
         }
