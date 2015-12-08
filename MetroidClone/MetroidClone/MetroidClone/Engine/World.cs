@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using MetroidClone.Metroid;
 using MetroidClone.Metroid.Monsters;
+using MetroidClone.Engine.Solids;
 
 namespace MetroidClone.Engine
 {
@@ -16,6 +17,15 @@ namespace MetroidClone.Engine
         public AssetManager AssetManager { get; set; }
         public Level Level;
         public Player Player;
+        public Random Random;
+
+        public List<ISolid> Solids
+        {
+            get
+            {
+                return GameObjects.OfType<ISolid>().ToList();
+            }
+        }
 
         public World()
         {
@@ -27,7 +37,7 @@ namespace MetroidClone.Engine
         {
             (new LevelGenerator()).Generate(this);
             Player = new Player();
-            AddObject(Player, 40, 40);
+            AddObject(Player, 80, 80);
             AddObject(new TestMonster(), 100, 50);
 
             // foreach (GameObject gameObject in GameObjects)
