@@ -100,7 +100,6 @@ namespace MetroidClone.Metroid
         {
             base.Draw();
             //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
-            Console.WriteLine(collectedScrap);
         }
 
         void Attack()

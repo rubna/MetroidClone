@@ -88,6 +88,7 @@
     <Compile Include="Engine\Solids\ISolid.cs" />
     <Compile Include="Engine\Solids\Wall.cs" />
     <Compile Include="Engine\World.cs" />
+    <Compile Include="Metroid\Collectible.cs" />
     <Compile Include="Metroid\Drone.cs" />
     <Compile Include="Metroid\GunLock.cs" />
     <Compile Include="Metroid\Player Attacks\PlayerAttack.cs" />
@@ -102,7 +103,7 @@
     <Compile Include="Metroid\RocketPickup.cs" />
     <Compile Include="Metroid\WrenchPickup.cs" />
     <Compile Include="Metroid\Scrap.cs" />
-	<Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
