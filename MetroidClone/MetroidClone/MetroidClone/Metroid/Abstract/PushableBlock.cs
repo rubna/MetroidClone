@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace MetroidClone.Metroid
 {
-    class PushableBlock : PhysicsObject :
+    class PushableBlock : PhysicsObject
     {
         public override void Create()
         {
