@@ -9,8 +9,9 @@ namespace MetroidClone.Metroid
 {
     abstract class Monster : PhysicsObject
     {
-        protected int HitPoints = 1;
+        public int HitPoints = 1;
         public int Damage = 1;
+        protected int ScoreOnKill = 1;
         protected Vector2 SpeedOnHit = Vector2.Zero;
 
         public override void Update(GameTime gameTime)
@@ -22,17 +23,24 @@ namespace MetroidClone.Metroid
                 if (TranslatedBoundingBox.Intersects(bullet.TranslatedBoundingBox))
                 {
                     bullet.Destroy();
-                    Hurt(Math.Sign(Position.X - bullet.Position.X));
+                    Hurt(Math.Sign(Position.X - bullet.Position.X), true);
                 }
         }
 
-        void Hurt(int xDirection)
+        void Hurt(int xDirection, bool hitByPlayer)
         {
             HitPoints--;
             if (SpeedOnHit != Vector2.Zero)
                 Speed = new Vector2(xDirection * SpeedOnHit.X, SpeedOnHit.Y);
             if (HitPoints <= 0)
+            {
                 Destroy();
+                if (hitByPlayer = true)
+                {
+                    World.Player.Score = World.Player.Score + ScoreOnKill;
+                    Console.WriteLine(World.Player.Score);
+                }
+            }
         }
     }
 }
