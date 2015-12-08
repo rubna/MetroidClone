@@ -123,7 +123,7 @@ namespace MetroidClone.Engine
                     break;
                 }
                 else
-                    Position.Y += Math.Sign(roundedSpeed.Y);
+                    Position.Y += Math.Sign(roundedSpeed.Y); 
             }
         }
 
