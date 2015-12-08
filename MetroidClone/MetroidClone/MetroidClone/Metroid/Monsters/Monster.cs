@@ -39,9 +39,10 @@ namespace MetroidClone.Metroid
             if (HitPoints <= 0)
             {
                 Destroy();
-                if (hitByPlayer = true)
+                if (hitByPlayer)
                 {
                     World.Player.Score = World.Player.Score + ScoreOnKill;
+                    Console.Write("Score: ");
                     Console.WriteLine(World.Player.Score);
                 }
             }

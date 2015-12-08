@@ -139,7 +139,7 @@ namespace MetroidClone.Metroid
             Visible = false;
             Speed = new Vector2(xDirection * 3, -2);
             if (hitPoints <= 0)
-            Console.Write("Je bent dood");
+            Console.Write("You are dead");
         }
 
         void NextWeapon()
