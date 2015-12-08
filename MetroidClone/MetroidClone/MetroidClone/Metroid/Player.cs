@@ -13,6 +13,8 @@ namespace MetroidClone.Metroid
     class Player : PhysicsObject
     {
         float blinkTimer = 0;
+        int collectedScrap = 0;
+
         public Weapon CurrentWeapon = Weapon.Nothing;
         public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
 
@@ -73,6 +75,10 @@ namespace MetroidClone.Metroid
                         Hurt(Math.Sign(Position.X - monster.Position.X));
             }
 
+            foreach (Scrap scrap in World.GameObjects.OfType<Scrap>().ToList())
+                if (TranslatedBoundingBox.Intersects(scrap.TranslatedBoundingBox))
+                    Collect(scrap);
+
             //blink
             if (blinkTimer > 0)
             {
@@ -86,7 +92,7 @@ namespace MetroidClone.Metroid
                     blinkTimer = 0;
                     Visible = true;
                 }
-            }
+        }
         }
 
 
@@ -113,7 +119,7 @@ namespace MetroidClone.Metroid
                     break;
                 }
                 case 3:
-                {
+        {
                     World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
                     break;
                 }
@@ -126,6 +132,12 @@ namespace MetroidClone.Metroid
             blinkTimer = 1;
             Visible = false;
             Speed = new Vector2(xDirection * 3, -2);
+        }
+
+        void Collect(Scrap scrap)
+        {
+            collectedScrap += scrap.ScrapAmount;
+            scrap.Destroy();
         }
 
         void NextWeapon()
