@@ -14,6 +14,7 @@ namespace MetroidClone.Metroid
         public int Damage = 1;
         protected int ScoreOnKill = 1;
         protected Vector2 SpeedOnHit = Vector2.Zero;
+        int randomNumber;
 
         public override void Update(GameTime gameTime)
         {
@@ -28,7 +29,7 @@ namespace MetroidClone.Metroid
                     attack.Destroy();
                     Hurt(Math.Sign(Position.X - attack.Position.X), true);
                 }
-                }
+            }
         }
 
         void Hurt(int xDirection, bool hitByPlayer)
@@ -39,6 +40,12 @@ namespace MetroidClone.Metroid
             if (HitPoints <= 0)
             {
                 Destroy();
+                if (World.Player.UnlockedWeapons.Contains(Weapon.Rocket))
+                {
+                    randomNumber = World.Random.Next(8);
+                    if (randomNumber == 0)
+                        World.AddObject(new RocketAmmo(), Position.X, Position.Y);
+                }
                 if (hitByPlayer)
                 {
                     World.Player.Score = World.Player.Score + ScoreOnKill;

@@ -13,10 +13,12 @@ namespace MetroidClone.Metroid
     class Player : PhysicsObject
     {
         float blinkTimer = 0;
+        int collectedScrap = 0;
+
         public Weapon CurrentWeapon = Weapon.Nothing;
         public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
         int hitPoints = 100;
-        int rocketAmmo = 5;
+        public int RocketAmmo = 5;
         public int Score = 0;
 
         public override void Create()
@@ -81,6 +83,10 @@ namespace MetroidClone.Metroid
                 }
             }
 
+            foreach (Scrap scrap in World.GameObjects.OfType<Scrap>().ToList())
+                if (TranslatedBoundingBox.Intersects(scrap.TranslatedBoundingBox))
+                    Collect(scrap);
+
             //blink
             if (blinkTimer > 0)
             {
@@ -94,14 +100,14 @@ namespace MetroidClone.Metroid
                     blinkTimer = 0;
                     Visible = true;
                 }
-        }
+            }
         }
 
 
         public override void Draw()
         {
+            Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
             base.Draw();
-            //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
         }
 
         void Attack()
@@ -122,12 +128,12 @@ namespace MetroidClone.Metroid
                 }
                 case 3:
                 {
-                        if (rocketAmmo > 0)
+                        if (RocketAmmo > 0)
                         {
-                            World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
-                            rocketAmmo --;
+                    World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
+                            RocketAmmo --;
                         }
-                        break;
+                    break;
                 }
                 default: break;
             }
@@ -140,6 +146,12 @@ namespace MetroidClone.Metroid
             Speed = new Vector2(xDirection * 3, -2);
             if (hitPoints <= 0)
             Console.Write("You are dead");
+        }
+
+        void Collect(Scrap scrap)
+        {
+            collectedScrap += scrap.ScrapAmount;
+            scrap.Destroy();
         }
 
         void NextWeapon()
