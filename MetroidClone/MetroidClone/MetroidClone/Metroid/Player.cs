@@ -16,6 +16,7 @@ namespace MetroidClone.Metroid
         public Weapon CurrentWeapon = Weapon.Nothing;
         public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
         int hitPoints = 100;
+        int rocketAmmo = 5;
         public int Score = 0;
 
         public override void Create()
@@ -120,9 +121,13 @@ namespace MetroidClone.Metroid
                     break;
                 }
                 case 3:
-        {
-                    World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
-                    break;
+                {
+                        if (rocketAmmo > 0)
+                        {
+                            World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
+                            rocketAmmo --;
+                        }
+                        break;
                 }
                 default: break;
             }

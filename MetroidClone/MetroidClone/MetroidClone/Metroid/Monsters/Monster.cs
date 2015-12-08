@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using MetroidClone.Metroid.Abstract;
 
 namespace MetroidClone.Metroid
 {
@@ -25,7 +26,7 @@ namespace MetroidClone.Metroid
                 if (TranslatedBoundingBox.Intersects(attack.TranslatedBoundingBox))
                 {
                     attack.Destroy();
-                    Hurt(Math.Sign(Position.X - attack.Position.X));
+                    Hurt(Math.Sign(Position.X - attack.Position.X), true);
                 }
                 }
         }
