@@ -10,6 +10,7 @@ namespace MetroidClone.Metroid
     abstract class Monster : PhysicsObject
     {
         protected int HitPoints = 1;
+        public int Damage = 1;
         protected Vector2 SpeedOnHit = Vector2.Zero;
 
         public override void Update(GameTime gameTime)

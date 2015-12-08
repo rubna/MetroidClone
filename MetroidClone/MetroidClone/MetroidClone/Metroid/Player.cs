@@ -13,6 +13,7 @@ namespace MetroidClone.Metroid
     {
         float bulletSpeed = 5;
         float blinkTimer = 0;
+        int HitPoints = 100;
 
         public override void Create()
         {
@@ -51,7 +52,10 @@ namespace MetroidClone.Metroid
             {
                 foreach (Monster monster in World.GameObjects.OfType<Monster>().ToList())
                     if (TranslatedBoundingBox.Intersects(monster.TranslatedBoundingBox))
+                    {
+                        HitPoints = HitPoints- monster.Damage;
                         Hurt(Math.Sign(Position.X - monster.Position.X));
+                    }
             }
 
             //blink
@@ -86,6 +90,8 @@ namespace MetroidClone.Metroid
             blinkTimer = 1;
             Visible = false;
             Speed = new Vector2(xDirection * 3, -2);
+            if (HitPoints <= 0)
+            Console.Write("Je bent dood");
         }
     }
 }

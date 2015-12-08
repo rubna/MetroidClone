@@ -14,6 +14,7 @@ namespace MetroidClone.Metroid.Monsters
             BoundingBox = new Rectangle(-10, -10, 20, 20);
             SpeedOnHit = new Vector2(3, -2);
             HitPoints = 10;
+            Damage = 5;
         }
 
         public override void Draw()
