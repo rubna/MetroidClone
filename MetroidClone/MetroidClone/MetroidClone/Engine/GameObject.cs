@@ -34,6 +34,7 @@ namespace MetroidClone.Engine
         protected bool AnimationIsRepeating;
         protected float AnimationSpeed;
         protected Vector2 ImageScaling;
+        protected float ImageRotation;
 
         //Event handlers
         public event EventHandler AnimationFinished;
@@ -72,7 +73,7 @@ namespace MetroidClone.Engine
         public virtual void Draw()
         {
             if (CurrentSprite != null && Visible)
-                Drawing.DrawSprite(CurrentSprite, Position, (int) CurrentImage, ImageScaling); //Draw the current image of the sprite.
+                Drawing.DrawSprite(CurrentSprite, Position, (int) CurrentImage, ImageScaling, null, ImageRotation); //Draw the current image of the sprite.
         }
 
         //Plays an animation. 

@@ -18,12 +18,15 @@ namespace MetroidClone.Metroid
         {
             base.Update(gameTime);
 
-            //check collision player bullets
-            foreach (PlayerBullet bullet in World.GameObjects.OfType<PlayerBullet>().ToList())
-                if (TranslatedBoundingBox.Intersects(bullet.TranslatedBoundingBox))
+            //check collision player attacks
+            foreach (IPlayerAttack attackInterface in World.GameObjects.OfType<IPlayerAttack>().ToList())
+            {
+                PhysicsObject attack = attackInterface as PhysicsObject;
+                if (TranslatedBoundingBox.Intersects(attack.TranslatedBoundingBox))
                 {
-                    bullet.Destroy();
-                    Hurt(Math.Sign(Position.X - bullet.Position.X), true);
+                    attack.Destroy();
+                    Hurt(Math.Sign(Position.X - attack.Position.X));
+                }
                 }
         }
 
