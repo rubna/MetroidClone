@@ -48,7 +48,7 @@ namespace MetroidClone.Engine
             AddObject(new WrenchPickup(), 350, 50);
             AddObject(new GunLock(), 350, 250);
             AddObject(new Scrap(), 300, 187);
-
+            AddObject(new Switch(), Level.TileSize.X, 3 * Level.TileSize.Y);
             AddObject(new SlopeRight(new Rectangle(280, 192, 56, 32)));
 
             // foreach (GameObject gameObject in GameObjects)

@@ -105,6 +105,7 @@
     <Compile Include="Metroid\Player Attacks\PlayerRocket.cs" />
     <Compile Include="Metroid\Player.cs" />
     <Compile Include="Metroid\RocketPickup.cs" />
+    <Compile Include="Metroid\Switch.cs" />
     <Compile Include="Metroid\WrenchPickup.cs" />
     <Compile Include="Metroid\Scrap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
