@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,8 @@ namespace MetroidClone.Engine
         public World World { get; protected set; }
         public Level Level { get; protected set; }
         public readonly int Width, Height, BlockWidth, BlockHeight;
+
+        static Random random = World.Random;
 
         //The width and height of the level can be given when creating a level.
         public LevelGenerator()
@@ -45,20 +48,12 @@ namespace MetroidClone.Engine
             int hBlocks = Width / BlockWidth, vBlocks = Height / BlockHeight;
             LevelBlockRequirements[,] basicGrid = new LevelBlockRequirements[hBlocks, vBlocks];
 
-            //By default, all sides contain walls.
+            //By default, all sides are walls.
             for (int i = 0; i < hBlocks; i++)
             {
                 for (int j = 0; j < vBlocks; j++)
                 {
-                    basicGrid[i, j] = new LevelBlockRequirements();
-                    //if (i == 0)
-                        basicGrid[i, j].LeftSideType = SideType.Wall;
-                    //if (i == hBlocks - 1)
-                        basicGrid[i, j].RightSideType = SideType.Wall;
-                    //if (j == 0)
-                        basicGrid[i, j].TopSideType = SideType.Wall;
-                    //if (j == vBlocks - 1)
-                        basicGrid[i, j].BottomSideType = SideType.Wall;
+                    basicGrid[i, j] = new LevelBlockRequirements(SideType.Wall);
                 }
             }
 
@@ -83,6 +78,12 @@ namespace MetroidClone.Engine
             //Connect the exits
             ConnectPoints(basicGrid, roomExits);
 
+            //Connect each now unconnected point to a connected point
+            ConnectUnconnectedPoints(basicGrid);
+
+            //Prune unneeded walls
+            PruneWalls(basicGrid);
+
             //Create the actual level grid
             LevelBlock[,] levelGrid = new LevelBlock[hBlocks, vBlocks];
 
@@ -94,7 +95,7 @@ namespace MetroidClone.Engine
                     //Get a block that would fit at this position.
                     try
                     {
-                        levelGrid[i, j] = GetPossibleLevelBlocks(basicGrid[i, j]).GetRandomItem();
+                        levelGrid[i, j] = GetPossibleLevelBlock(basicGrid[i, j]);
                     }
                     catch (Exception e)
                     {
@@ -118,82 +119,191 @@ namespace MetroidClone.Engine
         //Connect any number of points on the level grid.
         void ConnectPoints(LevelBlockRequirements[,] basicGrid, List<Point> points)
         {
-            int hBlocks = Width / BlockWidth, vBlocks = Height / BlockHeight;
+            //Choose a random point and connect that to each other point.
+            //This automatically guarantees that each point is connected to each other point, as
+            //you can always travel to the first point and then to the target point.
+            Point point = points.GetRandomItem();
 
-            points = points.ShallowClone();
-            points.Shuffle();
-
-            //Connect each point to each other point.
             for (int i = 0; i < points.Count; i++)
             {
-                Point exit = points[i];
-                for (int j = i + 1; j < points.Count; j++)
+                Point otherPoint = points[i];
+                if (point == otherPoint)
+                    continue;
+
+                //Check how far we have to travel
+                Point distanceDifference = new Point(otherPoint.X - point.X, otherPoint.Y - point.Y);
+
+                //And store the directions we have to take into a RandomCollection of directions
+                RandomCollection<Direction> directionsToTravel = new RandomCollection<Direction>();
+
+                if (distanceDifference.X < 0)
+                    directionsToTravel.Add(Direction.Left, -distanceDifference.X);
+                if (distanceDifference.X > 0)
+                    directionsToTravel.Add(Direction.Right, distanceDifference.X);
+                if (distanceDifference.Y < 0)
+                    directionsToTravel.Add(Direction.Up, -distanceDifference.Y);
+                if (distanceDifference.Y > 0)
+                    directionsToTravel.Add(Direction.Down, distanceDifference.Y);
+
+                //Then actually travel from the first point to the second one.
+                Point position = point;
+                while (directionsToTravel.Count != 0)
                 {
-                    Point otherExit = points[j];
-
-                    //Check how far we have to travel
-                    Point distanceDifference = new Point(otherExit.X - exit.X, otherExit.Y - exit.Y);
-
-                    //And store it into a RandomCollection of directions
-                    RandomCollection<Direction> directionsToTravel = new RandomCollection<Direction>();
-
-                    if (distanceDifference.X < 0)
-                        directionsToTravel.Add(Direction.Left, -distanceDifference.X);
-                    if (distanceDifference.X > 0)
-                        directionsToTravel.Add(Direction.Right, distanceDifference.X);
-                    if (distanceDifference.Y < 0)
-                        directionsToTravel.Add(Direction.Up, -distanceDifference.Y);
-                    if (distanceDifference.Y > 0)
-                        directionsToTravel.Add(Direction.Down, distanceDifference.Y);
-
-                    //Then actually travel from the first point to the second one.
-                    Point position = exit;
-                    while (directionsToTravel.Count != 0)
+                    switch (directionsToTravel.Take())
                     {
-                        switch (directionsToTravel.Take())
-                        {
-                            case Direction.Left:
-                                basicGrid[position.X, position.Y].LeftSideType = SideType.Exit;
-                                position.X -= 1;
-                                basicGrid[position.X, position.Y].RightSideType = SideType.Exit;
-                                break;
-                            case Direction.Right:
-                                basicGrid[position.X, position.Y].RightSideType = SideType.Exit;
-                                position.X += 1;
-                                basicGrid[position.X, position.Y].LeftSideType = SideType.Exit;
-                                break;
-                            case Direction.Up:
-                                basicGrid[position.X, position.Y].TopSideType = SideType.Exit;
-                                position.Y -= 1;
-                                basicGrid[position.X, position.Y].BottomSideType = SideType.Exit;
-                                break;
-                            case Direction.Down:
-                                basicGrid[position.X, position.Y].BottomSideType = SideType.Exit;
-                                position.Y += 1;
-                                basicGrid[position.X, position.Y].TopSideType = SideType.Exit;
-                                break;
-                        }
+                        case Direction.Left:
+                            basicGrid[position.X, position.Y].LeftSideType = SideType.Exit;
+                            position.X -= 1;
+                            basicGrid[position.X, position.Y].RightSideType = SideType.Exit;
+                            break;
+                        case Direction.Right:
+                            basicGrid[position.X, position.Y].RightSideType = SideType.Exit;
+                            position.X += 1;
+                            basicGrid[position.X, position.Y].LeftSideType = SideType.Exit;
+                            break;
+                        case Direction.Up:
+                            basicGrid[position.X, position.Y].TopSideType = SideType.Exit;
+                            position.Y -= 1;
+                            basicGrid[position.X, position.Y].BottomSideType = SideType.Exit;
+                            break;
+                        case Direction.Down:
+                            basicGrid[position.X, position.Y].BottomSideType = SideType.Exit;
+                            position.Y += 1;
+                            basicGrid[position.X, position.Y].TopSideType = SideType.Exit;
+                            break;
                     }
-
-                    if (position != otherExit)
-                        throw new Exception();
                 }
             }
         }
 
-        //Get all the blocks that meet certain requirements.
-        List<LevelBlock> GetPossibleLevelBlocks(LevelBlockRequirements requirements)
+        //Connect all completely unconnected points to a connected point, making sure all cells are reachable.
+        void ConnectUnconnectedPoints(LevelBlockRequirements[,] basicGrid)
         {
-            List<LevelBlock> possibleLevelBlocks = new List<LevelBlock>();
+            int hBlocks = Width / BlockWidth, vBlocks = Height / BlockHeight;
+
+            //Store which blocks weren't connected.
+            bool[,] isConnected = new bool[hBlocks, vBlocks];
+            List<Point> unconnectedPoints = new List<Point>();
+            for (int i = 0; i < hBlocks; i++)
+            {
+                for (int j = 0; j < vBlocks; j++)
+                {
+                    isConnected[i, j] = ! basicGrid[i, j].IsOnlyWalls();
+                    if (! isConnected[i, j])
+                        unconnectedPoints.Add(new Point(i, j));
+                }
+            }
+
+            bool connectedAnythingThisRound;
+
+            while (unconnectedPoints.Count > 0)
+            {
+                connectedAnythingThisRound = false;
+
+                List<Point> removedUnconnectedPoints = new List<Point>(); //A list to store points we remove as changing a list during foreach is impossible
+
+                foreach (Point point in unconnectedPoints)
+                {
+                    int i = point.X, j = point.Y; //Temporary store the x and y of this point.
+
+                    bool[,] wasConnected = (bool[,])isConnected.Clone();
+
+                    List<Point> possiblePoints = new List<Point>(); //Points to connect to.
+                    if (i > 0 && isConnected[i - 1, j])
+                        possiblePoints.Add(new Point(i - 1, j));
+                    if (i < hBlocks - 1 && isConnected[i + 1, j])
+                        possiblePoints.Add(new Point(i + 1, j));
+                    if (j > 0 && isConnected[i, j - 1])
+                        possiblePoints.Add(new Point(i, j - 1));
+                    if (j < vBlocks - 1 && isConnected[i, j + 1])
+                        possiblePoints.Add(new Point(i, j + 1));
+
+                    if (possiblePoints.Count != 0)
+                    {
+                        //Connect this point to a random other one.
+                        ConnectPoints(basicGrid, new List<Point>() { point, possiblePoints.GetRandomItem() });
+                        isConnected[i, j] = true; //Mark this point as connected.
+                        connectedAnythingThisRound = true;
+                        removedUnconnectedPoints.Add(point);
+                    }
+                }
+
+                foreach (Point point in removedUnconnectedPoints)
+                    unconnectedPoints.Remove(point);
+
+                //Give up if we couldn't connect anything at all.
+                if (! connectedAnythingThisRound)
+                    break;
+            }
+        }
+
+        //Remove walls where they are too thick for no reason.
+        //For example, if two generation blocks on top of each other would declare a wall on the side of the other block, this'd remove
+        //one of the two walls.
+        void PruneWalls(LevelBlockRequirements[,] basicGrid)
+        {
+            int hBlocks = Width / BlockWidth, vBlocks = Height / BlockHeight;
+            for (int i = 0; i < hBlocks; i++)
+            {
+                for (int j = 0; j < vBlocks; j++)
+                {
+                    LevelBlockRequirements block = basicGrid[i, j];
+
+                    //We only have to look to the right and bottom, as other blocks check for the left and top (their right and bottom) automatically.
+
+                    //Check to the right
+                    if (i < hBlocks - 1 && block.RightSideType == SideType.Wall)
+                    {
+                        LevelBlockRequirements rightBlock = basicGrid[i + 1, j];
+                        if (rightBlock.LeftSideType == SideType.Wall)
+                        {
+                            switch (random.Next(2))
+                            {
+                                case 0:
+                                    block.RightSideType = SideType.Any;
+                                    break;
+                                case 1:
+                                    rightBlock.LeftSideType = SideType.Any;
+                                    break;
+                            }
+                        }
+                    }
+
+                    //Check to the bottom
+                    if (j < vBlocks - 1 && block.BottomSideType == SideType.Wall)
+                    {
+                        LevelBlockRequirements bottomBlock = basicGrid[i, j + 1];
+                        if (bottomBlock.BottomSideType == SideType.Wall)
+                        {
+                            switch (random.Next(2))
+                            {
+                                case 0:
+                                    block.BottomSideType = SideType.Any;
+                                    break;
+                                case 1:
+                                    bottomBlock.TopSideType = SideType.Any;
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        //Get a block that meets certain requirements.
+        LevelBlock GetPossibleLevelBlock(LevelBlockRequirements requirements)
+        {
+            WeightedRandomCollection<LevelBlock> possibleLevelBlocks = new WeightedRandomCollection<LevelBlock>();
 
             //Check all level blocks and see which ones would meet the requirements.
             foreach (LevelBlock levelBlock in levelBlocks)
             {
                 if (levelBlock.MeetsRequirements(requirements))
-                    possibleLevelBlocks.Add(levelBlock);
+                    possibleLevelBlocks.Add(levelBlock, levelBlock.AppearancePreference);
             }
 
-            return possibleLevelBlocks;
+            //Then return one.
+            return possibleLevelBlocks.Get();
         }
 
         //Reads the possible level blocks from the level file
@@ -248,8 +358,22 @@ namespace MetroidClone.Engine
                         currentLevelBlock.HasLeftExit = true;
                     if (exits.Contains("R"))
                         currentLevelBlock.HasRightExit = true;
+                    if (exits.Contains("!"))
+                        currentLevelBlock.ExitsMustMatch = true;
 
-                    //TODO: the second argument can now contain information about difficulty etc.
+                    //The second argument (optional) should contain information about how often a block appears.
+                    if (arguments.Length >= 2)
+                    {
+                        string appearancePreferenceString = arguments[1];
+                        try
+                        {
+                            currentLevelBlock.AppearancePreference = double.Parse(appearancePreferenceString, CultureInfo.InvariantCulture);
+                        }
+                        catch
+                        {
+                            currentLevelBlock.AppearancePreference = 1;
+                        }
+                    }
                 }
                 else if (currentLevelBlock != null)
                 {
@@ -275,6 +399,7 @@ namespace MetroidClone.Engine
             }
         }
 
+        //Parse a single special tile definition and store it in memory.
         void ParseSpecialTileDefinition(string definition)
         {
             string[] parts = definition.Split(' ');
@@ -287,6 +412,7 @@ namespace MetroidClone.Engine
                 bool specialTileIsWall = false;
                 string expectingNext = "";
                 bool hasPreviousPercentage = false;
+                Dictionary<string, char> specialKeywords = new Dictionary<string, char>(); //Special keywords that can be given by level block when placing the tile.
                 double previousPercentage = 1;
 
                 while (parts.Length > ++currentPart)
@@ -306,6 +432,14 @@ namespace MetroidClone.Engine
                     {
                         specialTile = new SpecialTileGroupDefinition();
                         expectingNext = "OF";
+                    }
+                    else if (parts[currentPart].Contains(">")) //The part is a special keyword
+                    {
+                        string[] keywordchar = parts[currentPart].Split('>');
+                        if (keywordchar.Length != 2 || keywordchar[1].Length != 1)
+                            throw new Exception("Error in levelblocks definition! Couldn't parse special keyword definition.");
+                        specialKeywords.Add(keywordchar[0], keywordchar[1][0]);
+                        expectingNext = "OR";
                     }
                     else if (parts[currentPart].Contains("%")) //The part is a percentage
                     {
@@ -341,6 +475,8 @@ namespace MetroidClone.Engine
 
                 if (specialTileIsWall)
                     specialTile.CanBeWall = true;
+
+                specialTile.SpecialKeywords = specialKeywords;
 
                 specialTiles.Add(character, specialTile);
             }

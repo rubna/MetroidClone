@@ -17,7 +17,7 @@ namespace MetroidClone.Engine
         public AssetManager AssetManager { get; set; }
         public Level Level;
         public Player Player;
-        public Random Random;
+        public static Random Random;
 
         public float Width { get; protected set; } = 8000;
         public float Height { get; protected set; } = 8000;
@@ -41,6 +41,8 @@ namespace MetroidClone.Engine
             newGameObjects = new List<GameObject>();
 
             shouldUpdateSolidGrid = false;
+
+            Random = new Random();
         }
 
         public void Initialize()
@@ -48,9 +50,8 @@ namespace MetroidClone.Engine
             (new LevelGenerator()).Generate(this);
             Player = new Player();
             AddObject(Player, 80, 80);
-            AddObject(new TestMonster(), 100, 50);
 
-            // foreach (GameObject gameObject in GameObjects)
+            //foreach (GameObject gameObject in GameObjects)
             //gameObject.Create();
 
             shouldUpdateSolidGrid = true;

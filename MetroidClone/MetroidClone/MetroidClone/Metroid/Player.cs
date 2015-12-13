@@ -20,6 +20,8 @@ namespace MetroidClone.Metroid
         int timeSinceLastJumpIntention = 0;
         const int maxTimeSinceLastJumpIntention = 5; //The maximum time you can press the jump button before landing on a platform.
 
+        bool startedSlowingDownJump; //This is used to make sure that the player will jump the maximum height if releasing the jump button slightly before reaching it.
+
         public Weapon CurrentWeapon = Weapon.Nothing;
         public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
 
@@ -31,6 +33,8 @@ namespace MetroidClone.Metroid
             PlayAnimation("tempplayer", speed: 0f);
 
             Friction = new Vector2(0.85f, 1);
+
+            startedSlowingDownJump = false;
         }
 
         public override void Update(GameTime gameTime)
@@ -63,11 +67,15 @@ namespace MetroidClone.Metroid
 
             //jump
             if (timeSinceLastJumpIntention < maxTimeSinceLastJumpIntention && timeSinceOnGround < maxFromPlatformTimeForJump && Speed.Y >= 0)
+            {
                 Speed.Y = -8f;
+                startedSlowingDownJump = false;
+            }
 
-            if (Speed.Y < 0 && !Input.KeyboardCheckDown(Keys.Up))
+            if (Speed.Y < 0 && !Input.KeyboardCheckDown(Keys.Up) && (Speed.Y < -3 || startedSlowingDownJump))
             {
                 Speed.Y *= 0.9f;
+                startedSlowingDownJump = true;
             }
 
             //drop through jumpthroughs

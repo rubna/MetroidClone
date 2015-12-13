@@ -18,5 +18,18 @@ namespace MetroidClone.Engine
             TopSideType = SideType.Any;
             BottomSideType = SideType.Any;
         }
+
+        public LevelBlockRequirements(SideType sideType)
+        {
+            LeftSideType = sideType;
+            RightSideType = sideType;
+            TopSideType = sideType;
+            BottomSideType = sideType;
+        }
+
+        public bool IsOnlyWalls()
+        {
+            return LeftSideType == SideType.Wall && RightSideType == SideType.Wall && TopSideType == SideType.Wall && BottomSideType == SideType.Wall;
+        }
     }
 }

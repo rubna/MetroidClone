@@ -13,6 +13,12 @@ namespace MetroidClone.Engine
         public bool HasLeftExit, HasRightExit, HasTopExit, HasBottomExit;
         public bool HasLeftWall, HasRightWall, HasTopWall, HasBottomWall;
 
+        public bool ExitsMustMatch; //True if this block may not be placed on positions where the exits don't match exactly.
+
+        public double AppearancePreference; //The preference for this block to appear if it's possible to place it.
+
+        static Random random = World.Random;
+
         public LevelBlock(int width, int height)
         {
             Width = width;
@@ -29,6 +35,10 @@ namespace MetroidClone.Engine
             HasRightWall = false;
             HasTopWall = false;
             HasBottomWall = false;
+
+            ExitsMustMatch = false;
+
+            AppearancePreference = 1;
         }
 
         //Updates information about level wall etc.
@@ -67,7 +77,7 @@ namespace MetroidClone.Engine
         public void Place(World world, Dictionary<char, ISpecialTileDefinition> specialTiles, int x, int y, bool preferLeftWall = true,
             bool preferRightWall = true, bool preferTopWall = true, bool preferBottomWall = true)
         {
-            int BlockID = (new Random()).Next(int.MaxValue);
+            int BlockID = random.Next(int.MaxValue);
 
             Level level = world.Level;
             for (int i = x; i < x + Width; i++)
@@ -85,7 +95,14 @@ namespace MetroidClone.Engine
                     while (specialTiles.ContainsKey(data))
                     {
                         specialTileTurnsIntoWallOnSides = specialTileTurnsIntoWallOnSides || specialTiles[data].CanBeWall;
-                        data = specialTiles[data].GetTile(BlockID);
+                        List<string> specialKeywords = new List<string>(); //Contains the special keywords that are true at this moment.
+
+                        if (preferLeftWall) specialKeywords.Add("LEFTWALL");
+                        if (preferRightWall) specialKeywords.Add("RIGHTWALL");
+                        if (preferTopWall) specialKeywords.Add("TOPWALL");
+                        if (preferBottomWall) specialKeywords.Add("BOTTOMWALL");
+
+                        data = specialTiles[data].GetTile(BlockID, specialKeywords);
 
                         if (loopCount > 1000)
                             throw new Exception("Possible infinite loop detected! Please change the level definition file.");
@@ -117,6 +134,7 @@ namespace MetroidClone.Engine
                     }
 
                     if (data == '1') //A wall
+                        //world.AddObject(new Wall())
                         level.Grid[i, j] = true;
                     else if (data == '.')
                     {
@@ -129,14 +147,19 @@ namespace MetroidClone.Engine
         //Check if the level block meets the given requirements.
         public bool MeetsRequirements(LevelBlockRequirements requirements)
         {
-            return (requirements.LeftSideType != SideType.Wall | HasLeftWall &&
+            return ((requirements.LeftSideType != SideType.Wall | HasLeftWall &&
                     requirements.LeftSideType != SideType.Exit | HasLeftExit &&
                     requirements.RightSideType != SideType.Wall | HasRightWall &&
                     requirements.RightSideType != SideType.Exit | HasRightExit &&
                     requirements.TopSideType != SideType.Wall | HasTopWall &&
                     requirements.TopSideType != SideType.Exit | HasTopExit &&
                     requirements.BottomSideType != SideType.Wall | HasBottomWall &&
-                    requirements.BottomSideType != SideType.Exit | HasBottomExit);
+                    requirements.BottomSideType != SideType.Exit | HasBottomExit) &&
+                    ((!ExitsMustMatch) ||
+                    (requirements.LeftSideType != SideType.Exit | HasLeftExit &&
+                    requirements.RightSideType != SideType.Exit | HasRightExit &&
+                    requirements.TopSideType != SideType.Exit | HasTopExit &&
+                    requirements.BottomSideType != SideType.Exit | HasBottomExit)));
         }
     }
 }

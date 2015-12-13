@@ -11,7 +11,7 @@ namespace MetroidClone.Engine
 
     class RandomCollection<T> : IRandomCollection<T>
     {
-        Random random;
+        static Random random = World.Random;
 
         public bool IsReadOnly { get { return false; } }
         public int Count { get { return values.Count; } }
@@ -20,7 +20,6 @@ namespace MetroidClone.Engine
 
         public RandomCollection()
         {
-            random = new Random();
             values = new List<T>();
         }
 

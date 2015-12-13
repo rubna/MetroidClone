@@ -8,7 +8,7 @@ namespace MetroidClone.Engine
     //Some useful methods Lists can use
     public static class ListExtensions
     {
-        static Random random = new Random();
+        static Random random = new Random(DateTime.Now.Millisecond);
 
         public static T GetRandomItem<T>(this List<T> list)
         {
@@ -19,7 +19,7 @@ namespace MetroidClone.Engine
 
         public static void Shuffle<T>(this List<T> list)
         {
-            for (int i = list.Count; i > 1; i--)
+            for (int i = list.Count - 1; i > 0; i--)
             {
                 int k = random.Next(i + 1);
                 T value = list[k];

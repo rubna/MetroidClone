@@ -13,16 +13,26 @@ namespace MetroidClone.Engine
         WeightedRandomCollection<char> PossibleTiles;
 
         public bool CanBeWall { get; set; }
+        public Dictionary<string, char> SpecialKeywords { get; set; }
 
         public SpecialTileDefinition()
         {
             PossibleTiles = new WeightedRandomCollection<char>();
+            SpecialKeywords = new Dictionary<string, char>();
             CanBeWall = true;
         }
 
         //Get a tile defined by the definition.
-        public char GetTile(int blockID = 0)
+        public char GetTile(int blockID = 0, List<string> specialKeywords = null)
         {
+            if (specialKeywords != null)
+            {
+                foreach (string keyword in specialKeywords)
+                {
+                    if (SpecialKeywords.ContainsKey(keyword))
+                        return SpecialKeywords[keyword];
+                }
+            }
             return PossibleTiles.Get();
         }
 
