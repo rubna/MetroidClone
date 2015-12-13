@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace MetroidClone.Engine
 {
@@ -13,6 +14,8 @@ namespace MetroidClone.Engine
         GraphicsDeviceManager graphics;
         AssetManager assetManager;
         SpriteBatch spriteBatch;
+
+        public static Profiler Profiler;
 
         private DrawWrapper drawWrapper;
 
@@ -28,6 +31,10 @@ namespace MetroidClone.Engine
         {
             graphics = new GraphicsDeviceManager(this);
             assetManager = new AssetManager(Content);
+
+            Profiler = new Profiler();
+
+            Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
         }
 
         protected override void Initialize()
@@ -41,6 +48,7 @@ namespace MetroidClone.Engine
             graphics.ApplyChanges();
 
             IsFixedTimeStep = true;
+            
             TargetElapsedTime = TimeSpan.FromMilliseconds(1000f / 60f);
 
             IsMouseVisible = true;
@@ -67,6 +75,17 @@ namespace MetroidClone.Engine
         protected override void Update(GameTime gameTime)
         {
             var inputHelper = InputHelper.Instance;
+
+            Profiler.LogEventEnd("FinalizeStep");
+
+            if (inputHelper.KeyboardCheckReleased(Keys.F12))
+            {
+                Profiler.ShowOutput();
+            }
+
+            Profiler.LogGameStepStart();
+
+            Profiler.LogEventStart("Update");
             inputHelper.Update();
 
             if (inputHelper.KeyboardCheckPressed(Keys.Escape))
@@ -74,10 +93,12 @@ namespace MetroidClone.Engine
 
             world.Update(gameTime);
             base.Update(gameTime);
+            Profiler.LogEventEnd("Update");
         }
 
         protected override void Draw(GameTime gameTime)
         {
+            Profiler.LogEventStart("Draw");
             GraphicsDevice.Clear(Color.White);
 
             world.Draw();
@@ -85,6 +106,9 @@ namespace MetroidClone.Engine
             drawWrapper.EndOfDraw();
 
             base.Draw(gameTime);
+            Profiler.LogEventEnd("Draw");
+
+            Profiler.LogEventStart("FinalizeStep");
         }
     }
 }

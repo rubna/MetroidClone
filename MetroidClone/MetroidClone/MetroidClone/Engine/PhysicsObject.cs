@@ -31,18 +31,29 @@ namespace MetroidClone.Engine
         protected bool OnGround = false;
         protected Vector2 WallBounce = Vector2.Zero;
 
-        const float maxYSpeed = 15; //The maximum vertical speed.
+        const float maxSpeed = 15; //The maximum speed.
 
         public override void Update(GameTime gameTime)
         {
+            MainGame.Profiler.LogEventStart("PhysicsObject Update");
+
             base.Update(gameTime);
 
             Speed *= Friction;
 
             //resolve speeds
             Speed.Y += Gravity;
-            if (Speed.Y > maxYSpeed)
-                Speed.Y = maxYSpeed;
+
+            //Enforce maximum speed
+            if (Speed.X < -maxSpeed)
+                Speed.X = -maxSpeed;
+            if (Speed.Y < -maxSpeed)
+                Speed.Y = -maxSpeed;
+            if (Speed.X > maxSpeed)
+                Speed.X = maxSpeed;
+            if (Speed.Y > maxSpeed)
+                Speed.Y = maxSpeed;
+
             PositionPrevious = Position;
 
             //check collision
@@ -53,6 +64,8 @@ namespace MetroidClone.Engine
             }
             else
                 Position += Speed;
+
+            MainGame.Profiler.LogEventEnd("PhysicsObject Update");
 
         }
 
@@ -67,8 +80,11 @@ namespace MetroidClone.Engine
         {
             OnJumpThrough = false;
             OnGround = false;
-            foreach (ISolid solid in World.GameObjects.OfType<ISolid>().ToList())
+            List<ISolid> solids = World.Solids;
+            int numberOfSolids = solids.Count;
+            for (int i = 0; i < numberOfSolids; i++)
             {
+                ISolid solid = solids[i];
                 Rectangle box = TranslatedBoundingBox;
                 box.Offset(0, 1); //Move the collision box down.
                 if (solid.CollidesWith(box))
@@ -129,8 +145,7 @@ namespace MetroidClone.Engine
 
         protected bool InsideWall(Rectangle boundingbox)
         {
-            //foreach (ISolid solid in World.Solids)
-            List<ISolid> solids = World.Solids;
+            List<ISolid> solids = World.GetNearSolids(Position);
             int numberOfSolids = solids.Count;
             for (int i = 0; i < numberOfSolids; i++)
             {

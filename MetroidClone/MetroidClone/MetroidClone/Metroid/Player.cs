@@ -14,6 +14,11 @@ namespace MetroidClone.Metroid
     {
         float blinkTimer = 0;
         int collectedScrap = 0;
+        int timeSinceOnGround = 0;
+        const int maxFromPlatformTimeForJump = 5; //The maximum time you can still jump after having moved from a platform.
+
+        int timeSinceLastJumpIntention = 0;
+        const int maxTimeSinceLastJumpIntention = 5; //The maximum time you can press the jump button before landing on a platform.
 
         public Weapon CurrentWeapon = Weapon.Nothing;
         public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
@@ -24,6 +29,8 @@ namespace MetroidClone.Metroid
             BoundingBox = new Rectangle(-12, -16, 24, 32);
 
             PlayAnimation("tempplayer", speed: 0f);
+
+            Friction = new Vector2(0.85f, 1);
         }
 
         public override void Update(GameTime gameTime)
@@ -42,8 +49,20 @@ namespace MetroidClone.Metroid
                 PlayAnimation("tempplayer", Direction.Right, speed: 0.2f);
             }
 
+            //You can still jump a small time after having walked from a platform
+            if (OnGround)
+                timeSinceOnGround = 0;
+            else
+                timeSinceOnGround++;
+
+            //You can press jump a small time before landing on a platform and you'll still jump
+            if (Input.KeyboardCheckPressed(Keys.Up))
+                timeSinceLastJumpIntention = 0;
+            else
+                timeSinceLastJumpIntention++;
+
             //jump
-            if (Input.KeyboardCheckPressed(Keys.Up) && OnGround)
+            if (timeSinceLastJumpIntention < maxTimeSinceLastJumpIntention && timeSinceOnGround < maxFromPlatformTimeForJump && Speed.Y >= 0)
                 Speed.Y = -8f;
 
             if (Speed.Y < 0 && !Input.KeyboardCheckDown(Keys.Up))
@@ -99,7 +118,6 @@ namespace MetroidClone.Metroid
 
         public override void Draw()
         {
-            Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
             base.Draw();
         }
 

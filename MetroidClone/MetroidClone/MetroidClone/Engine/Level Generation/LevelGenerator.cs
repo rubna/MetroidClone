@@ -7,6 +7,8 @@ using System.Text;
 
 namespace MetroidClone.Engine
 {
+    public enum Direction { Left, Right, Up, Down }
+
     class LevelGenerator
     {
         List<LevelBlock> levelBlocks;
@@ -42,7 +44,6 @@ namespace MetroidClone.Engine
             //Create the basic grid for the level. This will contain the main path through the level.
             int hBlocks = Width / BlockWidth, vBlocks = Height / BlockHeight;
             LevelBlockRequirements[,] basicGrid = new LevelBlockRequirements[hBlocks, vBlocks];
-            bool[,] isOnMainPath = new bool[hBlocks, vBlocks];
 
             //By default, all sides contain walls.
             for (int i = 0; i < hBlocks; i++)
@@ -50,16 +51,14 @@ namespace MetroidClone.Engine
                 for (int j = 0; j < vBlocks; j++)
                 {
                     basicGrid[i, j] = new LevelBlockRequirements();
-                    if (i == 0)
+                    //if (i == 0)
                         basicGrid[i, j].LeftSideType = SideType.Wall;
-                    if (i == hBlocks - 1)
+                    //if (i == hBlocks - 1)
                         basicGrid[i, j].RightSideType = SideType.Wall;
-                    if (j == 0)
+                    //if (j == 0)
                         basicGrid[i, j].TopSideType = SideType.Wall;
-                    if (j == vBlocks - 1)
+                    //if (j == vBlocks - 1)
                         basicGrid[i, j].BottomSideType = SideType.Wall;
-
-                    isOnMainPath[i, j] = false;
                 }
             }
 
@@ -67,7 +66,7 @@ namespace MetroidClone.Engine
 
             //The left exit
             roomExits.Add(new Point(0, 0));
-            basicGrid[0, 2].LeftSideType = SideType.Exit;
+            basicGrid[0, 0].LeftSideType = SideType.Exit;
 
             //The right exit
             roomExits.Add(new Point(hBlocks - 1, 1));
@@ -75,16 +74,14 @@ namespace MetroidClone.Engine
 
             //The top exit
             roomExits.Add(new Point(2, 0));
-            basicGrid[hBlocks - 1, 0].TopSideType = SideType.Exit;
+            basicGrid[2, 0].TopSideType = SideType.Exit;
 
             //The bottom exit
             roomExits.Add(new Point(1, vBlocks - 1));
             basicGrid[1, vBlocks - 1].BottomSideType = SideType.Exit;
 
-            ConnectExitToMainPath(basicGrid, isOnMainPath, roomExits[0], new Point(1, 0));
-            ConnectExitToMainPath(basicGrid, isOnMainPath, roomExits[0], new Point(1, 0));
-            ConnectExitToMainPath(basicGrid, isOnMainPath, roomExits[0], new Point(1, 0));
-            ConnectExitToMainPath(basicGrid, isOnMainPath, roomExits[0], new Point(1, 0));
+            //Connect the exits
+            ConnectPoints(basicGrid, roomExits);
 
             //Create the actual level grid
             LevelBlock[,] levelGrid = new LevelBlock[hBlocks, vBlocks];
@@ -118,18 +115,77 @@ namespace MetroidClone.Engine
             }
         }
 
-        void ConnectExitToMainPath(LevelBlockRequirements[,] basicGrid, bool[,] isOnMainPath, Point exit, Point direction)
+        //Connect any number of points on the level grid.
+        void ConnectPoints(LevelBlockRequirements[,] basicGrid, List<Point> points)
         {
             int hBlocks = Width / BlockWidth, vBlocks = Height / BlockHeight;
 
+            points = points.ShallowClone();
+            points.Shuffle();
 
+            //Connect each point to each other point.
+            for (int i = 0; i < points.Count; i++)
+            {
+                Point exit = points[i];
+                for (int j = i + 1; j < points.Count; j++)
+                {
+                    Point otherExit = points[j];
+
+                    //Check how far we have to travel
+                    Point distanceDifference = new Point(otherExit.X - exit.X, otherExit.Y - exit.Y);
+
+                    //And store it into a RandomCollection of directions
+                    RandomCollection<Direction> directionsToTravel = new RandomCollection<Direction>();
+
+                    if (distanceDifference.X < 0)
+                        directionsToTravel.Add(Direction.Left, -distanceDifference.X);
+                    if (distanceDifference.X > 0)
+                        directionsToTravel.Add(Direction.Right, distanceDifference.X);
+                    if (distanceDifference.Y < 0)
+                        directionsToTravel.Add(Direction.Up, -distanceDifference.Y);
+                    if (distanceDifference.Y > 0)
+                        directionsToTravel.Add(Direction.Down, distanceDifference.Y);
+
+                    //Then actually travel from the first point to the second one.
+                    Point position = exit;
+                    while (directionsToTravel.Count != 0)
+                    {
+                        switch (directionsToTravel.Take())
+                        {
+                            case Direction.Left:
+                                basicGrid[position.X, position.Y].LeftSideType = SideType.Exit;
+                                position.X -= 1;
+                                basicGrid[position.X, position.Y].RightSideType = SideType.Exit;
+                                break;
+                            case Direction.Right:
+                                basicGrid[position.X, position.Y].RightSideType = SideType.Exit;
+                                position.X += 1;
+                                basicGrid[position.X, position.Y].LeftSideType = SideType.Exit;
+                                break;
+                            case Direction.Up:
+                                basicGrid[position.X, position.Y].TopSideType = SideType.Exit;
+                                position.Y -= 1;
+                                basicGrid[position.X, position.Y].BottomSideType = SideType.Exit;
+                                break;
+                            case Direction.Down:
+                                basicGrid[position.X, position.Y].BottomSideType = SideType.Exit;
+                                position.Y += 1;
+                                basicGrid[position.X, position.Y].TopSideType = SideType.Exit;
+                                break;
+                        }
+                    }
+
+                    if (position != otherExit)
+                        throw new Exception();
+                }
+            }
         }
 
         //Get all the blocks that meet certain requirements.
         List<LevelBlock> GetPossibleLevelBlocks(LevelBlockRequirements requirements)
         {
             List<LevelBlock> possibleLevelBlocks = new List<LevelBlock>();
-            
+
             //Check all level blocks and see which ones would meet the requirements.
             foreach (LevelBlock levelBlock in levelBlocks)
             {
@@ -197,7 +253,7 @@ namespace MetroidClone.Engine
                 }
                 else if (currentLevelBlock != null)
                 {
-                    if (! string.IsNullOrWhiteSpace(line)) //Set the level data.
+                    if (!string.IsNullOrWhiteSpace(line)) //Set the level data.
                     {
                         for (int j = 0; j < line.Length; j++)
                         {
@@ -218,7 +274,7 @@ namespace MetroidClone.Engine
                 }
             }
         }
-        
+
         void ParseSpecialTileDefinition(string definition)
         {
             string[] parts = definition.Split(' ');
@@ -232,7 +288,7 @@ namespace MetroidClone.Engine
                 string expectingNext = "";
                 bool hasPreviousPercentage = false;
                 double previousPercentage = 1;
-                
+
                 while (parts.Length > ++currentPart)
                 {
                     if (expectingNext != "") //The part is part of a two-word term

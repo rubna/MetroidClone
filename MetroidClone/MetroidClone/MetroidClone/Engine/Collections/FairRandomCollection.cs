@@ -35,6 +35,15 @@ namespace MetroidClone.Engine
             timesReturned.Add(0);
         }
 
+        public void Add(T item, int times)
+        {
+            for (int i = 0; i < times; i++)
+            {
+                values.Add(item);
+                timesReturned.Add(0);
+            }
+        }
+
         public void AddItems(IEnumerable<T> items)
         {
             foreach (T item in items)
