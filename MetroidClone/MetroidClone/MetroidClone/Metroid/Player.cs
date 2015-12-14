@@ -113,6 +113,7 @@ namespace MetroidClone.Metroid
             if (collectedScrap < 25)
                 return;
             World.AddObject(new Drone(), Position);
+            collectedScrap -= 25;
         }
 
         public override void Draw()
