@@ -60,20 +60,20 @@ namespace MetroidClone.Engine
             List<Point> roomExits = new List<Point>();
 
             //The left exit
-            roomExits.Add(new Point(0, 0));
-            basicGrid[0, 0].LeftSideType = SideType.Exit;
+            roomExits.Add(new Point(0, random.Next(vBlocks)));
+            basicGrid[0, roomExits[0].Y].LeftSideType = SideType.Exit;
 
             //The right exit
-            roomExits.Add(new Point(hBlocks - 1, 1));
-            basicGrid[hBlocks - 1, 1].RightSideType = SideType.Exit;
+            roomExits.Add(new Point(hBlocks - 1, random.Next(vBlocks)));
+            basicGrid[hBlocks - 1, roomExits[1].Y].RightSideType = SideType.Exit;
 
             //The top exit
-            roomExits.Add(new Point(2, 0));
-            basicGrid[2, 0].TopSideType = SideType.Exit;
+            roomExits.Add(new Point(random.Next(hBlocks), 0));
+            basicGrid[roomExits[2].X, 0].TopSideType = SideType.Exit;
 
             //The bottom exit
-            roomExits.Add(new Point(1, vBlocks - 1));
-            basicGrid[1, vBlocks - 1].BottomSideType = SideType.Exit;
+            roomExits.Add(new Point(random.Next(hBlocks), vBlocks - 1));
+            basicGrid[roomExits[3].X, vBlocks - 1].BottomSideType = SideType.Exit;
 
             //Connect the exits
             ConnectPoints(basicGrid, roomExits);
@@ -202,11 +202,11 @@ namespace MetroidClone.Engine
 
                 List<Point> removedUnconnectedPoints = new List<Point>(); //A list to store points we remove as changing a list during foreach is impossible
 
+                unconnectedPoints.Shuffle(); //Shuffle the points so that they connect in a more random way.
+
                 foreach (Point point in unconnectedPoints)
                 {
                     int i = point.X, j = point.Y; //Temporary store the x and y of this point.
-
-                    bool[,] wasConnected = (bool[,])isConnected.Clone();
 
                     List<Point> possiblePoints = new List<Point>(); //Points to connect to.
                     if (i > 0 && isConnected[i - 1, j])

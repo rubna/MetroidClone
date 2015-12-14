@@ -156,10 +156,10 @@ namespace MetroidClone.Engine
                     requirements.BottomSideType != SideType.Wall | HasBottomWall &&
                     requirements.BottomSideType != SideType.Exit | HasBottomExit) &&
                     ((!ExitsMustMatch) ||
-                    (requirements.LeftSideType != SideType.Exit | HasLeftExit &&
-                    requirements.RightSideType != SideType.Exit | HasRightExit &&
-                    requirements.TopSideType != SideType.Exit | HasTopExit &&
-                    requirements.BottomSideType != SideType.Exit | HasBottomExit)));
+                    (requirements.LeftSideType == SideType.Exit | !HasLeftExit &&
+                    requirements.RightSideType == SideType.Exit | !HasRightExit &&
+                    requirements.TopSideType == SideType.Exit | !HasTopExit &&
+                    requirements.BottomSideType == SideType.Exit | !HasBottomExit)));
         }
     }
 }
