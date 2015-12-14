@@ -65,6 +65,11 @@ namespace MetroidClone.Metroid
                 Console.WriteLine(CurrentWeapon);
             }
 
+            if (Input.KeyboardCheckPressed(Keys.Z))
+            {
+                CreateDrone();
+            }
+
             base.Update(gameTime);
 
             //check for getting hurt
@@ -95,6 +100,12 @@ namespace MetroidClone.Metroid
         }
         }
 
+        void CreateDrone()
+        {
+            if (collectedScrap < 25)
+                return;
+            World.AddObject(new Drone(), Position);
+        }
 
         public override void Draw()
         {

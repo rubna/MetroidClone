@@ -41,7 +41,7 @@ namespace MetroidClone.Engine
             Player = new Player();
             AddObject(new JumpThrough(new Rectangle(200, 150, 16, 1)));
             AddObject(Player, 100, 100);
-            AddObject(new Drone(), Player.Position);
+            //AddObject(new Drone(), Player.Position);
             AddObject(new TestMonster(), 200, 50);
             AddObject(new GunPickup(), 300, 50);
             AddObject(new RocketPickup(), 250, 50);
