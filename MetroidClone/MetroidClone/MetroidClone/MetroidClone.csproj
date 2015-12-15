@@ -77,6 +77,7 @@
     <Compile Include="Engine\Asset Loading\Asset\Sound.cs" />
     <Compile Include="Engine\Asset Loading\Asset\Sprite.cs" />
     <Compile Include="Engine\Asset Loading\AudioWrapper.cs" />
+    <Compile Include="Engine\TileLoading.cs" />
     <Compile Include="Engine\DrawWrapper.cs" />
     <Compile Include="Engine\GameObject.cs" />
     <Compile Include="Engine\InputHelper.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Metroid\GunLock.cs" />
     <Compile Include="Metroid\Player Attacks\PlayerAttack.cs" />
     <Compile Include="Metroid\GunPickup.cs" />
+	<Compile Include="Metroid\Abstract\PushableBlock.cs" />
     <Compile Include="Metroid\Player Attacks\PlayerExplosion.cs" />
     <Compile Include="Metroid\Player Attacks\PlayerBullet.cs" />
     <Compile Include="Metroid\Monsters\Monster.cs" />

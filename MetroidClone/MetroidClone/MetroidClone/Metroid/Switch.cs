@@ -11,6 +11,9 @@ namespace MetroidClone.Metroid
     class Switch : PhysicsObject
     {
         bool activated = false;
+        float shortest_Distance = 9000;
+        int counter = 0;
+        Door linked_Door = new Door();
         public override void Create()
         {
             base.Create();
@@ -37,32 +40,30 @@ namespace MetroidClone.Metroid
             }
             if (activated)
             {
-                
-                float shortest_Distance = 0;
-                int counter = 0;
-                Door linked_Door = new Door();
-                foreach (Door door in World.GameObjects.OfType<Door>().ToList())
+                if (counter == 0)
                 {
-                    float distance;
-                    distance = Vector2.Distance(Position, door.Position);
-                    if (shortest_Distance == 0)
+                    // checks which door is closest and links the switch with that door
+                    foreach (Door door in World.GameObjects.OfType<Door>().ToList())
                     {
-                        linked_Door = door;
-                        shortest_Distance = distance;
+                        float distance;
+                        distance = Vector2.Distance(Position, door.Position);
+                        if (distance < shortest_Distance)
+                        {
+                            linked_Door = door;
+                            shortest_Distance = distance;
+                        }
                     }
-                    else
-                    if (distance < shortest_Distance)
-                    {
-                        linked_Door = door;
-                        shortest_Distance = distance;
-                    }
+
                 }
+                // opens the door
                 if (counter < 120)
                 {
-                    linked_Door.Position.Y--;
+                    linked_Door.Position.Y = linked_Door.Position.Y - World.Level.TileSize.Y / 60f;
                     counter++;
+                    
                 }
             }
+
         }
         public override void Draw()
         {

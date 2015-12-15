@@ -15,18 +15,19 @@ namespace MetroidClone.Metroid
             base.Create();
             CollideWithWalls = false;
             Gravity = 0;
-            BoundingBox = new Rectangle(-5, -3, World.Level.TileSize.X / 3, World.Level.TileSize.Y * 2);
+            BoundingBox = new Rectangle(0, 0, World.Level.TileSize.X / 3, World.Level.TileSize.Y * 2);
         }
 
         bool ISolid.CollidesWith(Rectangle box)
         {
             return box.Intersects(TranslatedBoundingBox);
         }
-
         public override void Draw()
         {
             base.Draw();
             Drawing.DrawRectangle(TranslatedBoundingBox, Color.Blue);
         }
+
+
     }
 }

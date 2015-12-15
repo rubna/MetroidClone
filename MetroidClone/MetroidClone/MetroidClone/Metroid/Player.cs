@@ -45,6 +45,15 @@ namespace MetroidClone.Metroid
                 PlayAnimation("tempplayer", Direction.Right, speed: 0.2f);
             }
 
+            //pushing objects
+            foreach (PushableBlock pushableBlock in World.GameObjects.OfType<PushableBlock>())
+            {
+                if (Input.KeyboardCheckDown(Keys.Left) && this.CollidesWith(-5, 5, pushableBlock))
+                {
+                    pushableBlock.Speed.X = 10;
+                }
+            }
+
             //jump
             if (Input.KeyboardCheckPressed(Keys.Up) && OnGround)
                 Speed.Y = -6f;
