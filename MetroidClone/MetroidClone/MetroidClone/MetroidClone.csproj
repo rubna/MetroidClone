@@ -85,10 +85,15 @@
     <Compile Include="Engine\MainGame.cs" />
     <Compile Include="Engine\PhysicsObject.cs" />
     <Compile Include="Engine\Solids\JumpThrough.cs" />
+    <Compile Include="Engine\Solids\SlopeLeft.cs" />
+    <Compile Include="Engine\Solids\SlopeRight.cs" />
     <Compile Include="Engine\VectorExtensions.cs" />
     <Compile Include="Engine\Solids\ISolid.cs" />
     <Compile Include="Engine\Solids\Wall.cs" />
     <Compile Include="Engine\World.cs" />
+    <Compile Include="Metroid\HealthDrop.cs" />
+    <Compile Include="Metroid\RocketAmmo.cs" />
+    <Compile Include="Metroid\Collectible.cs" />
     <Compile Include="Metroid\Drone.cs" />
     <Compile Include="Metroid\GunLock.cs" />
     <Compile Include="Metroid\Player Attacks\PlayerAttack.cs" />
@@ -103,6 +108,7 @@
     <Compile Include="Metroid\Player.cs" />
     <Compile Include="Metroid\RocketPickup.cs" />
     <Compile Include="Metroid\WrenchPickup.cs" />
+    <Compile Include="Metroid\Scrap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

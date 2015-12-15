@@ -17,6 +17,7 @@ namespace MetroidClone.Engine
         public AssetManager AssetManager { get; set; }
         public Level Level;
         public Player Player;
+        public Random Random;
 
         public List<ISolid> Solids
         {
@@ -34,6 +35,7 @@ namespace MetroidClone.Engine
 
         public void Initialize()
         {
+            Random = new Random();
             Level = new Level();
             AddObject(Level);
             Player = new Player();
@@ -45,6 +47,9 @@ namespace MetroidClone.Engine
             AddObject(new RocketPickup(), 250, 50);
             AddObject(new WrenchPickup(), 350, 50);
             AddObject(new GunLock(), 350, 250);
+            AddObject(new Scrap(), 300, 187);
+
+            AddObject(new SlopeRight(new Rectangle(280, 192, 56, 32)));
             AddObject(new PushableBlock(), 120, 100);
 
             // foreach (GameObject gameObject in GameObjects)

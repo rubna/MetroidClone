@@ -1,27 +1,27 @@
-﻿using Microsoft.Xna.Framework;
+﻿using MetroidClone.Engine;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MetroidClone.Metroid.Monsters
+namespace MetroidClone.Metroid
 {
-    class TestMonster : Monster
+    class Scrap : Collectible
     {
+        public int ScrapAmount;
+
         public override void Create()
         {
             base.Create();
             BoundingBox = new Rectangle(-10, -10, 20, 20);
-            SpeedOnHit = new Vector2(3, -2);
-            HitPoints = 10;
-            Damage = 5;
-            ScoreOnKill = 20;
+            ScrapAmount = World.Random.Next(5, 11);
         }
 
         public override void Draw()
         {
             base.Draw();
-            Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
+            Drawing.DrawRectangle(TranslatedBoundingBox, Color.DarkSlateGray);
         }
     }
 }

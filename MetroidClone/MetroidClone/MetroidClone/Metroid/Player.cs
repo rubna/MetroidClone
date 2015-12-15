@@ -13,8 +13,13 @@ namespace MetroidClone.Metroid
     class Player : PhysicsObject
     {
         float blinkTimer = 0;
+        int collectedScrap = 0;
+
         public Weapon CurrentWeapon = Weapon.Nothing;
         public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
+        public int HitPoints = 100;
+        public int RocketAmmo = 5;
+        public int Score = 0;
 
         public override void Create()
         {
@@ -78,9 +83,18 @@ namespace MetroidClone.Metroid
             if (blinkTimer == 0)
             {
                 foreach (Monster monster in World.GameObjects.OfType<Monster>().ToList())
+                {
                     if (TranslatedBoundingBox.Intersects(monster.TranslatedBoundingBox))
+                    {
+                        HitPoints = HitPoints - monster.Damage;
                         Hurt(Math.Sign(Position.X - monster.Position.X));
             }
+                }
+            }
+
+            foreach (Scrap scrap in World.GameObjects.OfType<Scrap>().ToList())
+                if (TranslatedBoundingBox.Intersects(scrap.TranslatedBoundingBox))
+                    Collect(scrap);
 
             //blink
             if (blinkTimer > 0)
@@ -101,8 +115,8 @@ namespace MetroidClone.Metroid
 
         public override void Draw()
         {
+            Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
             base.Draw();
-            //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
         }
 
         void Attack()
@@ -123,7 +137,11 @@ namespace MetroidClone.Metroid
                 }
                 case 3:
                 {
+                        if (RocketAmmo > 0)
+                        {
                     World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
+                            RocketAmmo --;
+                        }
                     break;
                 }
                 default: break;
@@ -135,6 +153,14 @@ namespace MetroidClone.Metroid
             blinkTimer = 1;
             Visible = false;
             Speed = new Vector2(xDirection * 3, -2);
+            if (HitPoints <= 0)
+            Console.Write("You are dead");
+        }
+
+        void Collect(Scrap scrap)
+        {
+            collectedScrap += scrap.ScrapAmount;
+            scrap.Destroy();
         }
 
         void NextWeapon()
