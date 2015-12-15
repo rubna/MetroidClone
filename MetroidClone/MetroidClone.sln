@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetroidClone", "MetroidClone\MetroidClone\MetroidClone.csproj", "{0D8C2F2F-C357-4B27-85B8-255A53E641D6}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "MetroidCloneContent", "MetroidClone\MetroidCloneContent\MetroidCloneContent.contentproj", "{6286845E-628E-43B8-A2BA-3376D009F508}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetroidCloneContent", "MetroidClone\MetroidCloneContent\MetroidCloneContent.contentproj", "{6286845E-628E-43B8-A2BA-3376D009F508}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
