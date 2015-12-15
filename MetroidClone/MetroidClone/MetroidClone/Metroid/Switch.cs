@@ -20,6 +20,7 @@ namespace MetroidClone.Metroid
 
         public override void Update(GameTime gameTime)
         {
+
             base.Update(gameTime);
 
             //check collision player attacks
@@ -32,6 +33,34 @@ namespace MetroidClone.Metroid
                     {
                         activated = true;
                     }
+                }
+            }
+            if (activated)
+            {
+                
+                float shortest_Distance = 0;
+                int counter = 0;
+                Door linked_Door = new Door();
+                foreach (Door door in World.GameObjects.OfType<Door>().ToList())
+                {
+                    float distance;
+                    distance = Vector2.Distance(Position, door.Position);
+                    if (shortest_Distance == 0)
+                    {
+                        linked_Door = door;
+                        shortest_Distance = distance;
+                    }
+                    else
+                    if (distance < shortest_Distance)
+                    {
+                        linked_Door = door;
+                        shortest_Distance = distance;
+                    }
+                }
+                if (counter < 120)
+                {
+                    linked_Door.Position.Y--;
+                    counter++;
                 }
             }
         }

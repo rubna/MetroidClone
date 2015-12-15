@@ -15,7 +15,7 @@ namespace MetroidClone.Metroid
             base.Create();
             CollideWithWalls = false;
             Gravity = 0;
-            BoundingBox = new Rectangle(-5, -3, World.Level.TileSize.X / 3, World.Level.TileSize.Y);
+            BoundingBox = new Rectangle(-5, -3, World.Level.TileSize.X / 3, World.Level.TileSize.Y * 2);
         }
 
         bool ISolid.CollidesWith(Rectangle box)
