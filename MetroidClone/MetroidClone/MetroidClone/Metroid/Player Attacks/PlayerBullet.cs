@@ -12,12 +12,15 @@ namespace MetroidClone.Metroid
     {
         public override void Create()
         {
+            base.Create();
             BoundingBox = new Rectangle(-4, -4, 8, 8);
             Friction.X = 1;
             Gravity = 0;
             CollideWithWalls = false;
-            Speed.X = 5 * GetFlip;
-            base.Create();
+            if (Input.ControllerCheckConnected() && Input.ThumbStickCheckDirection(false) != Vector2.Zero)
+                Speed = 5 * Input.ThumbStickCheckDirection(false);
+            else
+                Speed.X = 5 * GetFlip;
         }
         public override void Update(GameTime gameTime)
         {

@@ -72,6 +72,15 @@ namespace MetroidClone.Engine
             newGameObjects.Add(gameObject);
         }
 
+        public void AddObject(GameObject gameObject, Vector2 position, Vector2 direction)
+        {
+            gameObject.World = this;
+            gameObject.Drawing = DrawWrapper;
+            gameObject.Position = position;
+            gameObject.Assets = AssetManager;
+            newGameObjects.Add(gameObject);
+        }
+
         public void RemoveObject(GameObject gameObject)
         {
             newGameObjects.Remove(gameObject);

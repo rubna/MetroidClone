@@ -14,13 +14,17 @@ namespace MetroidClone.Engine
 
         private KeyboardState keyBoardState, lastKeyboardState;
         private GamePadState gamePadState, lastGamePadState;
+        private MouseState mouseState, lastMouseState;
 
         public void Update()
         {
-            lastGamePadState = gamePadState;
-            lastKeyboardState = keyBoardState;
-            gamePadState = GamePad.GetState(PlayerIndex.One);
             keyBoardState = Keyboard.GetState();
+            lastKeyboardState = keyBoardState;
+            mouseState = Mouse.GetState();
+            lastMouseState = mouseState;
+
+            gamePadState = GamePad.GetState(PlayerIndex.One);
+            lastGamePadState = gamePadState;
         }
 
         public bool KeyboardCheckDown(Keys k)
@@ -35,11 +39,38 @@ namespace MetroidClone.Engine
         {
             return keyBoardState.IsKeyDown(k) && lastKeyboardState.IsKeyUp(k);
         }
+        public Point MouseCheckPosition()
+        {
+            return new Point(mouseState.X, mouseState.Y);
+        }
+        public bool MouseButtonCheckDown(bool left)
+        {
+            if (left)
+                return mouseState.LeftButton == ButtonState.Pressed;
+            return mouseState.RightButton == ButtonState.Pressed;
+        }
+        public bool MouseButtonCheckReleased(bool left)
+        {
+            if (left)
+                return mouseState.LeftButton == ButtonState.Released;
+            return mouseState.RightButton == ButtonState.Released;
+        }
+        public bool MouseButtonCheckPressed(bool left)
+        {
+            if (left)
+                return mouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton == ButtonState.Released;
+            return mouseState.RightButton == ButtonState.Pressed && lastMouseState.RightButton == ButtonState.Released;
+        }
+
+        public bool ControllerCheckConnected()
+        {
+            return gamePadState.IsConnected;
+        }
         public Vector2 ThumbStickCheckDirection(bool left)
         {
             if (left)
-                return gamePadState.ThumbSticks.Left.ToCartesian();
-            return gamePadState.ThumbSticks.Right.ToCartesian();
+                return gamePadState.ThumbSticks.Left * (1 / gamePadState.ThumbSticks.Left.Length());
+            return new Vector2(gamePadState.ThumbSticks.Right.X, -gamePadState.ThumbSticks.Right.Y) * (1 / gamePadState.ThumbSticks.Right.Length());
         }
         public bool ThumbStickCheckDown(bool left)
         {
@@ -59,19 +90,19 @@ namespace MetroidClone.Engine
         {
             return gamePadState.IsButtonDown(b) && lastGamePadState.IsButtonUp(b);
         }
-        public bool GamePadTriggerDown(bool left)
+        public bool GamePadTriggerCheckDown(bool left)
         {
             if (left)
                 return gamePadState.Triggers.Left != 0;
             return gamePadState.Triggers.Right != 0;
         }
-        public bool GamePadTriggerPressed(bool left)
+        public bool GamePadTriggerCheckPressed(bool left)
         {
             if (left)
                 return gamePadState.Triggers.Left != 0 && lastGamePadState.Triggers.Left == 0;
             return gamePadState.Triggers.Right != 0 && lastGamePadState.Triggers.Right == 0;
         }
-        public bool GamePadTriggerReleased(bool left)
+        public bool GamePadTriggerCheckReleased(bool left)
         {
             if (left)
                 return gamePadState.Triggers.Left == 0 && lastGamePadState.Triggers.Left != 0;

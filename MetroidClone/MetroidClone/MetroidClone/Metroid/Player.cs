@@ -13,6 +13,7 @@ namespace MetroidClone.Metroid
     class Player : PhysicsObject
     {
         float blinkTimer = 0;
+        float attackTimer = 0;
         int collectedScrap = 0;
 
         public Weapon CurrentWeapon = Weapon.Nothing;
@@ -29,14 +30,14 @@ namespace MetroidClone.Metroid
         public override void Update(GameTime gameTime)
         {
             //move around
-            if (Input.KeyboardCheckDown(Keys.Left) || Input.ThumbStickCheckDirection(true).X < 0)
+            if (Input.KeyboardCheckDown(Keys.A) || Input.ThumbStickCheckDirection(true).X < 0)
             {
                 Speed.X -= 0.5f;
                 FlipX = true;
                 PlayAnimation("tempplayer", Direction.Left, speed: 0.2f);
             }
 
-            if (Input.KeyboardCheckDown(Keys.Right) || Input.ThumbStickCheckDirection(true).X > 0)
+            if (Input.KeyboardCheckDown(Keys.D) || Input.ThumbStickCheckDirection(true).X > 0)
             {
                 Speed.X += 0.5f;
                 FlipX = false;
@@ -44,29 +45,55 @@ namespace MetroidClone.Metroid
             }
 
             //jump
-            if ((Input.KeyboardCheckPressed(Keys.Up) || Input.GamePadCheckPressed(Buttons.A)) && OnGround)
+            if ((Input.KeyboardCheckDown(Keys.W) || Input.ThumbStickCheckDirection(true).Y > 0.9f || Input.GamePadCheckDown(Buttons.A)) && OnGround)
                 Speed.Y = -6f;
-            if (Speed.Y < 0 && (!Input.KeyboardCheckDown(Keys.Up) || !Input.GamePadCheckDown(Buttons.A)))
+            if (Speed.Y < 0 && (!Input.KeyboardCheckDown(Keys.W) && Input.ThumbStickCheckDirection(true).Y <= 0.9f && !Input.GamePadCheckDown(Buttons.A)))
             {
                 Speed.Y *= 0.9f;
             }
 
             //drop through jumpthroughs
-            if ((Input.KeyboardCheckPressed(Keys.Down) || Input.ThumbStickCheckDirection(true).Y < 0) && OnJumpThrough)
+            if ((Input.KeyboardCheckPressed(Keys.S) || Input.ThumbStickCheckDirection(true).Y < 0) && OnJumpThrough)
                 Position.Y++;
 
             //attack
-            if (Input.KeyboardCheckPressed(Keys.X) || (Input.ThumbStickCheckDown(false)))
-                Attack(Input.ThumbStickCheckDirection(false));
+            if (Input.MouseButtonCheckDown(true) || (Input.ThumbStickCheckDown(false)))
+            {
+                if (attackTimer == 0)
+                {
+                    Attack();
+                    switch ((int)CurrentWeapon)
+                    {
+                        case 0:
+                            break;
+                        case 1:
+                            {
+                                attackTimer = 0.05f;
+                                break;
+                            }
+                        case 2:
+                            {
+                                attackTimer = 0.1f;
+                                break;
+                            }
+                        case 3:
+                            {
+                                attackTimer = 0.2f;
+                                break;
+                            }
+                    }
+                }
+            }
 
             //switch weapons
-            if (Input.KeyboardCheckPressed(Keys.C) || Input.GamePadCheckPressed(Buttons.Y))
+            if (Input.KeyboardCheckPressed(Keys.Q) || Input.GamePadCheckPressed(Buttons.Y))
             {
                 NextWeapon();
                 Console.WriteLine(CurrentWeapon);
+                attackTimer = 0;
             }
 
-            if (Input.KeyboardCheckPressed(Keys.Z) || Input.GamePadCheckPressed(Buttons.B))
+            if (Input.KeyboardCheckPressed(Keys.E) || Input.GamePadCheckPressed(Buttons.B))
             {
                 CreateDrone();
             }
@@ -99,6 +126,13 @@ namespace MetroidClone.Metroid
                     Visible = true;
                 }
             }
+
+            if (attackTimer > 0)
+            {
+                attackTimer -= 0.01f;
+                if (attackTimer<=0)
+                    attackTimer = 0;
+            }
         }
 
         void CreateDrone()
@@ -115,9 +149,8 @@ namespace MetroidClone.Metroid
             //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
         }
 
-        void Attack(Vector2 shootAngle)
+        void Attack()
         {
-            shootAngle *= 1 / shootAngle.Length();
             switch ((int)CurrentWeapon)
             {
                 case 0:
