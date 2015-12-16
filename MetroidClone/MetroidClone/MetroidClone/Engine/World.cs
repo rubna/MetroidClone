@@ -16,9 +16,13 @@ namespace MetroidClone.Engine
         public Level Level;
         public Player Player;
         public static Random Random;
+        public Vector2 Camera;
 
         public float Width { get; protected set; } = 8000;
         public float Height { get; protected set; } = 8000;
+
+        public float TileWidth => 48;
+        public float TileHeight => 48;
 
         const float GridSize = 100f;
         public List<ISolid>[,] SolidGrid;
@@ -41,16 +45,13 @@ namespace MetroidClone.Engine
             shouldUpdateSolidGrid = false;
 
             Random = new Random();
+
+            Camera = new Vector2(0);
         }
 
         public void Initialize()
         {
-            (new LevelGenerator()).Generate(this);
-            Player = new Player();
-            AddObject(Player, 80, 80);
-
-            //foreach (GameObject gameObject in GameObjects)
-            //gameObject.Create();
+            (new WorldGenerator()).Generate(this);
 
             shouldUpdateSolidGrid = true;
         }
@@ -64,7 +65,8 @@ namespace MetroidClone.Engine
             {
                 for (int j = 0; j < vCells; j++)
                 {
-                    Rectangle boundingbox = new Rectangle((int) ((i - 1) * GridSize), (int) ((j - 1) * GridSize), (int) GridSize * 2, (int) GridSize * 2);
+                    //Get a bounding box with some extra padding around it.
+                    Rectangle boundingbox = new Rectangle((int) ((i - 1) * GridSize), (int) ((j - 1) * GridSize), (int) GridSize * 3, (int) GridSize * 3);
                     int numberOfSolids = solids.Count;
                     SolidGrid[i, j] = new List<ISolid>();
                     for (int k = 0; k < numberOfSolids; k++)
@@ -118,10 +120,50 @@ namespace MetroidClone.Engine
                 shouldUpdateSolidGrid = false;
                 UpdateSolidGrid();
             }
+
+            UpdateCamera(); //Update the position of the camera.
+        }
+
+        void UpdateCamera()
+        {
+            float roomWidth = WorldGenerator.LevelWidth * TileWidth, roomHeight = WorldGenerator.LevelHeight * TileHeight;
+
+            //Calculate the basic goal position.
+            Vector2 GoalCamera = new Vector2((int)(Player.Position.X / roomWidth) * roomWidth, (int)(Player.Position.Y / roomHeight) * roomHeight);
+
+            //Briefly show a small part of the next room if you bump into a wall there.
+            if (Player.TimeSinceHWallCollision < 2)
+            {
+                if (Player.LastHCollisionDirection == Direction.Right && Player.Position.X % roomWidth > roomWidth - TileWidth)
+                    GoalCamera.X += TileWidth;
+                if (Player.LastHCollisionDirection == Direction.Left && Player.Position.X % roomWidth < TileWidth)
+                    GoalCamera.X -= TileWidth;
+            }
+            if (Player.TimeSinceVWallCollision < 2)
+            {
+                if (Player.LastVCollisionDirection == Direction.Down && Player.Position.Y % roomHeight > roomHeight - TileHeight)
+                    GoalCamera.Y += TileHeight;
+            }
+            if (Player.TimeSinceVWallCollision < 12)
+            {
+                if (Player.LastVCollisionDirection == Direction.Up && Player.Position.Y % roomHeight < TileHeight)
+                    GoalCamera.Y -= TileHeight;
+            }
+
+            //Move the camera towards the goal if the goal camera position if not equal to the camera position.
+            if (Camera.X < GoalCamera.X)
+                Camera.X = Math.Min(GoalCamera.X, Camera.X + (GoalCamera.X - Camera.X) * 0.12f + 3f);
+            if (Camera.X > GoalCamera.X)
+                Camera.X = Math.Max(GoalCamera.X, Camera.X + (GoalCamera.X - Camera.X) * 0.12f - 3f);
+            if (Camera.Y < GoalCamera.Y)
+                Camera.Y = Math.Min(GoalCamera.Y, Camera.Y + (GoalCamera.Y - Camera.Y) * 0.12f + 3f);
+            if (Camera.Y > GoalCamera.Y)
+                Camera.Y = Math.Max(GoalCamera.Y, Camera.Y + (GoalCamera.Y - Camera.Y) * 0.12f - 3f);
         }
 
         public void Draw()
         {
+            //TODO: Only draw objects that are visible.
             foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
                 gameObject.Draw();
             DrawWrapper.EndOfDraw();
@@ -129,7 +171,10 @@ namespace MetroidClone.Engine
 
         public List<ISolid> GetNearSolids(Vector2 position)
         {
-            return SolidGrid[(int) (position.X / GridSize), (int) (position.Y / GridSize)];
+            if (position.X > -GridSize && position.Y > -GridSize && position.X < Width && position.Y < Height)
+                return SolidGrid[(int)(position.X / GridSize), (int)(position.Y / GridSize)];
+            else
+                return new List<ISolid>(); //Nothing here.
         }
     }
 }

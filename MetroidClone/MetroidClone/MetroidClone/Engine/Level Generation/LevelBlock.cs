@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MetroidClone.Metroid;
+using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +18,8 @@ namespace MetroidClone.Engine
         public bool ExitsMustMatch; //True if this block may not be placed on positions where the exits don't match exactly.
 
         public double AppearancePreference; //The preference for this block to appear if it's possible to place it.
+
+        public string Group;
 
         static Random random = World.Random;
 
@@ -39,6 +43,8 @@ namespace MetroidClone.Engine
             ExitsMustMatch = false;
 
             AppearancePreference = 1;
+
+            Group = "";
         }
 
         //Updates information about level wall etc.
@@ -80,11 +86,11 @@ namespace MetroidClone.Engine
             int BlockID = random.Next(int.MaxValue);
 
             Level level = world.Level;
-            for (int i = x; i < x + Width; i++)
+            for (int i = 0; i < Width; i++)
             {
-                for (int j = y; j < y + Height; j++)
+                for (int j = 0; j < Height; j++)
                 {
-                    char data = Data[i - x, j - y];
+                    char data = Data[i, j];
 
                     //Check special tiles until we find a normal tile.
                     int loopCount = 0;
@@ -111,31 +117,36 @@ namespace MetroidClone.Engine
                     //If the special tile can be turned into a wall, check if this should happen.
                     if (specialTileTurnsIntoWallOnSides)
                     {
-                        if (i == x) //Left wall
+                        if (i == 0) //Left wall
                         {
                             if (preferLeftWall)
                                 data = '1';
                         }
-                        if (i == x + Width - 1) //Right wall
+                        if (i == Width - 1) //Right wall
                         {
                             if (preferRightWall)
                                 data = '1';
                         }
-                        if (j == y) //Top wall
+                        if (j == 0) //Top wall
                         {
                             if (preferTopWall)
                                 data = '1';
                         }
-                        if (j == y + Height - 1) //Bottom wall
+                        if (j == Height - 1) //Bottom wall
                         {
                             if (preferBottomWall)
                                 data = '1';
                         }
                     }
 
+                    int baseX = x + (int)world.TileWidth * i, baseY = y + (int)world.TileHeight * j;
                     if (data == '1') //A wall
-                        //world.AddObject(new Wall())
-                        level.Grid[i, j] = true;
+                        world.AddObject(new Wall(new Rectangle(baseX, baseY, (int)world.TileWidth, (int)world.TileHeight)));
+                    else if (data == 'P') //The player
+                    {
+                        world.Player = new Player();
+                        world.AddObject(world.Player, baseX + world.TileWidth / 2, baseY + world.TileHeight / 2);
+                    }
                     else if (data == '.')
                     {
                         //Nothing
@@ -147,19 +158,24 @@ namespace MetroidClone.Engine
         //Check if the level block meets the given requirements.
         public bool MeetsRequirements(LevelBlockRequirements requirements)
         {
-            return ((requirements.LeftSideType != SideType.Wall | HasLeftWall &&
-                    requirements.LeftSideType != SideType.Exit | HasLeftExit &&
-                    requirements.RightSideType != SideType.Wall | HasRightWall &&
-                    requirements.RightSideType != SideType.Exit | HasRightExit &&
-                    requirements.TopSideType != SideType.Wall | HasTopWall &&
-                    requirements.TopSideType != SideType.Exit | HasTopExit &&
-                    requirements.BottomSideType != SideType.Wall | HasBottomWall &&
-                    requirements.BottomSideType != SideType.Exit | HasBottomExit) &&
-                    ((!ExitsMustMatch) ||
-                    (requirements.LeftSideType == SideType.Exit | !HasLeftExit &&
-                    requirements.RightSideType == SideType.Exit | !HasRightExit &&
-                    requirements.TopSideType == SideType.Exit | !HasTopExit &&
-                    requirements.BottomSideType == SideType.Exit | !HasBottomExit)));
+            return (
+                //If the requirements dictate that a wall or exit should be at a certain position, check if the walls and exits match.
+                (requirements.LeftSideType != SideType.Wall | HasLeftWall &&
+                requirements.LeftSideType != SideType.Exit | HasLeftExit &&
+                requirements.RightSideType != SideType.Wall | HasRightWall &&
+                requirements.RightSideType != SideType.Exit | HasRightExit &&
+                requirements.TopSideType != SideType.Wall | HasTopWall &&
+                requirements.TopSideType != SideType.Exit | HasTopExit &&
+                requirements.BottomSideType != SideType.Wall | HasBottomWall &&
+                requirements.BottomSideType != SideType.Exit | HasBottomExit) &&
+                //Check if the exits match completely if required.
+                ((!ExitsMustMatch) ||
+                (requirements.LeftSideType == SideType.Exit | !HasLeftExit &&
+                requirements.RightSideType == SideType.Exit | !HasRightExit &&
+                requirements.TopSideType == SideType.Exit | !HasTopExit &&
+                requirements.BottomSideType == SideType.Exit | !HasBottomExit)) &&
+                //And check if the group matches
+                (Group == requirements.Group));
         }
     }
 }

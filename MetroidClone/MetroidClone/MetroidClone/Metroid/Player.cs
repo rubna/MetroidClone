@@ -20,6 +20,8 @@ namespace MetroidClone.Metroid
         int timeSinceLastJumpIntention = 0;
         const int maxTimeSinceLastJumpIntention = 5; //The maximum time you can press the jump button before landing on a platform.
 
+        public int TimeSinceHWallCollision, TimeSinceVWallCollision;
+
         bool startedSlowingDownJump; //This is used to make sure that the player will jump the maximum height if releasing the jump button slightly before reaching it.
 
         public Weapon CurrentWeapon = Weapon.Nothing;
@@ -33,8 +35,12 @@ namespace MetroidClone.Metroid
             PlayAnimation("tempplayer", speed: 0f);
 
             Friction = new Vector2(0.85f, 1);
+            Gravity = 0.3f;
 
             startedSlowingDownJump = false;
+
+            TimeSinceHWallCollision = 0;
+            TimeSinceVWallCollision = 0;
         }
 
         public override void Update(GameTime gameTime)
@@ -68,7 +74,7 @@ namespace MetroidClone.Metroid
             //jump
             if (timeSinceLastJumpIntention < maxTimeSinceLastJumpIntention && timeSinceOnGround < maxFromPlatformTimeForJump && Speed.Y >= 0)
             {
-                Speed.Y = -8f;
+                Speed.Y = -10f;
                 startedSlowingDownJump = false;
             }
 
@@ -120,7 +126,19 @@ namespace MetroidClone.Metroid
                     blinkTimer = 0;
                     Visible = true;
                 }
-        }
+            }
+
+            //Check if we had a collision with a wall horizontally and, if so, update the wall collision time.
+            if (HadHCollision)
+                TimeSinceHWallCollision = 0;
+            else
+                TimeSinceHWallCollision++;
+
+            //The same but now vertically
+            if (HadVCollision)
+                TimeSinceVWallCollision = 0;
+            else
+                TimeSinceVWallCollision++;
         }
 
 

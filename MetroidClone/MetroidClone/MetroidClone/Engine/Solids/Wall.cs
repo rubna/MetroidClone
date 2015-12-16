@@ -23,7 +23,8 @@ namespace MetroidClone.Engine
         public override void Draw()
         {
             base.Draw();
-            Drawing.DrawRectangle(BoundingBox, Color.Black);
+            Drawing.DrawRectangle(new Rectangle(BoundingBox.Left - (int) World.Camera.X, BoundingBox.Top - (int)World.Camera.Y,
+                BoundingBox.Width, BoundingBox.Height), Color.Black);
         }
     }
 }

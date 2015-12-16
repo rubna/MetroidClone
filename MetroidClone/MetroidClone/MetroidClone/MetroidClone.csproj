@@ -81,6 +81,7 @@
     <Compile Include="Engine\Collections\FairRandomCollection.cs" />
     <Compile Include="Engine\Collections\IRandomCollection.cs" />
     <Compile Include="Engine\Level Generation\ISpecialTileDefinition.cs" />
+    <Compile Include="Engine\Level Generation\RoomExit.cs" />
     <Compile Include="Engine\Level Generation\SpecialTileGroupDefinition.cs" />
     <Compile Include="Engine\Collections\WeightedRandomCollection.cs" />
     <Compile Include="Engine\DrawWrapper.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="Engine\InputHelper.cs" />
     <Compile Include="Engine\Level Generation\LevelBlockRequirements.cs" />
     <Compile Include="Engine\Level Generation\SpecialTileDefinition.cs" />
+    <Compile Include="Engine\Level Generation\WorldGenerator.cs" />
     <Compile Include="Engine\Level.cs" />
     <Compile Include="Engine\Level Generation\LevelBlock.cs" />
     <Compile Include="Engine\Level Generation\LevelGenerator.cs" />

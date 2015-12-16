@@ -19,6 +19,8 @@ DEFINE ð AS GROUP OF 30% 1 . 70% 1
 DEFINE e AS GROUP OF 50% 1 . 50% .
 DEFINE f AS WALL OR LEFTWALL>1 OR c
 DEFINE ƒ AS WALL OR RIGHTWALL>1 OR c
+DEFINE g AS LEFTWALL>e OR .
+DEFINE ĝ AS RIGHTWALL>e OR .
 DEFINE α AS WALL OR a
 
 And here are the actual generation blocks.
@@ -62,7 +64,7 @@ BLOCK LRD 0.7
 22222
 2.a.2
 2...2
-2e.e2
+2g.ĝ2
 1f2ƒ1
 
 BLOCK LU! 2
@@ -92,3 +94,32 @@ BLOCK UDLR 0.1
 2ççç2
 2...2
 21212
+
+BLOCK LRD 0.05
+22222
+2...2
+2...2
+1...1
+11211
+
+BLOCK LRD 0.5
+22222
+.....
+.....
+.....
+.1.1.
+
+BLOCK LRDU 0.05
+.....
+.1.1.
+.111.
+.e.e.
+11211
+
+SPECIAL PlayerStart
+BLOCK LRUD
+22222
+2.P.2
+2c1c2
+2...2
+11211

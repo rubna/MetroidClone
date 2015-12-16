@@ -79,9 +79,7 @@ namespace MetroidClone.Engine
             Profiler.LogEventEnd("FinalizeStep");
 
             if (inputHelper.KeyboardCheckReleased(Keys.F12))
-            {
                 Profiler.ShowOutput();
-            }
 
             Profiler.LogGameStepStart();
 

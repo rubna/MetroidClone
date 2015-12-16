@@ -8,6 +8,7 @@ namespace MetroidClone.Engine
     class GameObject
     {
         public Vector2 Position = Vector2.Zero;
+        public Vector2 DrawPosition { get { return Position - World.Camera; } }
         public bool FlipX = false;
         public int GetFlip
         {
@@ -73,7 +74,7 @@ namespace MetroidClone.Engine
         public virtual void Draw()
         {
             if (CurrentSprite != null && Visible)
-                Drawing.DrawSprite(CurrentSprite, Position, (int) CurrentImage, ImageScaling, null, ImageRotation); //Draw the current image of the sprite.
+                Drawing.DrawSprite(CurrentSprite, DrawPosition, (int) CurrentImage, ImageScaling, null, ImageRotation); //Draw the current image of the sprite.
         }
 
         //Plays an animation. 

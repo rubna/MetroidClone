@@ -13,6 +13,7 @@ namespace MetroidClone.Engine
         static Random random = World.Random;
 
         public bool IsReadOnly { get { return false; } }
+        public bool IsWriteOnly { get { return getTotalChance() == 0; } }
         public int Count { get { return values.Count; } }
 
         List<T> values;

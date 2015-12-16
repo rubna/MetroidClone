@@ -17,17 +17,16 @@ namespace MetroidClone.Engine
 
         public World World { get; protected set; }
         public Level Level { get; protected set; }
-        public readonly int Width, Height, BlockWidth, BlockHeight;
+        public readonly int Width, Height;
+        public const int BlockWidth = 5, BlockHeight = 5;
 
         static Random random = World.Random;
 
-        //The width and height of the level can be given when creating a level.
-        public LevelGenerator()
+        //The width and height of the level can be given when creating the level generator.
+        public LevelGenerator(int width = 20, int height = 15)
         {
-            Width = 20;
-            Height = 15;
-            BlockWidth = 5;
-            BlockHeight = 5;
+            Width = width;
+            Height = height;
 
             levelBlocks = new List<LevelBlock>();
             specialTiles = new Dictionary<char, ISpecialTileDefinition>();
@@ -35,14 +34,16 @@ namespace MetroidClone.Engine
             GetLevelBlocks();
         }
 
-        public void Generate(World world)
+        public void Generate(World world, Vector2 position, List<RoomExit> roomExits = null, List<string> guaranteedSpecialBlocks = null)
         {
-            Level = new Level();
+            //Null arguments
+            roomExits = roomExits ?? new List<RoomExit>();
+            guaranteedSpecialBlocks = guaranteedSpecialBlocks ?? new List<string>();
+            
+            //Create vars
             World = world;
             World.Level = Level;
             World.AddObject(Level);
-
-            Level.Grid = new bool[Width, Height]; //Clear the level
 
             //Create the basic grid for the level. This will contain the main path through the level.
             int hBlocks = Width / BlockWidth, vBlocks = Height / BlockHeight;
@@ -57,26 +58,21 @@ namespace MetroidClone.Engine
                 }
             }
 
-            List<Point> roomExits = new List<Point>();
-
-            //The left exit
-            roomExits.Add(new Point(0, random.Next(vBlocks)));
-            basicGrid[0, roomExits[0].Y].LeftSideType = SideType.Exit;
-
-            //The right exit
-            roomExits.Add(new Point(hBlocks - 1, random.Next(vBlocks)));
-            basicGrid[hBlocks - 1, roomExits[1].Y].RightSideType = SideType.Exit;
-
-            //The top exit
-            roomExits.Add(new Point(random.Next(hBlocks), 0));
-            basicGrid[roomExits[2].X, 0].TopSideType = SideType.Exit;
-
-            //The bottom exit
-            roomExits.Add(new Point(random.Next(hBlocks), vBlocks - 1));
-            basicGrid[roomExits[3].X, vBlocks - 1].BottomSideType = SideType.Exit;
+            //Create exits where they should be
+            foreach (RoomExit exit in roomExits)
+            {
+                if (exit.Direction == Direction.Left)
+                    basicGrid[exit.Position.X, exit.Position.Y].LeftSideType = SideType.Exit;
+                if (exit.Direction == Direction.Right)
+                    basicGrid[exit.Position.X, exit.Position.Y].RightSideType = SideType.Exit;
+                if (exit.Direction == Direction.Up)
+                    basicGrid[exit.Position.X, exit.Position.Y].TopSideType = SideType.Exit;
+                if (exit.Direction == Direction.Down)
+                    basicGrid[exit.Position.X, exit.Position.Y].BottomSideType = SideType.Exit;
+            }
 
             //Connect the exits
-            ConnectPoints(basicGrid, roomExits);
+            ConnectPoints(basicGrid, roomExits.Select(exitPoint => exitPoint.Position).ToList());
 
             //Connect each now unconnected point to a connected point
             ConnectUnconnectedPoints(basicGrid);
@@ -87,20 +83,23 @@ namespace MetroidClone.Engine
             //Create the actual level grid
             LevelBlock[,] levelGrid = new LevelBlock[hBlocks, vBlocks];
 
+            //Handle guaranteed blocks
+            foreach (string guaranteedBlock in guaranteedSpecialBlocks)
+            {
+
+            }
+
             //Choose the level blocks
             for (int i = 0; i < hBlocks; i++)
             {
                 for (int j = 0; j < vBlocks; j++)
                 {
                     //Get a block that would fit at this position.
-                    try
-                    {
-                        levelGrid[i, j] = GetPossibleLevelBlock(basicGrid[i, j]);
-                    }
-                    catch (Exception e)
-                    {
-                        throw new Exception("There's no block that would fit here! Please create more blocks and add them to LevelBlocks.txt.", e);
-                    }
+                    LevelBlock foundBlock = GetPossibleLevelBlock(basicGrid[i, j]);
+                    if (foundBlock == null)
+                        levelGrid[i, j] = foundBlock;
+                    else
+                        throw new Exception("There's no block that would fit here! Please create more blocks and add them to LevelBlocks.txt.");
                 }
             }
 
@@ -109,7 +108,8 @@ namespace MetroidClone.Engine
             {
                 for (int j = 0; j < vBlocks; j++)
                 {
-                    levelGrid[i, j].Place(World, specialTiles, i * BlockWidth, j * BlockHeight, basicGrid[i, j].LeftSideType == SideType.Wall,
+                    levelGrid[i, j].Place(World, specialTiles, (int) position.X + i * BlockWidth * (int) world.TileWidth,
+                        (int) position.Y + j * BlockHeight * (int) world.TileHeight, basicGrid[i, j].LeftSideType == SideType.Wall,
                         basicGrid[i, j].RightSideType == SideType.Wall, basicGrid[i, j].TopSideType == SideType.Wall,
                         basicGrid[i, j].BottomSideType == SideType.Wall);
                 }
@@ -119,6 +119,9 @@ namespace MetroidClone.Engine
         //Connect any number of points on the level grid.
         void ConnectPoints(LevelBlockRequirements[,] basicGrid, List<Point> points)
         {
+            if (points.Count == 0)
+                return;
+
             //Choose a random point and connect that to each other point.
             //This automatically guarantees that each point is connected to each other point, as
             //you can always travel to the first point and then to the target point.
@@ -302,6 +305,10 @@ namespace MetroidClone.Engine
                     possibleLevelBlocks.Add(levelBlock, levelBlock.AppearancePreference);
             }
 
+            //If we've not found anything, return null.
+            if (possibleLevelBlocks.IsWriteOnly)
+                return null;
+
             //Then return one.
             return possibleLevelBlocks.Get();
         }
@@ -319,6 +326,7 @@ namespace MetroidClone.Engine
             LevelBlock currentLevelBlock = null;
 
             int totalIgnoreCount = 0;
+            string blockSpecialGroup = ""; //Groups are used for special, named, blocks, like the starting position of the player.
 
             for (int i = 0; i < levelBlocksLines.Length; i++)
             {
@@ -332,7 +340,18 @@ namespace MetroidClone.Engine
                 if (totalIgnoreCount > 0)
                     continue;
 
-                if (line.StartsWith("BLOCK"))
+                if (line.StartsWith("SPECIAL"))
+                {
+                    line = line.Replace("SPECIAL", ""); //Delete the SPECIAL part of the line.
+
+                    //If there's a space at the beginning now, remove that, too.
+                    if (line.StartsWith(" "))
+                        line = line.Remove(0, 1);
+
+                    //Now, the rest of line is the special group for the next block.
+                    blockSpecialGroup = line;
+                }
+                else if (line.StartsWith("BLOCK"))
                 {
                     currentLevelBlock = new LevelBlock(BlockWidth, BlockHeight);
                     thisBlockDataHeight = 0;
@@ -360,6 +379,12 @@ namespace MetroidClone.Engine
                         currentLevelBlock.HasRightExit = true;
                     if (exits.Contains("!"))
                         currentLevelBlock.ExitsMustMatch = true;
+
+                    if (blockSpecialGroup != "") //If this block is part of a special block group, set that group.
+                    {
+                        currentLevelBlock.Group = blockSpecialGroup;
+                        blockSpecialGroup = ""; //The next block won't be part of a group by default.
+                    }
 
                     //The second argument (optional) should contain information about how often a block appears.
                     if (arguments.Length >= 2)
