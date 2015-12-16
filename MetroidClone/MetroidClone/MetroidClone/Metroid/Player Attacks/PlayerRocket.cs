@@ -19,17 +19,19 @@ namespace MetroidClone.Metroid.Player_Attacks
             Gravity = 0f;
             Friction.X = 0.99f;
             BoundingBox = new Rectangle(-4, -2, 8, 4);
-            if (Input.ControllerCheckConnected() && Input.ThumbStickCheckDirection(false) != Vector2.Zero)
+            if (Input.ControllerCheckConnected() == false && Input.ThumbStickCheckDirection(false) != Vector2.Zero)
                 direction = Input.ThumbStickCheckDirection(false);
             else
                 direction = Input.MouseCheckPosition().ToVector2() - Position;
+
+            direction.Normalize();
         }
 
         public override void Update(GameTime gameTime)
         {
             Speed += direction * 0.2f;
             base.Update(gameTime);
-            if (Speed.Length() < 0.01f)
+            if (HadHCollision || HadVCollision)
                 Destroy();
         }
 

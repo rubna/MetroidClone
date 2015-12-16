@@ -30,6 +30,9 @@ namespace MetroidClone.Engine
         protected bool OnGround = false;
         protected Vector2 WallBounce = Vector2.Zero;
 
+        //HadCollision stores whether there was a collision with a wall in the last update.
+        public bool HadHCollision = false, HadVCollision = false;
+
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
@@ -82,6 +85,9 @@ namespace MetroidClone.Engine
 
         void MoveCheckingWallCollision()
         {
+            HadHCollision = false; //We haven't registered a collision yet.
+            HadVCollision = false;
+
             //subPixelSpeed saved for the next frame
             Point roundedSpeed;
             subPixelSpeed += Speed;
@@ -94,6 +100,7 @@ namespace MetroidClone.Engine
                 if (InsideWall(Position.X + Math.Sign(roundedSpeed.X), Position.Y, BoundingBox))
                 {
                     Speed.X *= -WallBounce.X;
+                    HadHCollision = true;
                     break;
                 }
                 else
@@ -106,6 +113,7 @@ namespace MetroidClone.Engine
                 if (InsideWall(Position.X, Position.Y + Math.Sign(roundedSpeed.Y), BoundingBox))
                 {
                     Speed.Y *= -WallBounce.Y;
+                    HadVCollision = true;
                     break;
                 }
                 else

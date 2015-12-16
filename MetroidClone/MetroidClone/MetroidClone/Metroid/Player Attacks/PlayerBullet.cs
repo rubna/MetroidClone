@@ -17,10 +17,14 @@ namespace MetroidClone.Metroid
             Friction.X = 1;
             Gravity = 0;
             CollideWithWalls = false;
-            if (Input.ControllerCheckConnected() && Input.ThumbStickCheckDirection(false) != Vector2.Zero)
+            if (Input.ControllerCheckConnected() == false && Input.ThumbStickCheckDirection(false) != Vector2.Zero)
                 Speed = 5 * Input.ThumbStickCheckDirection(false);
             else
-                Speed.X = 5 * GetFlip;
+            {
+                Speed = Input.MouseCheckPosition().ToVector2() - Position;
+                Speed.Normalize();
+                Speed *= 5;
+            }
         }
         public override void Update(GameTime gameTime)
         {
