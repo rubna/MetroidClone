@@ -19,7 +19,7 @@ namespace MetroidClone.Engine
 
         public void Generate(World world)
         {
-            int worldW = 5, worldH = 5; //The width and height of the world.
+            int worldW = 7, worldH = 7; //The width and height of the world.
 
             //Define and initialize variables
             bool[,] isRoom = new bool[worldW, worldH];
@@ -30,8 +30,14 @@ namespace MetroidClone.Engine
                 {
                     roomExits[i, j] = new List<RoomExit>();
                     guaranteedSpecialBlocks[i, j] = new List<string>();
-                    isRoom[i, j] = true;
+                    isRoom[i, j] = false;
                 }
+
+            isRoom[0, worldH / 2] = true; //Starting room
+            guaranteedSpecialBlocks[0, worldH / 2].Add("PlayerStart");
+            guaranteedSpecialBlocks[0, worldH / 2].Add("GunPickup");
+
+            isRoom[1, worldH / 2] = true; //Room right of starting room.
 
             //Place the exits
             for (int i = 0; i < worldW; i++)
@@ -51,9 +57,6 @@ namespace MetroidClone.Engine
                         roomExits[i, j + 1].Add(new RoomExit(new Point(nextX, 0), Direction.Up));
                     }
                 }
-
-            //Special blocks (like the starting position of the player)
-            guaranteedSpecialBlocks[0, 0].Add("PlayerStart");
 
             //And generate the levels.
             for (int i = 0; i < worldW; i++)

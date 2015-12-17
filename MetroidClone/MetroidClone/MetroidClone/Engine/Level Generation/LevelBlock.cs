@@ -140,13 +140,18 @@ namespace MetroidClone.Engine
                     }
 
                     int baseX = x + (int)world.TileWidth * i, baseY = y + (int)world.TileHeight * j;
+                    float centerX = baseX + world.TileWidth / 2, centerY = baseY + world.TileHeight / 2;
                     if (data == '1') //A wall
                         world.AddObject(new Wall(new Rectangle(baseX, baseY, (int)world.TileWidth, (int)world.TileHeight)));
                     else if (data == 'P') //The player
                     {
                         world.Player = new Player();
-                        world.AddObject(world.Player, baseX + world.TileWidth / 2, baseY + world.TileHeight / 2);
+                        world.AddObject(world.Player, centerX, centerY);
                     }
+                    else if (data == 'J') //A jumpthrough block
+                        world.AddObject(new JumpThrough(new Rectangle(baseX, baseY, (int)world.TileWidth, 1)));
+                    else if (data == 'G') //A gun pickup block
+                        world.AddObject(new GunPickup(), centerX, centerY);
                     else if (data == '.')
                     {
                         //Nothing

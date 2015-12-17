@@ -1,5 +1,4 @@
-﻿using MetroidClone.Engine.Solids;
-using MetroidClone.Metroid;
+﻿using MetroidClone.Metroid;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -30,6 +29,10 @@ namespace MetroidClone.Engine
         protected bool OnJumpThrough = false;
         protected bool OnGround = false;
         protected Vector2 WallBounce = Vector2.Zero;
+
+        protected Rectangle DrawBoundingBox { get {
+            return new Rectangle(TranslatedBoundingBox.Left - (int)World.Camera.X, TranslatedBoundingBox.Top - (int)World.Camera.Y,
+                TranslatedBoundingBox.Width, TranslatedBoundingBox.Height); } }
 
         //HadCollision stores whether there was a collision with a wall in the last update.
         public bool HadHCollision = false, HadVCollision = false;
@@ -84,7 +87,7 @@ namespace MetroidClone.Engine
         {
             OnJumpThrough = false;
             OnGround = false;
-            List<ISolid> solids = World.Solids;
+            List<ISolid> solids = World.GetNearSolids(Position);
             int numberOfSolids = solids.Count;
             for (int i = 0; i < numberOfSolids; i++)
             {
@@ -94,7 +97,8 @@ namespace MetroidClone.Engine
                 if (solid.CollidesWith(box))
                 {
                     OnGround = true;
-                    Speed.Y = 0;
+                    if (Speed.Y > 0)
+                        Speed.Y = 0;
                     LastVCollisionDirection = Engine.Direction.Down;
                     HadVCollision = true;
                     if (solid is JumpThrough)

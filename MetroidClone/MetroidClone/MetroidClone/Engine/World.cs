@@ -52,6 +52,7 @@ namespace MetroidClone.Engine
         public void Initialize()
         {
             (new WorldGenerator()).Generate(this);
+            UpdateCamera(true);
 
             shouldUpdateSolidGrid = true;
         }
@@ -71,7 +72,7 @@ namespace MetroidClone.Engine
                     SolidGrid[i, j] = new List<ISolid>();
                     for (int k = 0; k < numberOfSolids; k++)
                     {
-                        if (solids[k].CollidesWith(boundingbox))
+                        if (!(solids[k] is Wall) || solids[k].CollidesWith(boundingbox))
                         {
                             SolidGrid[i, j].Add(solids[k]);
                         }
@@ -124,7 +125,7 @@ namespace MetroidClone.Engine
             UpdateCamera(); //Update the position of the camera.
         }
 
-        void UpdateCamera()
+        void UpdateCamera(bool jumpToGoal = false)
         {
             float roomWidth = WorldGenerator.LevelWidth * TileWidth, roomHeight = WorldGenerator.LevelHeight * TileHeight;
 
@@ -150,15 +151,20 @@ namespace MetroidClone.Engine
                     GoalCamera.Y -= TileHeight;
             }
 
-            //Move the camera towards the goal if the goal camera position if not equal to the camera position.
-            if (Camera.X < GoalCamera.X)
-                Camera.X = Math.Min(GoalCamera.X, Camera.X + (GoalCamera.X - Camera.X) * 0.12f + 3f);
-            if (Camera.X > GoalCamera.X)
-                Camera.X = Math.Max(GoalCamera.X, Camera.X + (GoalCamera.X - Camera.X) * 0.12f - 3f);
-            if (Camera.Y < GoalCamera.Y)
-                Camera.Y = Math.Min(GoalCamera.Y, Camera.Y + (GoalCamera.Y - Camera.Y) * 0.12f + 3f);
-            if (Camera.Y > GoalCamera.Y)
-                Camera.Y = Math.Max(GoalCamera.Y, Camera.Y + (GoalCamera.Y - Camera.Y) * 0.12f - 3f);
+            if (jumpToGoal)
+                Camera = GoalCamera;
+            else
+            {
+                //Move the camera towards the goal if the goal camera position if not equal to the camera position.
+                if (Camera.X < GoalCamera.X)
+                    Camera.X = Math.Min(GoalCamera.X, Camera.X + (GoalCamera.X - Camera.X) * 0.12f + 3f);
+                if (Camera.X > GoalCamera.X)
+                    Camera.X = Math.Max(GoalCamera.X, Camera.X + (GoalCamera.X - Camera.X) * 0.12f - 3f);
+                if (Camera.Y < GoalCamera.Y)
+                    Camera.Y = Math.Min(GoalCamera.Y, Camera.Y + (GoalCamera.Y - Camera.Y) * 0.12f + 3f);
+                if (Camera.Y > GoalCamera.Y)
+                    Camera.Y = Math.Max(GoalCamera.Y, Camera.Y + (GoalCamera.Y - Camera.Y) * 0.12f - 3f);
+            }
         }
 
         public void Draw()

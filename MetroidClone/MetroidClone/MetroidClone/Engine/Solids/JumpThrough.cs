@@ -4,11 +4,19 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 
-namespace MetroidClone.Engine.Solids
+namespace MetroidClone.Engine
 {
     class JumpThrough : GameObject, ISolid
     {
         Rectangle BoundingBox;
+        protected Rectangle DrawBoundingBox
+        {
+            get
+            {
+                return new Rectangle(BoundingBox.Left - (int)World.Camera.X, BoundingBox.Top - (int)World.Camera.Y,
+                    BoundingBox.Width, BoundingBox.Height);
+            }
+        }
 
         public JumpThrough(Rectangle boundingBox)
         {
@@ -19,14 +27,14 @@ namespace MetroidClone.Engine.Solids
         bool ISolid.CollidesWith(Rectangle boundingBox)
         {
             Rectangle box = boundingBox;
-            box.Y = box.Bottom-1;
+            box.Y = box.Bottom - 1;
             box.Height = 1;
             return BoundingBox.Intersects(box);
         }
 
         public override void Draw()
         {
-            Drawing.DrawRectangle(BoundingBox, Color.Black);
+            Drawing.DrawRectangle(DrawBoundingBox, Color.Black);
             base.Draw();
         }
     }

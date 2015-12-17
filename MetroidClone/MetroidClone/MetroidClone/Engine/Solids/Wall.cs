@@ -9,6 +9,14 @@ namespace MetroidClone.Engine
     class Wall : GameObject, ISolid
     {
         public Rectangle BoundingBox;
+        protected Rectangle DrawBoundingBox
+        {
+            get
+            {
+                return new Rectangle(BoundingBox.Left - (int)World.Camera.X, BoundingBox.Top - (int)World.Camera.Y,
+                    BoundingBox.Width, BoundingBox.Height);
+            }
+        }
 
         public Wall(Rectangle boundingBox)
         {
@@ -23,8 +31,7 @@ namespace MetroidClone.Engine
         public override void Draw()
         {
             base.Draw();
-            Drawing.DrawRectangle(new Rectangle(BoundingBox.Left - (int) World.Camera.X, BoundingBox.Top - (int)World.Camera.Y,
-                BoundingBox.Width, BoundingBox.Height), Color.Black);
+            Drawing.DrawRectangle(DrawBoundingBox, Color.Black);
         }
     }
 }

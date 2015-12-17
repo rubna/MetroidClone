@@ -88,7 +88,7 @@ namespace MetroidClone.Metroid
             }
 
             //drop through jumpthroughs
-            if (Input.KeyboardCheckPressed(Keys.Down) && OnJumpThrough)
+            if (Input.KeyboardCheckDown(Keys.Down) && OnJumpThrough)
                 Position.Y++;
 
             //attack
@@ -113,7 +113,7 @@ namespace MetroidClone.Metroid
                     {
                         HitPoints = HitPoints - monster.Damage;
                         Hurt(Math.Sign(Position.X - monster.Position.X));
-            }
+                    }
                 }
             }
 
@@ -134,7 +134,7 @@ namespace MetroidClone.Metroid
                     blinkTimer = 0;
                     Visible = true;
                 }
-        }
+            }
 
             //Check if we had a collision with a wall horizontally and, if so, update the wall collision time.
             if (HadHCollision)
@@ -157,25 +157,25 @@ namespace MetroidClone.Metroid
 
         void Attack()
         {
-            switch ((int)CurrentWeapon)
+            switch (CurrentWeapon)
             {
-                case 0:
+                case Weapon.Nothing:
                     break;
-                case 1:
+                case Weapon.Gun:
                 {
                     World.AddObject(new PlayerBullet() { FlipX = FlipX }, Position);
                     break;
                 }
-                case 2:
+                case Weapon.Rocket:
                 {
                     World.AddObject(new PlayerMelee(), Position + GetFlip * Vector2.UnitX * 20);
                     break;
                 }
-                case 3:
-        {
+                case Weapon.Wrench:
+                {
                         if (RocketAmmo > 0)
                         {
-                    World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
+                            World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
                             RocketAmmo --;
                         }
                     break;
