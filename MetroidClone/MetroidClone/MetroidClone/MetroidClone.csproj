@@ -104,6 +104,8 @@
     <Compile Include="Engine\Solids\ISolid.cs" />
     <Compile Include="Engine\Solids\Wall.cs" />
     <Compile Include="Engine\World.cs" />
+    <Compile Include="Metroid\HealthDrop.cs" />
+    <Compile Include="Metroid\RocketAmmo.cs" />
     <Compile Include="Metroid\Collectible.cs" />
     <Compile Include="Metroid\Drone.cs" />
     <Compile Include="Metroid\GunLock.cs" />
