@@ -16,7 +16,6 @@ namespace MetroidClone.Engine
         Dictionary<char, ISpecialTileDefinition> specialTiles;
 
         public World World { get; protected set; }
-        public Level Level { get; protected set; }
         public readonly int Width, Height;
         public const int BlockWidth = 5, BlockHeight = 5;
 
@@ -42,8 +41,6 @@ namespace MetroidClone.Engine
             
             //Create vars
             World = world;
-            World.Level = Level;
-            World.AddObject(Level);
 
             //Create the basic grid for the level. This will contain the main path through the level.
             int hBlocks = Width / BlockWidth, vBlocks = Height / BlockHeight;
@@ -86,7 +83,14 @@ namespace MetroidClone.Engine
             //Handle guaranteed blocks
             foreach (string guaranteedBlock in guaranteedSpecialBlocks)
             {
-
+                int i = 0, j = 0;
+                do
+                {
+                    i = World.Random.Next(hBlocks);
+                    j = World.Random.Next(vBlocks);
+                }
+                while (basicGrid[i, j].Group != "");
+                basicGrid[i, j].Group = guaranteedBlock;
             }
 
             //Choose the level blocks
@@ -96,10 +100,11 @@ namespace MetroidClone.Engine
                 {
                     //Get a block that would fit at this position.
                     LevelBlock foundBlock = GetPossibleLevelBlock(basicGrid[i, j]);
-                    if (foundBlock == null)
+                    if (foundBlock != null)
                         levelGrid[i, j] = foundBlock;
                     else
-                        throw new Exception("There's no block that would fit here! Please create more blocks and add them to LevelBlocks.txt.");
+                        throw new Exception("There's no block that would fit here! Please create more blocks (of group '" + basicGrid[i, j].Group +
+                            "') and add them to LevelBlocks.txt.");
                 }
             }
 

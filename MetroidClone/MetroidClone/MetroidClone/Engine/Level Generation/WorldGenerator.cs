@@ -19,28 +19,32 @@ namespace MetroidClone.Engine
 
         public void Generate(World world)
         {
+            int worldW = 5, worldH = 5; //The width and height of the world.
+
             //Define and initialize variables
-            List<RoomExit>[,] roomExits = new List<RoomExit>[5, 5];
-            List<string>[,] guaranteedSpecialBlocks = new List<string>[5, 5];
-            for (int i = 0; i < 5; i++)
-                for (int j = 0; j < 5; j++)
+            bool[,] isRoom = new bool[worldW, worldH];
+            List<RoomExit>[,] roomExits = new List<RoomExit>[worldW, worldH];
+            List<string>[,] guaranteedSpecialBlocks = new List<string>[worldW, worldH];
+            for (int i = 0; i < worldW; i++)
+                for (int j = 0; j < worldH; j++)
                 {
                     roomExits[i, j] = new List<RoomExit>();
                     guaranteedSpecialBlocks[i, j] = new List<string>();
+                    isRoom[i, j] = true;
                 }
 
             //Place the exits
-            for (int i = 0; i < 5; i++)
-                for (int j = 0; j < 5; j++)
+            for (int i = 0; i < worldW; i++)
+                for (int j = 0; j < worldH; j++)
                 {
                     //Place exits.
-                    if (i < 4)
+                    if (i < worldW - 1 && isRoom[i, j] && isRoom[i + 1, j])
                     {
                         int nextY = World.Random.Next(LevelHeight / LevelGenerator.BlockHeight);
                         roomExits[i, j].Add(new RoomExit(new Point(LevelWidth / LevelGenerator.BlockWidth - 1, nextY), Direction.Right));
                         roomExits[i + 1, j].Add(new RoomExit(new Point(0, nextY), Direction.Left));
                     }
-                    if (j < 4)
+                    if (j < worldH - 1 && isRoom[i, j] && isRoom[i, j + 1])
                     {
                         int nextX = World.Random.Next(LevelWidth / LevelGenerator.BlockWidth);
                         roomExits[i, j].Add(new RoomExit(new Point(nextX, LevelHeight / LevelGenerator.BlockHeight - 1), Direction.Down));
@@ -52,11 +56,12 @@ namespace MetroidClone.Engine
             guaranteedSpecialBlocks[0, 0].Add("PlayerStart");
 
             //And generate the levels.
-            for (int i = 0; i < 5; i++)
-                for (int j = 0; j < 5; j++)
+            for (int i = 0; i < worldW; i++)
+                for (int j = 0; j < worldH; j++)
                 {
-                    levelGenerator.Generate(world, new Vector2(LevelWidth * world.TileWidth * i, LevelHeight * world.TileHeight * j), roomExits[i, j],
-                        guaranteedSpecialBlocks[i, j]);
+                    if (isRoom[i, j])
+                        levelGenerator.Generate(world, new Vector2(LevelWidth * world.TileWidth * i, LevelHeight * world.TileHeight * j), roomExits[i, j],
+                            guaranteedSpecialBlocks[i, j]);
                 }
         }
     }
