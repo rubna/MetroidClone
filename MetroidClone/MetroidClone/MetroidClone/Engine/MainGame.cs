@@ -39,6 +39,9 @@ namespace MetroidClone.Engine
 
         protected override void Initialize()
         {
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+            drawWrapper = new DrawWrapper(spriteBatch, GraphicsDevice, assetManager);
+
             world = new World();
             graphics.PreferMultiSampling = true;
             graphics.SynchronizeWithVerticalRetrace = true;
@@ -46,7 +49,7 @@ namespace MetroidClone.Engine
             graphics.PreferredBackBufferHeight = 24 * 15 * 2;
 
             graphics.ApplyChanges();
-
+           
             IsFixedTimeStep = true;
             
             TargetElapsedTime = TimeSpan.FromMilliseconds(1000f / 60f);
@@ -56,11 +59,27 @@ namespace MetroidClone.Engine
             base.Initialize();
         }
 
+        protected void SwitchFullscreen()
+        {
+            if (! graphics.IsFullScreen)
+            {
+                graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                graphics.IsFullScreen = true;
+            }
+            else
+            {
+                graphics.PreferredBackBufferWidth = 24 * 20 * 2;
+                graphics.PreferredBackBufferHeight = 24 * 15 * 2;
+                graphics.IsFullScreen = false;
+            }
+            drawWrapper.SmartScale(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
+
+            graphics.ApplyChanges();
+        }
+
         protected override void LoadContent()
         {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-            drawWrapper = new DrawWrapper(spriteBatch, GraphicsDevice, assetManager);
-
             world.DrawWrapper = drawWrapper;
             world.AssetManager = assetManager;
 
@@ -80,6 +99,8 @@ namespace MetroidClone.Engine
 
             if (inputHelper.KeyboardCheckReleased(Keys.F12))
                 Profiler.ShowOutput();
+            if (inputHelper.KeyboardCheckReleased(Keys.F4))
+                SwitchFullscreen();
 
             Profiler.LogGameStepStart();
 
@@ -98,6 +119,8 @@ namespace MetroidClone.Engine
         {
             Profiler.LogEventStart("Draw");
             GraphicsDevice.Clear(Color.White);
+
+            drawWrapper.BeginDraw();
 
             world.Draw();
 

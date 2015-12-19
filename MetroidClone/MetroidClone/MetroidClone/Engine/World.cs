@@ -10,7 +10,7 @@ namespace MetroidClone.Engine
     {
         public List<GameObject> GameObjects;
         List<GameObject> newGameObjects;
-         
+
         public DrawWrapper DrawWrapper { get; set; }
         public AssetManager AssetManager { get; set; }
         public Level Level;
@@ -59,7 +59,7 @@ namespace MetroidClone.Engine
 
         public void UpdateSolidGrid()
         {
-            int hCells = (int) (Width / GridSize), vCells = (int) (Height / GridSize);
+            int hCells = (int)(Width / GridSize), vCells = (int)(Height / GridSize);
             SolidGrid = new List<ISolid>[hCells, vCells];
             List<ISolid> solids = Solids;
             for (int i = 0; i < hCells; i++)
@@ -67,7 +67,7 @@ namespace MetroidClone.Engine
                 for (int j = 0; j < vCells; j++)
                 {
                     //Get a bounding box with some extra padding around it.
-                    Rectangle boundingbox = new Rectangle((int) ((i - 1) * GridSize), (int) ((j - 1) * GridSize), (int) GridSize * 3, (int) GridSize * 3);
+                    Rectangle boundingbox = new Rectangle((int)((i - 1) * GridSize), (int)((j - 1) * GridSize), (int)GridSize * 3, (int)GridSize * 3);
                     int numberOfSolids = solids.Count;
                     SolidGrid[i, j] = new List<ISolid>();
                     for (int k = 0; k < numberOfSolids; k++)
@@ -182,5 +182,6 @@ namespace MetroidClone.Engine
             else
                 return new List<ISolid>(); //Nothing here.
         }
+
     }
 }
