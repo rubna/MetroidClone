@@ -86,7 +86,7 @@ namespace MetroidClone.Metroid
             }
 
             //switch weapons
-            if (Input.MouseButtonCheckPressed(false) || Input.GamePadCheckPressed(Buttons.Y))
+            if (Input.KeyboardCheckPressed(Keys.C) || Input.MouseButtonCheckPressed(false) || Input.GamePadCheckPressed(Buttons.Y))
             {
                 NextWeapon();
                 Console.WriteLine(CurrentWeapon);
