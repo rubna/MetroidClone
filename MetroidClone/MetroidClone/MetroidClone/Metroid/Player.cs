@@ -113,7 +113,7 @@ namespace MetroidClone.Metroid
                     {
                         HitPoints = HitPoints - monster.Damage;
                         Hurt(Math.Sign(Position.X - monster.Position.X));
-                    }
+            }
                 }
             }
 
@@ -175,7 +175,7 @@ namespace MetroidClone.Metroid
                 {
                         if (RocketAmmo > 0)
                         {
-                            World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
+                    World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
                             RocketAmmo --;
                         }
                     break;

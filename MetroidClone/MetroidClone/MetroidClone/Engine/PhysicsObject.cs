@@ -92,6 +92,8 @@ namespace MetroidClone.Engine
             for (int i = 0; i < numberOfSolids; i++)
             {
                 ISolid solid = solids[i];
+                if (solid == this) continue;
+
                 Rectangle box = TranslatedBoundingBox;
                 box.Offset(0, 1); //Move the collision box down.
                 if (solid.CollidesWith(box))
@@ -162,7 +164,7 @@ namespace MetroidClone.Engine
                     break;
                 }
                 else
-                    Position.Y += Math.Sign(roundedSpeed.Y); 
+                    Position.Y += Math.Sign(roundedSpeed.Y);
             }
         }
 
@@ -173,7 +175,7 @@ namespace MetroidClone.Engine
             for (int i = 0; i < numberOfSolids; i++)
             {
                 //Ignore collisions with jumpthroughs when going up.
-                if (!(solids[i] is JumpThrough && Speed.Y < 0) && solids[i].CollidesWith(boundingbox))
+                if (!(solids[i] is JumpThrough && Speed.Y < 0) && solids[i].CollidesWith(boundingbox) && !(solids[i] == this))
                 {
                     return true;
                 }
@@ -198,20 +200,20 @@ namespace MetroidClone.Engine
             return InsideWall(new Point((int)x, (int)y), boundingbox);
         }
 
-        protected bool CollidesWith(float x, float y, PhysicsObject obj)
+        protected bool CollidesWith(float xOffset, float yOffset, PhysicsObject obj)
         {
-            return CollidesWith(new Vector2(x, y).ToPoint(), obj);
+            return CollidesWith(new Vector2(xOffset, yOffset).ToPoint(), obj);
         }
 
-        protected bool CollidesWith(Vector2 position, PhysicsObject obj)
+        protected bool CollidesWith(Vector2 offset, PhysicsObject obj)
         {
-            return CollidesWith(position.ToPoint(), obj);
+            return CollidesWith(offset.ToPoint(), obj);
         }
 
-        protected bool CollidesWith(Point position, PhysicsObject obj)
+        protected bool CollidesWith(Point offset, PhysicsObject obj)
         {
             Rectangle bbox = BoundingBox;
-            bbox.Offset(position);
+            bbox.Offset(offset);
             return bbox.Intersects(obj.TranslatedBoundingBox);
         }
     }
