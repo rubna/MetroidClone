@@ -120,11 +120,11 @@ namespace MetroidClone.Engine
             Profiler.LogEventStart("Draw");
             GraphicsDevice.Clear(Color.White);
 
-            drawWrapper.BeginDraw();
-
-            world.Draw();
-
-            drawWrapper.EndOfDraw();
+            drawWrapper.BeginDraw(); //Start drawing
+            world.Draw(); //Draw the game world
+            drawWrapper.BeginDrawGUI(); //Start drawing the GUI
+            world.DrawGUI(); //Draw the GUI
+            drawWrapper.EndOfDraw(); //Stop drawing
 
             base.Draw(gameTime);
             Profiler.LogEventEnd("Draw");

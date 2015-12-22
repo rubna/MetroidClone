@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using MetroidClone.Metroid;
 
 namespace MetroidClone.Engine
 {
@@ -66,6 +67,9 @@ namespace MetroidClone.Engine
                         levelGenerator.Generate(world, new Vector2(LevelWidth * world.TileWidth * i, LevelHeight * world.TileHeight * j), roomExits[i, j],
                             guaranteedSpecialBlocks[i, j]);
                 }
+
+            //Add the "hack this game" object
+            world.AddObject(new HackThisGame()); 
         }
     }
 }

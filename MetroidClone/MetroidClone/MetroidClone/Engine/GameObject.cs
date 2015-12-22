@@ -77,6 +77,11 @@ namespace MetroidClone.Engine
                 Drawing.DrawSprite(CurrentSprite, DrawPosition, (int) CurrentImage, ImageScaling, null, ImageRotation); //Draw the current image of the sprite.
         }
 
+        public virtual void DrawGUI()
+        {
+            //Do nothing by default.
+        }
+
         //Plays an animation. 
         protected void PlayAnimation(string sprite, float? startImage = null, bool repeat = true, float speed = 1, Vector2? scaling = null)
         {

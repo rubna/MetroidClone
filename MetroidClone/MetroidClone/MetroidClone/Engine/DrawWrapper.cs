@@ -26,7 +26,9 @@ namespace MetroidClone.Engine
 
         private int deviceWidth, lastDeviceWidth;
 
+        //The size of the whole game view (excluding black bars), and the size of the GUI (including black bars).
         float displayLeft = 0, displayTop = 0, displayWidth = 0, displayHeight = 0;
+        public Vector2 GUISize { get { return new Vector2(displayWidth + displayLeft * 2, displayHeight + displayTop * 2); } }
 
         public AssetManager Assets;
 
@@ -87,8 +89,8 @@ namespace MetroidClone.Engine
 
         public void DrawRectangleUnscaled(Rectangle rectangle, Color color)
         {
-            DrawRectangle(new Rectangle((int) (rectangle.Left / GlobalScale), (int) (rectangle.Top / GlobalScale), (int) (rectangle.Right / GlobalScale),
-                (int) (rectangle.Bottom / GlobalScale)), color);
+            DrawRectangle(new Rectangle((int) (rectangle.Left / GlobalScale), (int) (rectangle.Top / GlobalScale), (int) (rectangle.Width / GlobalScale),
+                (int) (rectangle.Height / GlobalScale)), color);
         }
 
         public void DrawCircle(Vector2 position, float radius, Color color, int precision = 24)
@@ -112,6 +114,8 @@ namespace MetroidClone.Engine
 
             DrawPrimitive(PrimitiveType.TriangleList, verts, color);
         }
+
+        // Methods to draw sprites.
 
         public void DrawSprite(Sprite sprite, Vector2 position, Vector2? subimage = null, Vector2? size = null, Color? color = null, float rotation = 0f)
         {
@@ -156,6 +160,48 @@ namespace MetroidClone.Engine
             DrawSprite(drawSprite, position, new Vector2(subimage % drawSprite.SheetSize.X, (int)subimage / (int)drawSprite.SheetSize.X), size, color, rotation);
         }
 
+        //Methods to draw text.
+
+        public void DrawText(Font font, string text, Vector2 position, Color? color = null, float rotation = 0f, Vector2? origin = null, float scale = 1f, Font.Alignment alignment = Font.Alignment.TopLeft)
+        {
+            BeginSpriteBatch();
+
+            Vector2 finalOrigin = origin ?? new Vector2(0f, 0f);
+
+            //Apply the alignment.
+            if (alignment != Font.Alignment.TopLeft)
+            {
+                Vector2 textMeasure = font.Measure(text);
+                if (alignment == Font.Alignment.MiddleLeft || alignment == Font.Alignment.MiddleCenter || alignment == Font.Alignment.MiddleRight)
+                    finalOrigin.Y += textMeasure.Y / 2;
+                if (alignment == Font.Alignment.BottomLeft || alignment == Font.Alignment.BottomCenter || alignment == Font.Alignment.BottomRight)
+                    finalOrigin.Y += textMeasure.Y;
+                if (alignment == Font.Alignment.TopCenter || alignment == Font.Alignment.MiddleCenter || alignment == Font.Alignment.BottomCenter)
+                    finalOrigin.X += textMeasure.X / 2;
+                if (alignment == Font.Alignment.TopRight || alignment == Font.Alignment.MiddleRight || alignment == Font.Alignment.BottomRight)
+                    finalOrigin.X += textMeasure.X;
+            }
+
+            spriteBatch.DrawString(font.SpriteFont, text, position, color ?? Color.Black, rotation, finalOrigin, scale, SpriteEffects.None, 0f);
+        }
+
+        public void DrawText(string font, string text, Vector2 position, Color? color = null, float rotation = 0f, Vector2? origin = null, float scale = 1f, Font.Alignment alignment = Font.Alignment.TopLeft)
+        {
+            BeginSpriteBatch();
+
+            DrawText(Assets.GetFont(font), text, position, color, rotation, origin, scale, alignment);
+        }
+
+        public Vector2 MeasureText(Font font, string text)
+        {
+            return font.Measure(text);
+        }
+
+        public Vector2 MeasureText(string font, string text)
+        {
+            return MeasureText(Assets.GetFont(font), text);
+        }
+
         private void BeginSpriteBatch()
         {
             if (!BeginSpriteBatchCalled)
@@ -179,14 +225,20 @@ namespace MetroidClone.Engine
             currentEffect = basicEffect;
         }
 
-        public void EndOfDraw()
+        public void BeginDrawGUI()
         {
+            EndSpriteBatch();
+
             //Draw the GUI/HUD
             currentEffect = guiEffect;
             DrawBlackBars(); //Black bars around the view.
-            currentEffect = basicEffect;
+        }
 
-            EndSpriteBatch(); //Then end the sprite batch.
+        public void EndOfDraw()
+        {
+            EndSpriteBatch(); //End the sprite batch.
+
+            currentEffect = basicEffect; //Then reset the draw effect.
         }
 
         //Draw black bars around the view

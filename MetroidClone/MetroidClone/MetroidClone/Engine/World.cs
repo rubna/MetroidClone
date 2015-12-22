@@ -172,7 +172,12 @@ namespace MetroidClone.Engine
             //TODO: Only draw objects that are visible.
             foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
                 gameObject.Draw();
-            DrawWrapper.EndOfDraw();
+        }
+
+        public void DrawGUI()
+        {
+            foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
+                gameObject.DrawGUI();
         }
 
         public List<ISolid> GetNearSolids(Vector2 position)

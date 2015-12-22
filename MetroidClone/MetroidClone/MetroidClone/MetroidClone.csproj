@@ -75,6 +75,7 @@
     <Compile Include="Engine\Asset Loading\Asset\IAsset.cs" />
     <Compile Include="Engine\Asset Loading\AssetManager.cs" />
     <Compile Include="Engine\Asset Loading\Asset\Sound.cs" />
+    <Compile Include="Engine\Asset Loading\Asset\Font.cs" />
     <Compile Include="Engine\Asset Loading\Asset\Sprite.cs" />
     <Compile Include="Engine\Asset Loading\AudioWrapper.cs" />
     <Compile Include="Engine\Collections\RandomCollection.cs" />
@@ -104,6 +105,7 @@
     <Compile Include="Engine\Solids\ISolid.cs" />
     <Compile Include="Engine\Solids\Wall.cs" />
     <Compile Include="Engine\World.cs" />
+    <Compile Include="Metroid\HackThisGame.cs" />
     <Compile Include="Metroid\HealthDrop.cs" />
     <Compile Include="Metroid\RocketAmmo.cs" />
     <Compile Include="Metroid\Collectible.cs" />
