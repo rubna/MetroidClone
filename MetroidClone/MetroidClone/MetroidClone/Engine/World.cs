@@ -48,11 +48,11 @@ namespace MetroidClone.Engine
             AddObject(new WrenchPickup(), 350, 50);
             AddObject(new GunLock(), 350, 250);
             AddObject(new Scrap(), 300, 187);
-            AddObject(new Switch(), Level.TileSize.X, 3 * Level.TileSize.Y);
+            AddObject(new MeleeSwitch(), Level.TileSize.X, 3 * Level.TileSize.Y);
             AddObject(new SlopeRight(new Rectangle(280, 192, 56, 32)));
             AddObject(new PushableBlock(), 120, 100);
-            AddObject(new Door(), Level.TileSize.X * 3, 3 * Level.TileSize.Y);
-            AddObject(new Door(), Level.TileSize.X * 6, 3 * Level.TileSize.Y);
+            AddObject(new MeleeDoor(), Level.TileSize.X * 3, 3 * Level.TileSize.Y);
+            AddObject(new DestroyableDoor(), Level.TileSize.X * 6, 3 * Level.TileSize.Y);
 
             // foreach (GameObject gameObject in GameObjects)
             //gameObject.Create();
