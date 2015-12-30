@@ -15,16 +15,16 @@ namespace MetroidClone.Metroid.Player_Attacks
         public override void Create()
         {
             base.Create();
-            Console.WriteLine(Speed);
             Gravity = 0f;
             Friction.X = 0.99f;
             BoundingBox = new Rectangle(-4, -2, 8, 4);
-            if (Input.ControllerCheckConnected() == false && Input.ThumbStickCheckDirection(false) != Vector2.Zero)
+            if (Input.ControllerInUse)
                 direction = Input.ThumbStickCheckDirection(false);
             else
                 direction = Input.MouseCheckPosition().ToVector2() - Position;
 
             direction.Normalize();
+            Speed = direction;
         }
 
         public override void Update(GameTime gameTime)

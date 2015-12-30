@@ -88,6 +88,13 @@ namespace MetroidClone.Engine
             DrawPrimitive(PrimitiveType.TriangleStrip, verts, color);
         }
 
+        public void DrawTriangle(Vector2 v1, Vector2 v2, Vector2 v3, Color color)
+        {
+            List<Vector2> verts = new List<Vector2>() { v1, v2, v3 };
+
+            DrawPrimitive(PrimitiveType.TriangleList, verts, color);
+        }
+
         public void DrawSprite(Sprite sprite, Vector2 position, Vector2? subimage = null, Vector2? size = null, Color? color = null, float rotation = 0f)
         {
             BeginSpriteBatch();

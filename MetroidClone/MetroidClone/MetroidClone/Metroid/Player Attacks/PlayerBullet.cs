@@ -17,7 +17,7 @@ namespace MetroidClone.Metroid
             Friction.X = 1;
             Gravity = 0;
             CollideWithWalls = false;
-            if (Input.ControllerCheckConnected() == false && Input.ThumbStickCheckDirection(false) != Vector2.Zero)
+            if (Input.ControllerInUse)
                 Speed = 5 * Input.ThumbStickCheckDirection(false);
             else
             {

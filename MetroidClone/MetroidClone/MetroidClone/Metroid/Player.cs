@@ -18,6 +18,9 @@ namespace MetroidClone.Metroid
 
         public Weapon CurrentWeapon = Weapon.Nothing;
         public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
+        public int HitPoints = 100;
+        public int RocketAmmo = 5;
+        public int Score = 0;
 
         public override void Create()
         {
@@ -44,6 +47,15 @@ namespace MetroidClone.Metroid
                 PlayAnimation("tempplayer", Direction.Right, speed: 0.2f);
             }
 
+            //pushing objects
+            foreach (PushableBlock pushableBlock in World.GameObjects.OfType<PushableBlock>())
+            {
+                if (Input.KeyboardCheckDown(Keys.Left) && this.CollidesWith(-5, 5, pushableBlock))
+                {
+                    pushableBlock.Speed.X = 10;
+                }
+            }
+
             //jump
             if ((Input.KeyboardCheckDown(Keys.W) || Input.KeyboardCheckDown(Keys.Up) || Input.ThumbStickCheckDirection(true).Y > 0.9f || Input.GamePadCheckDown(Buttons.A)) && OnGround)
                 Speed.Y = -6f;
@@ -61,7 +73,7 @@ namespace MetroidClone.Metroid
             {
                 if (attackTimer == 0)
                 {
-                    Attack();
+                Attack();
                     switch ((int)CurrentWeapon)
                     {
                         case 0:
@@ -90,7 +102,6 @@ namespace MetroidClone.Metroid
             {
                 NextWeapon();
                 Console.WriteLine(CurrentWeapon);
-                attackTimer = 0;
             }
 
             if (Input.KeyboardCheckPressed(Keys.Space) || Input.GamePadCheckPressed(Buttons.B))
@@ -104,8 +115,13 @@ namespace MetroidClone.Metroid
             if (blinkTimer == 0)
             {
                 foreach (Monster monster in World.GameObjects.OfType<Monster>().ToList())
+                {
                     if (TranslatedBoundingBox.Intersects(monster.TranslatedBoundingBox))
+                    {
+                        HitPoints = HitPoints - monster.Damage;
                         Hurt(Math.Sign(Position.X - monster.Position.X));
+            }
+                }
             }
 
             foreach (Scrap scrap in World.GameObjects.OfType<Scrap>().ToList())
@@ -132,7 +148,7 @@ namespace MetroidClone.Metroid
                 attackTimer -= 0.01f;
                 if (attackTimer<=0)
                     attackTimer = 0;
-            }
+        }
         }
 
         void CreateDrone()
@@ -145,8 +161,11 @@ namespace MetroidClone.Metroid
 
         public override void Draw()
         {
+            Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
             base.Draw();
-            Drawing.DrawRectangle(new Rectangle(Input.MouseCheckPosition().X - 5, Input.MouseCheckPosition().Y - 5, 10, 10), Color.DarkKhaki);
+            //mouse pointer, disabled when controller in use
+            if (!Input.ControllerInUse)
+                Drawing.DrawRectangle(new Rectangle(Input.MouseCheckPosition().X - 5, Input.MouseCheckPosition().Y - 5, 10, 10), Color.DarkKhaki);
             //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
         }
 
@@ -168,7 +187,11 @@ namespace MetroidClone.Metroid
                 }
                 case 3:
         {
+                        if (RocketAmmo > 0)
+                        {
                     World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
+                            RocketAmmo --;
+                        }
                     break;
                 }
                 default: break;
@@ -180,6 +203,8 @@ namespace MetroidClone.Metroid
             blinkTimer = 1;
             Visible = false;
             Speed = new Vector2(xDirection * 3, -2);
+            if (HitPoints <= 0)
+            Console.Write("You are dead");
         }
 
         void Collect(Scrap scrap)

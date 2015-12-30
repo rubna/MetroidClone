@@ -11,6 +11,7 @@ namespace MetroidClone.Engine
         {
             get { return instance ?? (instance = new InputHelper()); }
         }
+        public bool ControllerInUse = false;
 
         private KeyboardState keyBoardState, lastKeyboardState;
         private GamePadState gamePadState, lastGamePadState;
@@ -18,13 +19,22 @@ namespace MetroidClone.Engine
 
         public void Update()
         {
-            keyBoardState = Keyboard.GetState();
-            lastKeyboardState = keyBoardState;
-            mouseState = Mouse.GetState();
-            lastMouseState = mouseState;
-
-            gamePadState = GamePad.GetState(PlayerIndex.One);
-            lastGamePadState = gamePadState;
+            if (!ControllerInUse)
+            {
+                lastKeyboardState = keyBoardState;
+                keyBoardState = Keyboard.GetState();
+                lastMouseState = mouseState;
+                mouseState = Mouse.GetState();
+                if (KeyboardCheckDown(Keys.Enter))
+                    ControllerInUse = true;
+            }
+            else
+            {
+                lastGamePadState = gamePadState;
+                gamePadState = GamePad.GetState(PlayerIndex.One);
+                if (GamePadCheckDown(Buttons.BigButton) || !gamePadState.IsConnected)
+                    ControllerInUse = false;
+            }
         }
 
         public bool KeyboardCheckDown(Keys k)
