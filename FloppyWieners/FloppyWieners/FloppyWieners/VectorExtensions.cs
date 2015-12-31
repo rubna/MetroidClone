@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 
-namespace MetroidClone.Engine
+namespace FloppyWieners
 {
     static class VectorExtensions
     {
@@ -63,20 +63,6 @@ namespace MetroidClone.Engine
         public static Point ClampPoint(this Point point, Point min, Point max)
         {
             return new Point((int)MathHelper.Clamp(point.X, min.X, max.X), (int)MathHelper.Clamp(point.Y, min.Y, max.Y));
-        }
-
-        /// <summary>
-        /// Returns the signed distance from a point to a line.
-        /// </summary>
-        /// <param name="pos"></param>
-        /// <param name="from"></param>
-        /// <param name="to"></param>
-        /// <returns></returns>
-        public static float DistanceToLine(this Vector2 pos, Vector2 from, Vector2 to)
-        {
-            float a = (to - pos).Angle() - (to - from).Angle();
-            a = MathHelper.ToRadians(a);
-            return (float)Math.Sin(Math.Atan2(Math.Sin(a), Math.Cos(a))) * (to - pos).Length();
         }
     }
 }
