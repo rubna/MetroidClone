@@ -8,6 +8,9 @@ using System.Text;
 
 namespace MetroidClone.Engine
 {
+    /// <summary>
+    /// GameObject with physics, collisions and a BoundingBox.
+    /// </summary>
     class PhysicsObject : GameObject
     {
         public Rectangle BoundingBox { get; protected set; }
@@ -25,9 +28,10 @@ namespace MetroidClone.Engine
         Vector2 subPixelSpeed = Vector2.Zero;
         public Vector2 PositionPrevious = Vector2.Zero;
         protected Vector2 Friction = new Vector2(0.8f, 1);
-        protected float Gravity = 0.2f;
+        protected float Gravity = 0.3f;
         protected bool OnJumpThrough = false;
         protected bool OnGround = false;
+        protected bool OnSlope = false;
         protected Vector2 WallBounce = Vector2.Zero;
 
         public override void Update(GameTime gameTime)
@@ -48,7 +52,6 @@ namespace MetroidClone.Engine
             }
             else
                 Position += Speed;
-
         }
 
         public override void Draw()
@@ -61,6 +64,7 @@ namespace MetroidClone.Engine
         void CheckOnGround()
         {
             OnJumpThrough = false;
+            OnSlope = false;
             OnGround = false;
             foreach (ISolid solid in World.GameObjects.OfType<ISolid>().ToList())
             {
@@ -127,8 +131,7 @@ namespace MetroidClone.Engine
             {
                 if (solid.CollidesWith(boundingbox))
                 {
-                    if (solid is JumpThrough)
-                        if (Speed.Y < 0)
+                    if (solid is JumpThrough && Speed.Y < 0)
                             continue;
                     return true;
                 }
@@ -136,33 +139,51 @@ namespace MetroidClone.Engine
             return false;
         }
 
-        protected bool InsideWall(Point position, Rectangle boundingbox)
+        /// <summary>
+        /// Checks whether there is collision with ISolid and an offsetted boundingbox.
+        /// </summary>
+        protected bool InsideWall(Point offset, Rectangle boundingbox)
         {
             Rectangle box = boundingbox;
-            box.Offset(position);
+            box.Offset(offset);
             return InsideWall(box);
         }
 
+        /// <summary>
+        /// Returns collision with ISolid and an offsetted boundingbox.
+        /// </summary>
         protected bool InsideWall(Vector2 position, Rectangle boundingbox)
         {
             return InsideWall(position.ToPoint(), boundingbox);
         }
 
+        /// <summary>
+        /// Returns collision with ISolid and an offsetted boundingbox.
+        /// </summary>
         protected bool InsideWall(float x, float y, Rectangle boundingbox)
         {
             return InsideWall(new Point((int)x, (int)y), boundingbox);
         }
 
+        /// <summary>
+        /// Returns collision with ISolid and a PhysicsObject, if that object would be at position (x, y).
+        /// </summary>
         protected bool CollidesWith(float x, float y, PhysicsObject obj)
         {
             return CollidesWith(new Vector2(x, y).ToPoint(), obj);
         }
 
+        /// <summary>
+        /// Returns collision with ISolid and a PhysicsObject, if that object would be at position (x, y).
+        /// </summary>
         protected bool CollidesWith(Vector2 position, PhysicsObject obj)
         {
             return CollidesWith(position.ToPoint(), obj);
         }
 
+        /// <summary>
+        /// Returns collision with ISolid and a PhysicsObject, if that object would be at position.
+        /// </summary>
         protected bool CollidesWith(Point position, PhysicsObject obj)
         {
             Rectangle bbox = BoundingBox;

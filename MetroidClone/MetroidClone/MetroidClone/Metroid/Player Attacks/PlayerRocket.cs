@@ -22,7 +22,7 @@ namespace MetroidClone.Metroid.Player_Attacks
         {
             Speed.X += GetFlip * 0.2f;
             base.Update(gameTime);
-            if (Math.Abs(Speed.X) < 0.01f)
+            if (Math.Abs(Speed.X) < 0.01f || PositionPrevious.Y != Position.Y)
                 Destroy();
         }
 

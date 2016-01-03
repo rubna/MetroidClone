@@ -26,7 +26,7 @@ namespace MetroidClone.Engine
 
         public DrawWrapper(SpriteBatch batch, GraphicsDevice device, AssetManager assetsManager)
         {
-            GlobalScale = 1f;
+            GlobalScale = 2f;
 
             spriteBatch = batch;
             graphicsDevice = device;
@@ -93,6 +93,20 @@ namespace MetroidClone.Engine
             List<Vector2> verts = new List<Vector2>() { v1, v2, v3 };
 
             DrawPrimitive(PrimitiveType.TriangleList, verts, color);
+        }
+
+        public void DrawLine(Vector2 from, Vector2 to, float width, Color color)
+        {
+            Vector2 offset = new Vector2(width / 2, (to - from).Angle() + 90).ToCartesian();
+            List<Vector2> verts = new List<Vector2>()
+            {
+                from + offset,
+                from - offset,
+                to + offset,
+                to - offset
+            };
+
+            DrawPrimitive(PrimitiveType.TriangleStrip, verts, color);
         }
 
         public void DrawSprite(Sprite sprite, Vector2 position, Vector2? subimage = null, Vector2? size = null, Color? color = null, float rotation = 0f)

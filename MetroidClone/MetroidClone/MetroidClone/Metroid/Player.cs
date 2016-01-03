@@ -18,10 +18,32 @@ namespace MetroidClone.Metroid
         public Weapon CurrentWeapon = Weapon.Nothing;
         public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
 
+        public float Rotation = 0;
+        public float AnimationRotation = 0;
+        AnimationBone body, hipLeft, kneeLeft, footLeft, hipRight, kneeRight, footRight;
+
         public override void Create()
         {
             base.Create();
             BoundingBox = new Rectangle(-12, -16, 24, 32);
+
+            //make skeleton
+            body = new AnimationBone(this) { Offset = new Vector2(0, 0) };
+            hipLeft = new AnimationBone(body) { Offset = new Vector2(-8, 5) };
+            kneeLeft = new AnimationBone(hipLeft) { Offset = new Vector2(0, 8) };
+            footLeft = new AnimationBone(kneeLeft) { Offset = new Vector2(0, 8) };
+
+            hipRight = new AnimationBone(body) { Offset = new Vector2(8, 5) };
+            kneeRight = new AnimationBone(hipRight) { Offset = new Vector2(0, 8) };
+            footRight = new AnimationBone(kneeRight) { Offset = new Vector2(0, 8) };
+
+            World.AddObject(body);
+            World.AddObject(hipLeft);
+            World.AddObject(kneeLeft);
+            World.AddObject(footLeft);
+            World.AddObject(hipRight);
+            World.AddObject(kneeRight);
+            World.AddObject(footRight);
 
             PlayAnimation("tempplayer", speed: 0f);
         }
@@ -75,6 +97,7 @@ namespace MetroidClone.Metroid
                         Hurt(Math.Sign(Position.X - monster.Position.X));
             }
 
+            //Collect scrap
             foreach (Scrap scrap in World.GameObjects.OfType<Scrap>().ToList())
                 if (TranslatedBoundingBox.Intersects(scrap.TranslatedBoundingBox))
                     Collect(scrap);
@@ -92,9 +115,24 @@ namespace MetroidClone.Metroid
                     blinkTimer = 0;
                     Visible = true;
                 }
-        }
+            }
+
+            //animation
+            PlayAnimationWalking();
         }
 
+        void PlayAnimationWalking()
+        {
+            AnimationRotation += 8;
+            AnimationRotation %= 360;
+
+
+            hipLeft.ImageRotation = VectorExtensions.LengthDirectionX(45, AnimationRotation + 180);
+            hipRight.ImageRotation = VectorExtensions.LengthDirectionX(45, AnimationRotation);
+            kneeLeft.ImageRotation = VectorExtensions.LengthDirectionX(45, AnimationRotation + 180 - 45);
+            kneeRight.ImageRotation = VectorExtensions.LengthDirectionX(45, AnimationRotation - 45);
+
+        }
 
         public override void Draw()
         {
