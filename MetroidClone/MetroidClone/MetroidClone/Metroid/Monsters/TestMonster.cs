@@ -21,7 +21,7 @@ namespace MetroidClone.Metroid.Monsters
         public override void Draw()
         {
             base.Draw();
-            Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
+            Drawing.DrawRectangle(DrawBoundingBox, Color.Red);
         }
     }
 }
