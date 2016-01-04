@@ -117,7 +117,7 @@ namespace MetroidClone.Metroid
                             break;
                         case 1:
                             {
-                                attackTimer = 0.05f;
+                                attackTimer = 0.1f;
                                 break;
                             }
                         case 2:
@@ -249,6 +249,7 @@ namespace MetroidClone.Metroid
         void Hurt(int xDirection)
         {
             blinkTimer = 1;
+            Input.GamePadVibrate(0.5f, 0.5f, 100);
             Visible = false;
             Speed = new Vector2(xDirection * 3, -2);
             if (HitPoints <= 0)
