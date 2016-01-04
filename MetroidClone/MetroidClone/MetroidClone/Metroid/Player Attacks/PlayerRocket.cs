@@ -37,7 +37,7 @@ namespace MetroidClone.Metroid.Player_Attacks
 
         public override void Draw()
         {
-            Drawing.DrawRectangle(TranslatedBoundingBox,Color.Green);
+            Drawing.DrawRectangle(DrawBoundingBox, Color.Green);
             base.Draw();
         }
 

@@ -30,7 +30,7 @@ namespace MetroidClone.Metroid
         public override void Draw()
         {
             base.Draw();
-            Drawing.DrawRectangle(TranslatedBoundingBox, Color.Pink);
+            Drawing.DrawRectangle(DrawBoundingBox, Color.Pink);
         }
     }
 }

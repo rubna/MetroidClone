@@ -1,0 +1,322 @@
+﻿Information about level blocks is stored in this file.
+Start a line with BLOCK to start a level block.
+Then, specify the exits. Use up to four letters for this. U if there's an exit above, D if there's an exit below, L if there's an exit to the left,
+R if there's an exit to the right.
+Then, you can specify the preference for this block to appear. If you use a smaller number, it'll appear less. If you use a larger number, it'll appear
+more. Default is "1".
+Then, use the next lines to specify the block. Use a dot for an empty position. Use a 1 for a block.
+For exits, always make sure at least the middle block is reachable.
+
+Here are some definitions for special blocks. As you see, they can be any unicode character.
+
+DEFINE 2 AS WALL OR .
+DEFINE a AS 50% 1 50% .
+DEFINE b AS GROUP OF 50% 1 50% .
+DEFINE c AS GROUP OF 1 .
+DEFINE ç AS GROUP OF 1 . .
+DEFINE ɔ AS GROUP OF 1 .
+DEFINE d AS GROUP OF 70% 1 . 30% 1
+DEFINE ð AS GROUP OF 30% 1 . 70% 1
+DEFINE e AS GROUP OF 50% 1 . 50% .
+DEFINE f AS WALL OR LEFTWALL>1 OR c
+DEFINE ƒ AS WALL OR RIGHTWALL>1 OR c
+DEFINE g AS LEFTWALL>e OR .
+DEFINE ĝ AS RIGHTWALL>e OR .
+DEFINE h AS BOTTOMWALL>a OR .
+DEFINE i AS 70% 1 30% .
+DEFINE j AS WALL OR J
+DEFINE k AS GROUP OF 40% . 40% 1 20% a
+DEFINE l AS LEFTWALL>1 OR 2
+DEFINE m AS LEFTWALL>1 OR .
+DEFINE n AS LEFTWALL>\ OR .
+
+DEFINE α AS WALL OR a
+DEFINE β AS WALL OR GROUP OF 1 .
+DEFINE γ AS WALL OR GROUP OF 1 .
+
+And here are the actual generation blocks.
+
+BLOCK ULR
+1\...
+11\..
+2mmn.
+1111\
+11111
+
+BLOCK UDLR 0.75
+1...1
+1.c.1
+2.c.2
+2...2
+1d.d1
+
+BLOCK UDLR 0.5
+2...2
+2...2
+2c1c2
+2...2
+11211
+
+BLOCK DLR
+2...2
+2..a2
+2.bb2
+2...2
+11211
+
+BLOCK LR
+1α1α1
+2.c.2
+2.a.2
+2.c.2
+a111a
+
+BLOCK LRD 0.5
+ααααα
+2...2
+2...2
+2...2
+12221
+
+BLOCK LRD 0.7
+22222
+2.a.2
+2...2
+2g.ĝ2
+1f2ƒ1
+
+BLOCK LU! 2
+....1
+...11
+..111
+.1111
+11111
+
+BLOCK RU! 2
+1....
+11...
+111..
+1111.
+11111
+
+BLOCK LRU
+22222
+2...2
+2.1.2
+2a1a2
+11111
+
+BLOCK UDLR 0.1
+22222
+2...2
+2ççç2
+2...2
+21212
+
+BLOCK LRD 0.05
+22222
+2...2
+2...2
+1...1
+11211
+
+BLOCK LRD 0.2
+22222
+.....
+.....
+.....
+.1.1.
+
+BLOCK LRDU 0.2
+.....
+.1.1.
+.111.
+.e.e.
+11211
+
+BLOCK L
+11111
+..aa1
+...a1
+..a11
+11111
+
+BLOCK LR
+11111
+γ..a.
+lγ...
+11.aa
+11111
+
+BLOCK LRU
+2...2
+2.a.2
+2e1e2
+21112
+11111
+
+BLOCK LR 0.5
+11111
+2a1a2
+2...2
+2a1a2
+11111
+
+BLOCK UD 0.5
+2a.a2
+2...2
+2.112
+2...2
+21..2
+
+BLOCK UD 0.5
+2a.a2
+2...2
+211.2
+2...2
+2..12
+
+THEMESTART Cramped
+
+BLOCK UD
+1α2α1
+1...1
+11a.1
+1...1
+1..11
+
+BLOCK RU
+1α2α1
+1...2
+1.1.2
+1a1aα
+11111
+
+BLOCK LUD
+12221
+1...1
+2..11
+11..1
+1α211
+
+BLOCK LRU
+11211
+1...1
+2.1.2
+1a1a1
+1α1α1
+
+BLOCK LRD
+11111
+1aaa1
+2...2
+2hhh2
+1γ2γ1
+
+BLOCK UD 0.5
+11211
+1...1
+1c1c1
+1.1.1
+12221
+
+BLOCK LRUD! 2
+1β2β1
+1...1
+2.1.2
+1...1
+1γ2γ1
+
+BLOCK LU
+11211
+α..k1
+2.1k1
+αi1k1
+11111
+
+BLOCK UD
+11211
+1..a1
+1.111
+1..a1
+11211
+
+BLOCK LR
+11111
+1.c.1
+2.c.2
+1a1a1
+11111
+
+BLOCK DU
+11J11
+1a.a1
+1c.c1
+11.11
+11J11
+
+THEMEEND
+
+THEMESTART Open
+
+BLOCK LRDU 2
+22222
+2...2
+2ɔ.ɔ2
+2...2
+2c2c2
+
+BLOCK LRDU 2
+22222
+2...2
+2.112
+2...2
+11222
+
+BLOCK LRU! 2
+22222
+2.c.2
+2.c.2
+2...2
+11111
+
+BLOCK LRD! 2
+11111
+2...2
+2c1c2
+2...2
+1ɔ.ɔ1
+
+THEMEEND
+
+SPECIAL PlayerStart
+BLOCK LRDU
+22222
+2.P.2
+2c1c2
+2...2
+11211
+
+SPECIAL GunPickup
+BLOCK LRDU
+22222
+2.G.2
+21j12
+21.12
+11j11
+
+SPECIAL FirstRightBorder
+BLOCK LRDU
+12221
+2...1
+2.1j2
+2...1
+11221
+
+SPECIAL SecondRightBorder
+BLOCK LRDU
+12221
+2..j1
+2.1j2
+2..j1
+11221
