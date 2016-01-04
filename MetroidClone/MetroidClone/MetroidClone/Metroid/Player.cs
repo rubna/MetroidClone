@@ -17,6 +17,9 @@ namespace MetroidClone.Metroid
 
         public Weapon CurrentWeapon = Weapon.Nothing;
         public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
+        public int HitPoints = 100;
+        public int RocketAmmo = 5;
+        public int Score = 0;
 
         public float Rotation = 0;
         public float AnimationRotation = 0;
@@ -64,6 +67,15 @@ namespace MetroidClone.Metroid
                 PlayAnimation("tempplayer", Direction.Right, speed: 0.2f);
             }
 
+            //pushing objects
+            foreach (PushableBlock pushableBlock in World.GameObjects.OfType<PushableBlock>())
+            {
+                if (Input.KeyboardCheckDown(Keys.Left) && this.CollidesWith(-5, 5, pushableBlock))
+                {
+                    pushableBlock.Speed.X = 10;
+                }
+            }
+
             //jump
             if (Input.KeyboardCheckPressed(Keys.Up) && OnGround)
                 Speed.Y = -6f;
@@ -93,8 +105,13 @@ namespace MetroidClone.Metroid
             if (blinkTimer == 0)
             {
                 foreach (Monster monster in World.GameObjects.OfType<Monster>().ToList())
+                {
                     if (TranslatedBoundingBox.Intersects(monster.TranslatedBoundingBox))
+                    {
+                        HitPoints = HitPoints - monster.Damage;
                         Hurt(Math.Sign(Position.X - monster.Position.X));
+            }
+                }
             }
 
             //Collect scrap
@@ -115,7 +132,7 @@ namespace MetroidClone.Metroid
                     blinkTimer = 0;
                     Visible = true;
                 }
-            }
+        }
 
             //animation
             PlayAnimationWalking();
@@ -158,7 +175,11 @@ namespace MetroidClone.Metroid
                 }
                 case 3:
         {
+                        if (RocketAmmo > 0)
+                        {
                     World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
+                            RocketAmmo --;
+                        }
                     break;
                 }
                 default: break;
@@ -170,6 +191,8 @@ namespace MetroidClone.Metroid
             blinkTimer = 1;
             Visible = false;
             Speed = new Vector2(xDirection * 3, -2);
+            if (HitPoints <= 0)
+            Console.Write("You are dead");
         }
 
         void Collect(Scrap scrap)

@@ -68,6 +68,8 @@ namespace MetroidClone.Engine
             OnGround = false;
             foreach (ISolid solid in World.GameObjects.OfType<ISolid>().ToList())
             {
+                if (solid == this) continue;
+
                 Rectangle box = TranslatedBoundingBox;
                 box.Offset(0, 1);
                 if (solid.CollidesWith(box))
@@ -129,6 +131,8 @@ namespace MetroidClone.Engine
         {
             foreach (ISolid solid in World.Solids)
             {
+                if (solid == this) continue;
+
                 if (solid.CollidesWith(boundingbox))
                 {
                     if (solid is JumpThrough && Speed.Y < 0)
@@ -170,7 +174,7 @@ namespace MetroidClone.Engine
         /// </summary>
         protected bool CollidesWith(float x, float y, PhysicsObject obj)
         {
-            return CollidesWith(new Vector2(x, y).ToPoint(), obj);
+            return CollidesWith(new Vector2(xOffset, yOffset).ToPoint(), obj);
         }
 
         /// <summary>
@@ -178,7 +182,7 @@ namespace MetroidClone.Engine
         /// </summary>
         protected bool CollidesWith(Vector2 position, PhysicsObject obj)
         {
-            return CollidesWith(position.ToPoint(), obj);
+            return CollidesWith(offset.ToPoint(), obj);
         }
 
         /// <summary>
@@ -187,7 +191,7 @@ namespace MetroidClone.Engine
         protected bool CollidesWith(Point position, PhysicsObject obj)
         {
             Rectangle bbox = BoundingBox;
-            bbox.Offset(position);
+            bbox.Offset(offset);
             return bbox.Intersects(obj.TranslatedBoundingBox);
         }
     }

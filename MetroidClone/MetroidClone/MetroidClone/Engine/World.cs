@@ -50,6 +50,7 @@ namespace MetroidClone.Engine
             AddObject(new Scrap(), 300, 187);
 
             AddObject(new SlopeRight(new Rectangle(280, 192, 56, 32)));
+            AddObject(new PushableBlock(), 120, 100);
 
             // foreach (GameObject gameObject in GameObjects)
             //gameObject.Create();
