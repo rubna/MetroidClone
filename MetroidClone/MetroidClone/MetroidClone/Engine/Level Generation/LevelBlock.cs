@@ -19,7 +19,8 @@ namespace MetroidClone.Engine
 
         public double AppearancePreference; //The preference for this block to appear if it's possible to place it.
 
-        public string Group;
+        public string Group, Theme; //The Group is used for special blocks that should be guaranteed in a room. The Theme is used to give
+        //a certain room a certain appearance.
 
         static Random random = World.Random;
 
@@ -45,6 +46,7 @@ namespace MetroidClone.Engine
             AppearancePreference = 1;
 
             Group = "";
+            Theme = "";
         }
 
         //Updates information about level wall etc.
@@ -141,8 +143,10 @@ namespace MetroidClone.Engine
 
                     int baseX = x + (int)world.TileWidth * i, baseY = y + (int)world.TileHeight * j;
                     float centerX = baseX + world.TileWidth / 2, centerY = baseY + world.TileHeight / 2;
+                    Rectangle stdCollisionRect = new Rectangle(baseX, baseY, (int)world.TileWidth, (int)world.TileHeight);
+
                     if (data == '1') //A wall
-                        world.AddObject(new Wall(new Rectangle(baseX, baseY, (int)world.TileWidth, (int)world.TileHeight)));
+                        world.AddObject(new Wall(stdCollisionRect));
                     else if (data == 'P') //The player
                     {
                         world.Player = new Player();
@@ -152,6 +156,10 @@ namespace MetroidClone.Engine
                         world.AddObject(new JumpThrough(new Rectangle(baseX, baseY, (int)world.TileWidth, 1)));
                     else if (data == 'G') //A gun pickup block
                         world.AddObject(new GunPickup(), centerX, centerY);
+                    else if (data == '\\') //A slope
+                        world.AddObject(new SlopeLeft(stdCollisionRect));
+                    else if (data == '/') //A slope
+                        world.AddObject(new SlopeRight(stdCollisionRect));
                     else if (data == '.')
                     {
                         //Nothing
@@ -180,7 +188,9 @@ namespace MetroidClone.Engine
                 requirements.TopSideType == SideType.Exit | !HasTopExit &&
                 requirements.BottomSideType == SideType.Exit | !HasBottomExit)) &&
                 //And check if the group matches
-                (Group == requirements.Group));
+                (Group == requirements.Group) &&
+                //And check if the theme matches (if this group has a theme)
+                (Theme == "" || requirements.Theme.Contains(Theme)));
         }
     }
 }

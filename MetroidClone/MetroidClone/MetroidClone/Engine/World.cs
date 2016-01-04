@@ -75,7 +75,7 @@ namespace MetroidClone.Engine
                         if (!(solids[k] is Wall) || solids[k].CollidesWith(boundingbox))
                         {
                             SolidGrid[i, j].Add(solids[k]);
-        }
+                        }
                     }
                 }
             }
@@ -133,14 +133,14 @@ namespace MetroidClone.Engine
             Vector2 GoalCamera = new Vector2((int)(Player.Position.X / roomWidth) * roomWidth, (int)(Player.Position.Y / roomHeight) * roomHeight);
 
             //Briefly show a small part of the next room if you bump into a wall there.
-            if (Player.TimeSinceHWallCollision < 2)
+            if (Player.TimeSinceHWallCollision < 5)
             {
                 if (Player.LastHCollisionDirection == Direction.Right && Player.Position.X % roomWidth > roomWidth - TileWidth)
                     GoalCamera.X += TileWidth;
                 if (Player.LastHCollisionDirection == Direction.Left && Player.Position.X % roomWidth < TileWidth)
                     GoalCamera.X -= TileWidth;
             }
-            if (Player.TimeSinceVWallCollision < 2)
+            if (Player.TimeSinceVWallCollision < 5)
             {
                 if (Player.LastVCollisionDirection == Direction.Down && Player.Position.Y % roomHeight > roomHeight - TileHeight)
                     GoalCamera.Y += TileHeight;

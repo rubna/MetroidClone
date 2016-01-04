@@ -17,6 +17,7 @@ namespace MetroidClone.Engine
                     BoundingBox.Width, BoundingBox.Height);
             }
         }
+        public override Vector2 CenterPosition { get { return BoundingBox.Center.ToVector2() + Position; } }
 
         public Wall(Rectangle boundingBox)
         {

@@ -9,6 +9,14 @@ namespace MetroidClone.Engine
     class SlopeRight : GameObject, ISolid
     {
         public Rectangle BoundingBox;
+        protected Rectangle DrawBoundingBox
+        {
+            get
+            {
+                return new Rectangle(BoundingBox.Left - (int)World.Camera.X, BoundingBox.Top - (int)World.Camera.Y,
+                    BoundingBox.Width, BoundingBox.Height);
+            }
+        }
 
         public SlopeRight(Rectangle boundingBox)
         {
@@ -28,7 +36,8 @@ namespace MetroidClone.Engine
         public override void Draw()
         {
             base.Draw();
-            Drawing.DrawTriangle(new Vector2(BoundingBox.Left, BoundingBox.Bottom), new Vector2(BoundingBox.Right, BoundingBox.Top), new Vector2(BoundingBox.Right, BoundingBox.Bottom), Color.Black);
+            Drawing.DrawTriangle(new Vector2(DrawBoundingBox.Left, DrawBoundingBox.Bottom), new Vector2(DrawBoundingBox.Right, DrawBoundingBox.Top),
+                new Vector2(DrawBoundingBox.Right, DrawBoundingBox.Bottom), Color.Black);
         }
     }
 }

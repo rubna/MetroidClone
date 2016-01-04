@@ -85,7 +85,7 @@
     <Compile Include="Engine\Level Generation\RoomExit.cs" />
     <Compile Include="Engine\Level Generation\SpecialTileGroupDefinition.cs" />
     <Compile Include="Engine\Collections\WeightedRandomCollection.cs" />
-	<Compile Include="Engine\TileLoading.cs" />
+    <Compile Include="Engine\TileLoading.cs" />
     <Compile Include="Engine\DrawWrapper.cs" />
     <Compile Include="Engine\GameObject.cs" />
     <Compile Include="Engine\InputHelper.cs" />
@@ -106,15 +106,18 @@
     <Compile Include="Engine\Solids\ISolid.cs" />
     <Compile Include="Engine\Solids\Wall.cs" />
     <Compile Include="Engine\World.cs" />
-    <Compile Include="Metroid\HackThisGame.cs" />
+    <Compile Include="Metroid\Hack This Game system\Hacking opportunities\MovementMods.cs" />
+    <Compile Include="Metroid\Hack This Game system\HackThisGame.cs" />
+    <Compile Include="Metroid\Hack This Game system\IHackingOpportunity.cs" />
     <Compile Include="Metroid\HealthDrop.cs" />
+    <Compile Include="Metroid\Map.cs" />
     <Compile Include="Metroid\RocketAmmo.cs" />
     <Compile Include="Metroid\Collectible.cs" />
     <Compile Include="Metroid\Drone.cs" />
     <Compile Include="Metroid\GunLock.cs" />
     <Compile Include="Metroid\Player Attacks\PlayerAttack.cs" />
     <Compile Include="Metroid\GunPickup.cs" />
-	<Compile Include="Metroid\Abstract\PushableBlock.cs" />
+    <Compile Include="Metroid\Abstract\PushableBlock.cs" />
     <Compile Include="Metroid\Player Attacks\PlayerExplosion.cs" />
     <Compile Include="Metroid\Player Attacks\PlayerBullet.cs" />
     <Compile Include="Metroid\Monsters\Monster.cs" />
@@ -156,6 +159,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

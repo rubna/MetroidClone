@@ -11,6 +11,7 @@ namespace MetroidClone.Engine
     {
         public SideType LeftSideType, RightSideType, TopSideType, BottomSideType;
         public string Group;
+        public string Theme;
 
         public LevelBlockRequirements()
         {
@@ -20,6 +21,7 @@ namespace MetroidClone.Engine
             BottomSideType = SideType.Any;
 
             Group = "";
+            Theme = "";
         }
 
         public LevelBlockRequirements(SideType sideType)
@@ -30,6 +32,7 @@ namespace MetroidClone.Engine
             BottomSideType = sideType;
 
             Group = "";
+            Theme = "";
         }
 
         public bool IsOnlyWalls()

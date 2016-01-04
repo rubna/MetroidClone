@@ -30,6 +30,9 @@ namespace MetroidClone.Metroid
         public int RocketAmmo = 5;
         public int Score = 0;
 
+        public float movementSpeedModifier; //This can be used to change the movement speed.
+        public float jumpHeightModifier; //This can be used to change the jump height.
+
         public override void Create()
         {
             base.Create();
@@ -44,6 +47,9 @@ namespace MetroidClone.Metroid
 
             TimeSinceHWallCollision = 0;
             TimeSinceVWallCollision = 0;
+
+            movementSpeedModifier = 1;
+            jumpHeightModifier = 1;
         }
 
         public override void Update(GameTime gameTime)
@@ -51,13 +57,13 @@ namespace MetroidClone.Metroid
             //move around
             if (Input.KeyboardCheckDown(Keys.Left))
             {
-                Speed.X -= 0.5f;
+                Speed.X -= movementSpeedModifier * 0.5f;
                 FlipX = true;
                 PlayAnimation("tempplayer", Direction.Left, speed: 0.2f);
             }
             if (Input.KeyboardCheckDown(Keys.Right))
             {
-                Speed.X += 0.5f;
+                Speed.X += movementSpeedModifier * 0.5f;
                 FlipX = false;
                 PlayAnimation("tempplayer", Direction.Right, speed: 0.2f);
             }
@@ -77,7 +83,7 @@ namespace MetroidClone.Metroid
             //jump
             if (timeSinceLastJumpIntention < maxTimeSinceLastJumpIntention && timeSinceOnGround < maxFromPlatformTimeForJump && Speed.Y >= 0)
             {
-                Speed.Y = -10f;
+                Speed.Y = -10f * jumpHeightModifier;
                 startedSlowingDownJump = false;
             }
 
@@ -173,11 +179,11 @@ namespace MetroidClone.Metroid
                 }
                 case Weapon.Wrench:
                 {
-                        if (RocketAmmo > 0)
-                        {
-                    World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
-                            RocketAmmo --;
-                        }
+                    if (RocketAmmo > 0)
+                    {
+                        World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
+                        RocketAmmo --;
+                    }
                     break;
                 }
                 default: break;

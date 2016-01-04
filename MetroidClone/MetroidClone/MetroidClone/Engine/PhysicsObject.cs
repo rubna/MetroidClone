@@ -40,6 +40,8 @@ namespace MetroidClone.Engine
 
         const float maxSpeed = 15; //The maximum speed.
 
+        public override Vector2 CenterPosition { get { return BoundingBox.Center.ToVector2() + Position; } }
+
         public override void Update(GameTime gameTime)
         {
             MainGame.Profiler.LogEventStart("PhysicsObject Update");

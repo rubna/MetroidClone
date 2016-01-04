@@ -33,7 +33,7 @@ namespace MetroidClone.Engine
             GetLevelBlocks();
         }
 
-        public void Generate(World world, Vector2 position, List<RoomExit> roomExits = null, List<string> guaranteedSpecialBlocks = null)
+        public void Generate(World world, Vector2 position, List<RoomExit> roomExits = null, List<string> guaranteedSpecialBlocks = null, string theme = "")
         {
             //Null arguments
             roomExits = roomExits ?? new List<RoomExit>();
@@ -46,11 +46,20 @@ namespace MetroidClone.Engine
             int hBlocks = Width / BlockWidth, vBlocks = Height / BlockHeight;
             LevelBlockRequirements[,] basicGrid = new LevelBlockRequirements[hBlocks, vBlocks];
 
-            //By default, all sides are walls.
+            //By default, all sides are walls, unless this is an Open room, in which case all sides (except the walls) are open.
             for (int i = 0; i < hBlocks; i++)
             {
                 for (int j = 0; j < vBlocks; j++)
                 {
+                    /*if (theme.Contains("Open"))
+                    {
+                        basicGrid[i, j] = new LevelBlockRequirements(SideType.Exit);
+                        if (i == 0) basicGrid[i, j].LeftSideType = SideType.Wall;
+                        if (i == hBlocks - 1) basicGrid[i, j].RightSideType = SideType.Wall;
+                        if (j == 0) basicGrid[i, j].TopSideType = SideType.Wall;
+                        if (j == vBlocks - 1) basicGrid[i, j].BottomSideType = SideType.Wall;
+                    }
+                    else*/
                     basicGrid[i, j] = new LevelBlockRequirements(SideType.Wall);
                 }
             }
@@ -80,6 +89,29 @@ namespace MetroidClone.Engine
             //Create the actual level grid
             LevelBlock[,] levelGrid = new LevelBlock[hBlocks, vBlocks];
 
+            //Get any border blocks from the guaranteed blocks.
+            List<string> borderBlocks = guaranteedSpecialBlocks.Where(specialBlock => specialBlock.Contains("Border")).ToList();
+            if (borderBlocks.Count != 0)
+            {
+                foreach (string borderBlock in borderBlocks)
+                {
+                    guaranteedSpecialBlocks.Remove(borderBlock);
+
+                    //Check which direction should be used
+                    Direction dir = Direction.Right;
+                    if (borderBlock.Contains("Left")) dir = Direction.Left;
+                    if (borderBlock.Contains("Right")) dir = Direction.Right;
+                    if (borderBlock.Contains("Up")) dir = Direction.Up;
+                    if (borderBlock.Contains("Down")) dir = Direction.Down;
+
+                    //Find the exit.
+                    RoomExit exit = roomExits.Find(ex => ex.Direction == dir);
+
+                    //And make sure the block is placed there.
+                    basicGrid[exit.Position.X, exit.Position.Y].Group = borderBlock;
+                }
+            }
+
             //Handle guaranteed blocks
             foreach (string guaranteedBlock in guaranteedSpecialBlocks)
             {
@@ -98,13 +130,19 @@ namespace MetroidClone.Engine
             {
                 for (int j = 0; j < vBlocks; j++)
                 {
-                    //Get a block that would fit at this position.
-                    LevelBlock foundBlock = GetPossibleLevelBlock(basicGrid[i, j]);
-                    if (foundBlock != null)
-                        levelGrid[i, j] = foundBlock;
-                    else
-                        throw new Exception("There's no block that would fit here! Please create more blocks (of group '" + basicGrid[i, j].Group +
-                            "') and add them to LevelBlocks.txt.");
+                    if (levelGrid[i, j] == null)
+                    {
+                        //Add the level theme
+                        basicGrid[i, j].Theme += theme;
+
+                        //Get a block that would fit at this position.
+                        LevelBlock foundBlock = GetPossibleLevelBlock(basicGrid[i, j]);
+                        if (foundBlock != null)
+                            levelGrid[i, j] = foundBlock;
+                        else
+                            throw new Exception("There's no block that would fit here! Please create more blocks (of group '" + basicGrid[i, j].Group +
+                                "') and add them to LevelBlocks.txt.");
+                    }
                 }
             }
 
@@ -332,6 +370,7 @@ namespace MetroidClone.Engine
 
             int totalIgnoreCount = 0;
             string blockSpecialGroup = ""; //Groups are used for special, named, blocks, like the starting position of the player.
+            string blockTheme = "";
 
             for (int i = 0; i < levelBlocksLines.Length; i++)
             {
@@ -342,6 +381,8 @@ namespace MetroidClone.Engine
                     totalIgnoreCount++;
                 if (line.StartsWith("ATTENTION") && totalIgnoreCount > 0)
                     totalIgnoreCount--;
+                if (line.StartsWith("THEMEEND"))
+                    blockTheme = "";
                 if (totalIgnoreCount > 0)
                     continue;
 
@@ -355,6 +396,17 @@ namespace MetroidClone.Engine
 
                     //Now, the rest of line is the special group for the next block.
                     blockSpecialGroup = line;
+                }
+                else if (line.StartsWith("THEMESTART"))
+                {
+                    line = line.Replace("THEMESTART", ""); //Delete the SPECIAL part of the line.
+
+                    //If there's a space at the beginning now, remove that, too.
+                    if (line.StartsWith(" "))
+                        line = line.Remove(0, 1);
+
+                    //Now, the rest of line is the current theme of blocks.
+                    blockTheme = line;
                 }
                 else if (line.StartsWith("BLOCK"))
                 {
@@ -390,6 +442,8 @@ namespace MetroidClone.Engine
                         currentLevelBlock.Group = blockSpecialGroup;
                         blockSpecialGroup = ""; //The next block won't be part of a group by default.
                     }
+
+                    currentLevelBlock.Theme = blockTheme;
 
                     //The second argument (optional) should contain information about how often a block appears.
                     if (arguments.Length >= 2)

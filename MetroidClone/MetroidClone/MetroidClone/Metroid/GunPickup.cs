@@ -14,6 +14,7 @@ namespace MetroidClone.Metroid
             base.Create();
             BoundingBox = new Rectangle(-5, -3, 10, 6);
         }
+
         public override void Update(GameTime gameTime)
         {
             if (CollidesWith(Position, World.Player))
