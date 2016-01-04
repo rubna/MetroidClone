@@ -172,7 +172,7 @@ namespace MetroidClone.Engine
         /// <summary>
         /// Returns collision with ISolid and a PhysicsObject, if that object would be at position (x, y).
         /// </summary>
-        protected bool CollidesWith(float x, float y, PhysicsObject obj)
+        protected bool CollidesWith(float xOffset, float yOffset, PhysicsObject obj)
         {
             return CollidesWith(new Vector2(xOffset, yOffset).ToPoint(), obj);
         }
@@ -180,7 +180,7 @@ namespace MetroidClone.Engine
         /// <summary>
         /// Returns collision with ISolid and a PhysicsObject, if that object would be at position (x, y).
         /// </summary>
-        protected bool CollidesWith(Vector2 position, PhysicsObject obj)
+        protected bool CollidesWith(Vector2 offset, PhysicsObject obj)
         {
             return CollidesWith(offset.ToPoint(), obj);
         }
@@ -188,7 +188,7 @@ namespace MetroidClone.Engine
         /// <summary>
         /// Returns collision with ISolid and a PhysicsObject, if that object would be at position.
         /// </summary>
-        protected bool CollidesWith(Point position, PhysicsObject obj)
+        protected bool CollidesWith(Point offset, PhysicsObject obj)
         {
             Rectangle bbox = BoundingBox;
             bbox.Offset(offset);
