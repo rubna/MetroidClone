@@ -90,7 +90,7 @@ namespace MetroidClone.Metroid
             }
 
             //jump
-            if ((Input.KeyboardCheckPressed(Keys.W) || Input.KeyboardCheckPressed(Keys.Up) || Input.ThumbStickCheckDirection(true).Y > 0.9f || Input.GamePadCheckDown(Buttons.A)) && OnGround)
+            if ((Input.KeyboardCheckPressed(Keys.W) || Input.KeyboardCheckPressed(Keys.Up) || Input.ThumbStickCheckDirection(true).Y > 0.9f || Input.GamePadCheckPressed(Buttons.A)) && OnGround)
             {
                 Speed.Y = -10f * jumpHeightModifier;
                 startedSlowingDownJump = true;
