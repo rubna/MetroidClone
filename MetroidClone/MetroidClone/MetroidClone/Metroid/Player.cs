@@ -14,7 +14,7 @@ namespace MetroidClone.Metroid
     {
         float blinkTimer = 0;
         float attackTimer = 0;
-        int collectedScrap = 0;
+        int collectedScrap = 9000;
 
         public Weapon CurrentWeapon = Weapon.Nothing;
         public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
