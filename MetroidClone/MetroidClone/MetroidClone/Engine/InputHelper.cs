@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Diagnostics;
 
 namespace MetroidClone.Engine
 {
@@ -16,6 +17,8 @@ namespace MetroidClone.Engine
         private KeyboardState keyBoardState, lastKeyboardState;
         private GamePadState gamePadState, lastGamePadState;
         private MouseState mouseState, lastMouseState;
+        private Stopwatch vibrateStopwatch = new Stopwatch();
+        private double vibrateTime;
 
         public void Update()
         {
@@ -32,7 +35,12 @@ namespace MetroidClone.Engine
             {
                 lastGamePadState = gamePadState;
                 gamePadState = GamePad.GetState(PlayerIndex.One);
-                if (GamePadCheckDown(Buttons.BigButton) || !gamePadState.IsConnected)
+                if (vibrateStopwatch.ElapsedMilliseconds >= vibrateTime)
+                {
+                    vibrateStopwatch.Reset();
+                    GamePad.SetVibration(PlayerIndex.One, 0, 0);
+                }
+                if (GamePadCheckDown(Buttons.Start) || !gamePadState.IsConnected)
                     ControllerInUse = false;
             }
         }
@@ -117,6 +125,13 @@ namespace MetroidClone.Engine
             if (left)
                 return gamePadState.Triggers.Left == 0 && lastGamePadState.Triggers.Left != 0;
             return gamePadState.Triggers.Right == 0 && lastGamePadState.Triggers.Right != 0;
+        }
+        public void GamePadVibrate(float leftMotor, float rightMotor, double time)
+        {
+            vibrateStopwatch.Restart();
+            if (time > vibrateTime - vibrateStopwatch.ElapsedMilliseconds)
+                vibrateTime = time;
+            GamePad.SetVibration(PlayerIndex.One, leftMotor, rightMotor);
         }
     }
 }
