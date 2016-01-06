@@ -31,16 +31,18 @@ namespace MetroidClone.Metroid
             BoundingBox = new Rectangle(-12, -16, 24, 32);
 
             //make skeleton
-            body = new AnimationBone(this) { Offset = new Vector2(0, 0) };
-            hipLeft = new AnimationBone(body) { Offset = new Vector2(-8, 5) };
-            kneeLeft = new AnimationBone(hipLeft) { Offset = new Vector2(0, 8) };
-            footLeft = new AnimationBone(kneeLeft) { Offset = new Vector2(0, 8) };
+            body = new AnimationBone(this, new Vector2(0, 0));
+            body.Depth = Depth - 10;
+            hipLeft = new AnimationBone(body, new Vector2(-8, 5));
+            kneeLeft = new AnimationBone(hipLeft, new Vector2(0, 8));
+            footLeft = new AnimationBone(kneeLeft, new Vector2(0, 8));
 
-            hipRight = new AnimationBone(body) { Offset = new Vector2(8, 5) };
-            kneeRight = new AnimationBone(hipRight) { Offset = new Vector2(0, 8) };
-            footRight = new AnimationBone(kneeRight) { Offset = new Vector2(0, 8) };
+            hipRight = new AnimationBone(body, new Vector2(8, 5));
+            kneeRight = new AnimationBone(hipRight, new Vector2(0, 8));
+            footRight = new AnimationBone(kneeRight, new Vector2(0, 8));
 
             World.AddObject(body);
+            //body.PlayAnimation("RobotSpriteBody", 0);
             World.AddObject(hipLeft);
             World.AddObject(kneeLeft);
             World.AddObject(footLeft);
@@ -132,7 +134,7 @@ namespace MetroidClone.Metroid
                     blinkTimer = 0;
                     Visible = true;
                 }
-        }
+            }
 
             //animation
             PlayAnimationWalking();
@@ -143,19 +145,21 @@ namespace MetroidClone.Metroid
             AnimationRotation += 8;
             AnimationRotation %= 360;
 
+            hipLeft.Offset = hipLeft.OriginalOffset + new Vector2(0.5f, 1) * new Vector2(4, AnimationRotation).ToCartesian();
+            hipRight.Offset = hipRight.OriginalOffset + new Vector2(0.5f, 1) * new Vector2(4, AnimationRotation + 180).ToCartesian();
 
             hipLeft.ImageRotation = VectorExtensions.LengthDirectionX(45, AnimationRotation + 180);
             hipRight.ImageRotation = VectorExtensions.LengthDirectionX(45, AnimationRotation);
-            kneeLeft.ImageRotation = VectorExtensions.LengthDirectionX(45, AnimationRotation + 180 - 45);
-            kneeRight.ImageRotation = VectorExtensions.LengthDirectionX(45, AnimationRotation - 45);
+            kneeLeft.ImageRotation = Math.Max(VectorExtensions.LengthDirectionX(45, AnimationRotation + 180 - 90), kneeLeft.Parent.ImageRotation);
+            kneeRight.ImageRotation = VectorExtensions.LengthDirectionX(45, AnimationRotation - 90);
 
         }
 
-        public override void Draw()
+        /*public override void Draw()
         {
-            Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
+            //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
             base.Draw();
-        }
+        }*/
 
         void Attack()
         {

@@ -58,7 +58,7 @@ namespace MetroidClone.Engine
         {
             //Draw the current image of the sprite. By default, the size of the bounding box is used.
             if (CurrentSprite != null && Visible)
-                Drawing.DrawSprite(CurrentSprite, Position, (int)CurrentImage, ImageScaling * new Vector2(BoundingBox.Width, BoundingBox.Height));
+                Drawing.DrawSprite(CurrentSprite, Position, (int)CurrentImage, ImageScaling);// * new Vector2(BoundingBox.Width, BoundingBox.Height));
         }
 
         void CheckOnGround()

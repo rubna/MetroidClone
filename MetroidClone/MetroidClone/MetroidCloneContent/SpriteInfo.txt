@@ -6,3 +6,4 @@
 //For a sprite strip, the sheet size can be a single number.
 //Example: player bottomcenter 3
 tempplayer middle 4x1
+RobotSpriteBody topcenter 1x1

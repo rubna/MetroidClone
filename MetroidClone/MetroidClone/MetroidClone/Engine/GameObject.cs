@@ -11,6 +11,7 @@ namespace MetroidClone.Engine
     class GameObject
     {
         public Vector2 Position = Vector2.Zero;
+        //public Vector2 DrawPosition { get { Position - World.Camera } };
         public bool FlipX = false;
         public int GetFlip
         {
@@ -33,7 +34,7 @@ namespace MetroidClone.Engine
         public bool Visible = true;
 
         //Information about the sprite. For objects without a sprite, CurrentSprite is null.
-        protected Sprite CurrentSprite;
+        public Sprite CurrentSprite;
         protected float CurrentImage;
         protected bool AnimationIsRepeating;
         protected float AnimationSpeed;
@@ -81,7 +82,7 @@ namespace MetroidClone.Engine
         }
 
         //Plays an animation. 
-        protected void PlayAnimation(string sprite, float? startImage = null, bool repeat = true, float speed = 1, Vector2? scaling = null)
+        public void PlayAnimation(string sprite, float? startImage = null, bool repeat = true, float speed = 1, Vector2? scaling = null)
         {
             CurrentSprite = Assets.GetSprite(sprite);
             if (startImage != null)

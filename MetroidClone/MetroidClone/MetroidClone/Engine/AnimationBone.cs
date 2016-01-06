@@ -10,6 +10,7 @@ namespace MetroidClone.Engine
     {
         public PhysicsObject Parent { get; private set; } = null;
         public Vector2 Offset = Vector2.Zero;
+        public Vector2 OriginalOffset;
         public Vector2 TargetPosition
         {
             get
@@ -27,9 +28,11 @@ namespace MetroidClone.Engine
         }
         public float DepthOffset = -1;
 
-        public AnimationBone(PhysicsObject parent)
+        public AnimationBone(PhysicsObject parent, Vector2 offset)
         {
             Parent = parent;
+            Offset = offset;
+            OriginalOffset = offset;
         }
 
         public override void Create()
