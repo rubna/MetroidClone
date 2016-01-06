@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using MetroidClone.Engine;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace MetroidClone.Metroid
 {
@@ -54,7 +55,7 @@ namespace MetroidClone.Metroid
 
         public override void DrawGUI()
         {
-            if (Input.KeyboardCheckDown(Microsoft.Xna.Framework.Input.Keys.M))
+            if (Input.KeyboardCheckDown(Keys.M) || Input.GamePadCheckDown(Buttons.Back))
                 DrawMap();
 
             base.DrawGUI();
