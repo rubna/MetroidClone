@@ -2,21 +2,32 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using MetroidClone.Metroid;
 
 namespace MetroidClone.Engine
 {
     class World
     {
+        public enum GameState
+        {
+            MainMenu,
+            Playing,
+            Paused
+        }
+
         public List<GameObject> GameObjects;
         List<GameObject> newGameObjects;
 
         public DrawWrapper DrawWrapper { get; set; }
         public AssetManager AssetManager { get; set; }
         public Level Level;
+        public MainMenu MainMenu;
+        public PauseMenu PauseMenu;
         public Player Player;
         public static Random Random;
         public Vector2 Camera;
+        public GameState PlayingState = GameState.MainMenu;
 
         public float Width { get; protected set; } = 8000;
         public float Height { get; protected set; } = 8000;
@@ -41,7 +52,8 @@ namespace MetroidClone.Engine
         {
             GameObjects = new List<GameObject>();
             newGameObjects = new List<GameObject>();
-
+            MainMenu = new MainMenu();
+            PauseMenu = new PauseMenu();
             shouldUpdateSolidGrid = false;
 
             Random = new Random();
@@ -51,9 +63,11 @@ namespace MetroidClone.Engine
 
         public void Initialize()
         {
+            newGameObjects.Clear();
+            AddObject(MainMenu);
+            AddObject(PauseMenu);
             (new WorldGenerator()).Generate(this);
             UpdateCamera(true);
-
             shouldUpdateSolidGrid = true;
         }
 
@@ -116,22 +130,51 @@ namespace MetroidClone.Engine
 
         public void Update(GameTime gameTime)
         {
-            foreach (GameObject gameObject in GameObjects)
-                gameObject.Update(gameTime);
-
-            List<GameObject> addedObjects = newGameObjects.Select(x => x).ToList();
-            addedObjects = addedObjects.Except(GameObjects).ToList();
-            foreach (GameObject gameObject in addedObjects)
-                gameObject.Create();
-            GameObjects = newGameObjects.Select(x => x).ToList();
-
-            if (shouldUpdateSolidGrid)
+            var inputHelper = InputHelper.Instance;
+            
+            if (PlayingState == GameState.Playing)
             {
-                shouldUpdateSolidGrid = false;
-                UpdateSolidGrid();
-            }
+                foreach (GameObject gameObject in GameObjects)
+                    gameObject.Update(gameTime);
 
-            UpdateCamera(); //Update the position of the camera.
+                List<GameObject> addedObjects = newGameObjects.Select(x => x).ToList();
+                addedObjects = addedObjects.Except(GameObjects).ToList();
+                foreach (GameObject gameObject in addedObjects)
+                    gameObject.Create();
+                GameObjects = newGameObjects.Select(x => x).ToList();
+
+                if (shouldUpdateSolidGrid)
+                {
+                    shouldUpdateSolidGrid = false;
+                    UpdateSolidGrid();
+                }
+
+                UpdateCamera(); //Update the position of the camera.
+                PauseMenu.ResumeGame = false;
+                MainMenu.StartGame = false;
+            }
+            if (PlayingState == GameState.MainMenu)
+            {
+                MainMenu.Update(gameTime);
+                PauseMenu.ExitGame = false;
+            }
+            if (PlayingState == GameState.Paused)
+            {
+                PauseMenu.Update(gameTime);
+            }
+            if (MainMenu.StartGame)
+            {
+                Initialize();
+                PlayingState = GameState.Playing;
+            }
+            if (PauseMenu.ResumeGame)
+                PlayingState = GameState.Playing;
+            if (PauseMenu.ExitGame)
+                PlayingState = GameState.MainMenu;
+            if (inputHelper.KeyboardCheckPressed(Keys.Escape) && PlayingState == GameState.Playing)
+            {
+                PlayingState = GameState.Paused;
+            }
         }
 
         void UpdateCamera(bool jumpToGoal = false)
@@ -179,8 +222,13 @@ namespace MetroidClone.Engine
         public void Draw()
         {
             //TODO: Only draw objects that are visible.
-            foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
-                gameObject.Draw();
+            if (PlayingState == GameState.Playing)
+                foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
+                    gameObject.Draw();
+            if (PlayingState == GameState.Paused)
+                PauseMenu.Draw2(); 
+            if (PlayingState == GameState.MainMenu)
+                MainMenu.Draw2();
         }
 
         public void DrawGUI()
