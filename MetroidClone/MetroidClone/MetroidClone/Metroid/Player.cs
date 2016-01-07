@@ -77,7 +77,7 @@ namespace MetroidClone.Metroid
                 timeSinceOnGround++;
 
             //You can press jump a small time before landing on a platform and you'll still jump
-            if (Input.KeyboardCheckDown(Keys.W) || Input.KeyboardCheckDown(Keys.Up) || Input.ThumbStickCheckDirection(true).Y > 0.75f || Input.GamePadCheckDown(Buttons.A))
+            if (Input.KeyboardCheckPressed(Keys.W) || Input.KeyboardCheckPressed(Keys.Up) || Input.ThumbStickCheckDirection(true).Y > 0.75f || Input.GamePadCheckPressed(Buttons.A))
                 timeSinceLastJumpIntention = 0;
             else
                 timeSinceLastJumpIntention++;
