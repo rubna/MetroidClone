@@ -37,10 +37,10 @@ DEFINE γ AS WALL OR GROUP OF 1 .
 And here are the actual generation blocks.
 
 BLOCK ULR
-1\...
-11\..
-2mmn.
-1111\
+12222
+1...1
+2l1.2
+111\2
 11111
 
 BLOCK UDLR 0.75
@@ -213,12 +213,19 @@ BLOCK LRD
 2hhh2
 1γ2γ1
 
-BLOCK UD 0.5
+BLOCK UD 0.25
 11211
 1...1
-1c1c1
-1.1.1
-12221
+111.1
+1...1
+12211
+
+BLOCK UD 0.25
+11211
+1...1
+1.111
+1...1
+11221
 
 BLOCK LRUD! 2
 1β2β1

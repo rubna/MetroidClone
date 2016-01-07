@@ -97,4 +97,7 @@ namespace MetroidClone.Metroid
             world.Player.jumpHeightModifier *= 1.2f;
         }
     }
+
+    //With this effect, the player will teleport to a random position
+
 }

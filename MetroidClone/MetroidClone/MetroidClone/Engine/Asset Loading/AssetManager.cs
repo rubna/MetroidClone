@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
 using MetroidClone.Engine.Asset;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace MetroidClone.Engine
 {
@@ -113,7 +114,9 @@ namespace MetroidClone.Engine
         {
             if (! assets.ContainsKey(name))
             {
-                assets[name] = new Sprite(content.Load<Texture2D>("Content/" + name), spriteInfo[name]["origin"], spriteInfo[name]["sheetsize"]);
+                //Get the sprite info dictionary.
+                Dictionary<string, Vector2> thisSpriteInfo = spriteInfo.Where(si => Regex.IsMatch(name, si.Key)).First().Value;
+                assets[name] = new Sprite(content.Load<Texture2D>("Content/" + name), thisSpriteInfo["origin"], thisSpriteInfo["sheetsize"]);
             }
             return assets[name] as Sprite;
         }

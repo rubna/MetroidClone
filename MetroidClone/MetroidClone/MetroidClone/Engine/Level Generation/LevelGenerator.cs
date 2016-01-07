@@ -151,8 +151,8 @@ namespace MetroidClone.Engine
             {
                 for (int j = 0; j < vBlocks; j++)
                 {
-                    levelGrid[i, j].Place(World, specialTiles, (int) position.X + i * BlockWidth * (int) world.TileWidth,
-                        (int) position.Y + j * BlockHeight * (int) world.TileHeight, basicGrid[i, j].LeftSideType == SideType.Wall,
+                    levelGrid[i, j].Place(World, specialTiles, (int) position.X + i * BlockWidth * (int) World.TileWidth,
+                        (int) position.Y + j * BlockHeight * (int) World.TileHeight, basicGrid[i, j].LeftSideType == SideType.Wall,
                         basicGrid[i, j].RightSideType == SideType.Wall, basicGrid[i, j].TopSideType == SideType.Wall,
                         basicGrid[i, j].BottomSideType == SideType.Wall);
                 }
@@ -572,7 +572,7 @@ namespace MetroidClone.Engine
         {
             List<char> knownWallCharacters = new List<char>();
 
-            knownWallCharacters.Add('1'); //'1' is the normal character for a wall, so this is always a wall.
+            knownWallCharacters.Add('1'); //'1' is the normal character for a wall, so this is always a wall
 
             foreach (KeyValuePair<char, ISpecialTileDefinition> specialTile in specialTiles)
             {

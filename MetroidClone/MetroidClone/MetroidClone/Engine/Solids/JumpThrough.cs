@@ -6,18 +6,8 @@ using Microsoft.Xna.Framework;
 
 namespace MetroidClone.Engine
 {
-    class JumpThrough : GameObject, ISolid
+    class JumpThrough : BoxObject, ISolid
     {
-        Rectangle BoundingBox;
-        protected Rectangle DrawBoundingBox
-        {
-            get
-            {
-                return new Rectangle(BoundingBox.Left - (int)World.Camera.X, BoundingBox.Top - (int)World.Camera.Y,
-                    BoundingBox.Width, BoundingBox.Height);
-            }
-        }
-
         public JumpThrough(Rectangle boundingBox)
         {
             boundingBox.Height = 1;

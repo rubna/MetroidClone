@@ -24,34 +24,29 @@ namespace MetroidClone.Engine
 
         public float Depth = 0;
 
-        public World World;
-        public DrawWrapper Drawing;
-        public AssetManager Assets;
+        //Various useful objects
+        public World World { protected get; set; }
+        public DrawWrapper Drawing { protected get; set; }
+        public AssetManager Assets { protected get; set; }
         protected InputHelper Input;
         public bool Visible = true;
 
         //Information about the sprite. For objects without a sprite, CurrentSprite is null.
-        protected Sprite CurrentSprite;
-        protected float CurrentImage;
-        protected bool AnimationIsRepeating;
-        protected float AnimationSpeed;
+        protected Sprite CurrentSprite = null;
+        protected float CurrentImage = 0;
+        protected bool AnimationIsRepeating = false;
+        protected float AnimationSpeed = 0;
         protected Vector2 ImageScaling;
         protected float ImageRotation;
 
         //Event handlers
         public event EventHandler AnimationFinished;
 
-        //Enum
-        protected enum Direction { Left, Right };
+        public virtual bool ShouldUpdate => true; //Whether we should update this object.
 
         public virtual void Create()
         {
             Input = InputHelper.Instance;
-
-            CurrentSprite = null;
-            CurrentImage = 0;
-            AnimationIsRepeating = false;
-            AnimationSpeed = 0;
         }
 
         public virtual void Update(GameTime gameTime)
@@ -84,7 +79,7 @@ namespace MetroidClone.Engine
         }
 
         //Plays an animation. 
-        protected void PlayAnimation(string sprite, float? startImage = null, bool repeat = true, float speed = 1, Vector2? scaling = null)
+        public void PlayAnimation(string sprite, float? startImage = null, bool repeat = true, float speed = 1, Vector2? scaling = null)
         {
             CurrentSprite = Assets.GetSprite(sprite);
             if (startImage != null)
@@ -95,9 +90,15 @@ namespace MetroidClone.Engine
         }
 
         //Plays an animation with the option to define the direction instead of the scaling.
-        protected void PlayAnimation(string sprite, Direction direction, float? startImage = null, bool repeat = true, float speed = 1)
+        public void PlayAnimation(string sprite, Direction direction, float? startImage = null, bool repeat = true, float speed = 1)
         {
             PlayAnimation(sprite, startImage, repeat, speed, new Vector2(direction == Direction.Right ? 1f: -1f, 1f));
+        }
+
+        //A more basic way to set a sprite, which may result in more readable code for some use cases.
+        public void SetSprite(string sprite)
+        {
+            PlayAnimation(sprite);
         }
 
         //Methods to call when events occur
