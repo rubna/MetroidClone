@@ -82,7 +82,7 @@ namespace MetroidClone.Engine
                         if (!(solids[k] is Wall) || solids[k].CollidesWith(boundingbox))
                         {
                             SolidGrid[i, j].Add(solids[k]);
-                        }
+        }
                     }
                 }
             }
@@ -107,6 +107,15 @@ namespace MetroidClone.Engine
             GameObjects.Add(gameObject);
             gameObject.Create();
             AddedGameObjects.Add(gameObject);
+        }
+
+        public void AddObject(GameObject gameObject, Vector2 position, Vector2 direction)
+        {
+            gameObject.World = this;
+            gameObject.Drawing = DrawWrapper;
+            gameObject.Position = position;
+            gameObject.Assets = AssetManager;
+            newGameObjects.Add(gameObject);
         }
 
         public void RemoveObject(GameObject gameObject)
