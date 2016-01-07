@@ -86,26 +86,41 @@ namespace MetroidClone.Engine
         }
         public Vector2 ThumbStickCheckDirection(bool left)
         {
+            if (!ControllerInUse)
+                return Vector2.Zero;
+
             if (left)
-                return gamePadState.ThumbSticks.Left * (1 / gamePadState.ThumbSticks.Left.Length());
-            return new Vector2(gamePadState.ThumbSticks.Right.X, -gamePadState.ThumbSticks.Right.Y) * (1 / gamePadState.ThumbSticks.Right.Length());
+                return gamePadState.ThumbSticks.Left;
+            return gamePadState.ThumbSticks.Right;
         }
         public bool ThumbStickCheckDown(bool left)
         {
+            if (!ControllerInUse)
+                return false;
+
             if (left)
                 return (gamePadState.ThumbSticks.Left.X != 0 || gamePadState.ThumbSticks.Left.Y != 0);
             return (gamePadState.ThumbSticks.Right.X != 0 || gamePadState.ThumbSticks.Right.Y != 0);
         }
         public bool GamePadCheckDown(Buttons b)
         {
+            if (!ControllerInUse)
+                return false;
+
             return gamePadState.IsButtonDown(b);
         }
         public bool GamePadCheckReleased(Buttons b)
         {
+            if (!ControllerInUse)
+                return false;
+
             return gamePadState.IsButtonUp(b) && lastGamePadState.IsButtonDown(b);
         }
         public bool GamePadCheckPressed(Buttons b)
         {
+            if (!ControllerInUse)
+                return false;
+
             return gamePadState.IsButtonDown(b) && lastGamePadState.IsButtonUp(b);
         }
         public bool GamePadTriggerCheckDown(bool left)

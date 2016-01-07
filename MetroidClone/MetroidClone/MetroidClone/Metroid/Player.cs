@@ -18,7 +18,7 @@ namespace MetroidClone.Metroid
         const int maxFromPlatformTimeForJump = 5; //The maximum time you can still jump after having moved from a platform.
         float attackTimer = 0;
 
-        int timeSinceLastJumpIntention = 0;
+        int timeSinceLastJumpIntention = 10;
         const int maxTimeSinceLastJumpIntention = 5; //The maximum time you can press the jump button before landing on a platform.
 
         public int TimeSinceHWallCollision, TimeSinceVWallCollision;
@@ -77,7 +77,7 @@ namespace MetroidClone.Metroid
                 timeSinceOnGround++;
 
             //You can press jump a small time before landing on a platform and you'll still jump
-            if (Input.KeyboardCheckDown(Keys.W) || Input.KeyboardCheckDown(Keys.Up) || Input.ThumbStickCheckDirection(true).Y > 0.9f || Input.GamePadCheckDown(Buttons.A))
+            if (Input.KeyboardCheckDown(Keys.W) || Input.KeyboardCheckDown(Keys.Up) || Input.ThumbStickCheckDirection(true).Y > 0.75f || Input.GamePadCheckDown(Buttons.A))
                 timeSinceLastJumpIntention = 0;
             else
                 timeSinceLastJumpIntention++;
@@ -89,13 +89,7 @@ namespace MetroidClone.Metroid
                 startedSlowingDownJump = false;
             }
 
-            //jump
-            if ((Input.KeyboardCheckPressed(Keys.W) || Input.KeyboardCheckPressed(Keys.Up) || Input.ThumbStickCheckDirection(true).Y > 0.9f || Input.GamePadCheckPressed(Buttons.A)) && OnGround)
-            {
-                Speed.Y = -10f * jumpHeightModifier;
-                startedSlowingDownJump = true;
-            }
-            if ((Speed.Y < 0 && (!Input.KeyboardCheckDown(Keys.W) && !Input.KeyboardCheckDown(Keys.Up) && Input.ThumbStickCheckDirection(true).Y <= 0.9f && !Input.GamePadCheckDown(Buttons.A))) && (Speed.Y < -3 || startedSlowingDownJump))
+            if ((Speed.Y < 0 && (!Input.KeyboardCheckDown(Keys.W) && !Input.KeyboardCheckDown(Keys.Up) && Input.ThumbStickCheckDirection(true).Y <= 0.75f && !Input.GamePadCheckDown(Buttons.A))) && (Speed.Y < -3 || startedSlowingDownJump))
             {
                 Speed.Y *= 0.9f;
                 startedSlowingDownJump = true;
@@ -110,7 +104,7 @@ namespace MetroidClone.Metroid
             {
                 if (attackTimer == 0)
                 {
-                Attack();
+                    Attack();
                     switch ((int)CurrentWeapon)
                     {
                         case 0:
