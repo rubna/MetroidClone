@@ -88,6 +88,10 @@ namespace MetroidClone.Engine
                 return mouseState.ScrollWheelValue > lastMouseState.ScrollWheelValue;
             return mouseState.ScrollWheelValue < lastMouseState.ScrollWheelValue;
         }
+        public bool MouseWheelPressed()
+        {
+            return mouseState.MiddleButton == ButtonState.Pressed && lastMouseState.MiddleButton == ButtonState.Released;
+        }
 
         public bool ControllerCheckConnected()
         {

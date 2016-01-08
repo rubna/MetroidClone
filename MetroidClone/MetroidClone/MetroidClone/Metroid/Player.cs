@@ -100,7 +100,7 @@ namespace MetroidClone.Metroid
                 Speed.Y *= 0.9f;
                 startedSlowingDownJump = true;
             }
-            
+
             //drop through jumpthroughs
             if ((Input.KeyboardCheckPressed(Keys.S) || Input.KeyboardCheckPressed(Keys.Down) || Input.ThumbStickCheckDirection(true).Y < 0) && OnJumpThrough)
                 Position.Y++;
@@ -110,7 +110,7 @@ namespace MetroidClone.Metroid
             {
                 if (attackTimer == 0)
                 {
-                Attack();
+                    Attack();
                     switch ((int)CurrentWeapon)
                     {
                         case (int)Weapon.Nothing:
@@ -129,12 +129,12 @@ namespace MetroidClone.Metroid
                 }
             }
 
-            if (Input.KeyboardCheckPressed(Keys.F) || Input.GamePadCheckPressed(Buttons.B))
+            if (Input.KeyboardCheckPressed(Keys.F) || Input.MouseWheelPressed() || Input.GamePadCheckPressed(Buttons.B))
             {
-                if (attackTimer == 0/* && UnlockedWeapons.Contains(Weapon.Wrench)*/)
+                if (attackTimer == 0 && UnlockedWeapons.Contains(Weapon.Wrench))
                 {
                     World.AddObject(new PlayerMelee(), Position + GetFlip * Vector2.UnitX * 20);
-                    attackTimer = 0.15f;
+                    attackTimer = 0.1f;
                 }
             }
 
