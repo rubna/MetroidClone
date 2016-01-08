@@ -28,8 +28,11 @@ namespace MetroidClone.Engine
                 keyBoardState = Keyboard.GetState();
                 lastMouseState = mouseState;
                 mouseState = Mouse.GetState();
-                if (KeyboardCheckDown(Keys.Enter))
+                if (KeyboardCheckPressed (Keys.Enter))
+                {
                     ControllerInUse = true;
+                    GamePadVibrate(1, 1, 200);
+                }
             }
             else
             {
@@ -78,6 +81,12 @@ namespace MetroidClone.Engine
             if (left)
                 return mouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton == ButtonState.Released;
             return mouseState.RightButton == ButtonState.Pressed && lastMouseState.RightButton == ButtonState.Released;
+        }
+        public bool MouseWheelCheckScroll(bool up)
+        {
+            if (up)
+                return mouseState.ScrollWheelValue > lastMouseState.ScrollWheelValue;
+            return mouseState.ScrollWheelValue < lastMouseState.ScrollWheelValue;
         }
 
         public bool ControllerCheckConnected()

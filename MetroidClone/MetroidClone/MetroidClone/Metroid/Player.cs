@@ -107,19 +107,14 @@ namespace MetroidClone.Metroid
                     Attack();
                     switch ((int)CurrentWeapon)
                     {
-                        case 0:
+                        case (int)Weapon.Nothing:
                             break;
-                        case 1:
+                        case (int)Weapon.Gun:
                             {
                                 attackTimer = 0.1f;
                                 break;
                             }
-                        case 2:
-                            {
-                                attackTimer = 0.1f;
-                                break;
-                            }
-                        case 3:
+                        case (int)Weapon.Rocket:
                             {
                                 attackTimer = 0.2f;
                                 break;
@@ -128,14 +123,23 @@ namespace MetroidClone.Metroid
                 }
             }
 
+            if (Input.KeyboardCheckPressed(Keys.F) || Input.GamePadCheckPressed(Buttons.B))
+            {
+                if (attackTimer == 0/* && UnlockedWeapons.Contains(Weapon.Wrench)*/)
+                {
+                    World.AddObject(new PlayerMelee(), Position + GetFlip * Vector2.UnitX * 20);
+                    attackTimer = 0.15f;
+                }
+            }
+
             //switch weapons
-            if (Input.KeyboardCheckPressed(Keys.C) || Input.MouseButtonCheckPressed(false) || Input.GamePadCheckPressed(Buttons.Y))
+            if (Input.KeyboardCheckPressed(Keys.C) || Input.MouseWheelCheckScroll(true) || Input.MouseWheelCheckScroll(false) || Input.GamePadCheckPressed(Buttons.Y))
             {
                 NextWeapon();
                 Console.WriteLine(CurrentWeapon);
             }
 
-            if (Input.KeyboardCheckPressed(Keys.Space) || Input.GamePadCheckPressed(Buttons.B))
+            if (Input.KeyboardCheckPressed(Keys.Space) || Input.GamePadCheckPressed(Buttons.X))
             {
                 CreateDrone();
             }
@@ -224,14 +228,9 @@ namespace MetroidClone.Metroid
                 }
                 case Weapon.Rocket:
                 {
-                    World.AddObject(new PlayerMelee(), Position + GetFlip * Vector2.UnitX * 20);
-                    break;
-                }
-                case Weapon.Wrench:
-                {
                         if (RocketAmmo > 0)
                         {
-                    World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
+                            World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
                             RocketAmmo --;
                         }
                     break;
@@ -258,15 +257,10 @@ namespace MetroidClone.Metroid
 
         void NextWeapon()
         {
-            CurrentWeapon++;
-            if ((int)CurrentWeapon > 3)
-            {
-                CurrentWeapon = 0;
-                if (!UnlockedWeapons.Contains(CurrentWeapon))
-                    NextWeapon();
-            }
-            if (!UnlockedWeapons.Contains(CurrentWeapon))
-                NextWeapon();
+            if (CurrentWeapon == Weapon.Gun && UnlockedWeapons.Contains(Weapon.Rocket))
+                CurrentWeapon = Weapon.Rocket;
+            if (CurrentWeapon == Weapon.Rocket && UnlockedWeapons.Contains(Weapon.Gun))
+                CurrentWeapon = Weapon.Gun;
         }
     }
     public enum Weapon
