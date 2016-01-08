@@ -231,7 +231,7 @@ namespace MetroidClone.Metroid
                 {
                         if (RocketAmmo > 0)
                         {
-                    World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
+                            World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
                             RocketAmmo --;
                         }
                     break;

@@ -179,7 +179,7 @@ namespace MetroidClone.Engine
                 }
             }
 
-            for (int i = 0; i < LevelWidth * WorldWidth; i++)
+            /*for (int i = 0; i < LevelWidth * WorldWidth; i++)
                 for (int j = 0; j < LevelHeight * WorldHeight; j++)
                 {
                     if (!doNotCreateBackground[i, j])
@@ -189,7 +189,7 @@ namespace MetroidClone.Engine
                         world.AddObject(bgt);
                         bgt.SetSprite("BackgroundTileset/background" + World.Random.Next(1, 5));
                     }
-                }
+                }*/
         }
     }
 }

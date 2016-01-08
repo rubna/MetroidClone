@@ -37,6 +37,8 @@ namespace MetroidClone.Metroid
         bool hasWinner;
         float timeUntilChoiceEnd = 0, timeLeftToDrawChoice = 0;
 
+        public override bool ShouldDrawGUI => true;
+
         public HackThisGame()
         {
             //Set variables

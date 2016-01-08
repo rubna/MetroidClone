@@ -18,7 +18,12 @@ namespace MetroidClone.Metroid
             Gravity = 0;
             CollideWithWalls = false;
             if (Input.ControllerInUse)
-                Speed = 5 * Input.ThumbStickCheckDirection(false);
+            {
+                Vector2 dir = Input.ThumbStickCheckDirection(false);
+                dir.Y = -dir.Y;
+                dir.Normalize();
+                Speed = 5 * dir;
+            }
             else
             {
                 Speed = Input.MouseCheckPosition().ToVector2() - DrawPosition;

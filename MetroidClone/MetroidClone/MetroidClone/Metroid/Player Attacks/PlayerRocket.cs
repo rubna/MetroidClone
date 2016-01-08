@@ -19,11 +19,17 @@ namespace MetroidClone.Metroid.Player_Attacks
             Friction.X = 0.99f;
             BoundingBox = new Rectangle(-4, -2, 8, 4);
             if (Input.ControllerInUse)
+            {
                 direction = Input.ThumbStickCheckDirection(false);
+                direction.Y = -direction.Y;
+;
+            }
             else
+            {
                 direction = Input.MouseCheckPosition().ToVector2() - Position;
-
+            }
             direction.Normalize();
+
             Speed = direction;
         }
 

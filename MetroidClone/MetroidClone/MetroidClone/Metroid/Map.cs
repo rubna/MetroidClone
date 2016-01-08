@@ -13,6 +13,8 @@ namespace MetroidClone.Metroid
     {
         bool[,] hasVisitedCell;
 
+        public override bool ShouldDrawGUI => true; //This object has a GUI event.
+
         public Map()
         {
             Depth = 10; //Should be drawn below other GUI items.
@@ -57,8 +59,6 @@ namespace MetroidClone.Metroid
         {
             if (Input.KeyboardCheckDown(Keys.M) || Input.GamePadCheckDown(Buttons.Back))
                 DrawMap();
-
-            base.DrawGUI();
         }
 
         public override void Update(GameTime gameTime)
