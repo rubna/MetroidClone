@@ -21,7 +21,7 @@ namespace MetroidClone.Metroid
                 Speed = 5 * Input.ThumbStickCheckDirection(false);
             else
             {
-                Speed = Input.MouseCheckPosition().ToVector2() - DrawPosition;
+                Speed = Input.MouseCheckPosition() - DrawPosition;
                 Speed.Normalize();
                 Speed *= 5;
             }

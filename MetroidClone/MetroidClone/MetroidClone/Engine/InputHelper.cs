@@ -19,6 +19,7 @@ namespace MetroidClone.Engine
         private MouseState mouseState, lastMouseState;
         private Stopwatch vibrateStopwatch = new Stopwatch();
         private double vibrateTime;
+        
 
         public void Update()
         {
@@ -59,7 +60,7 @@ namespace MetroidClone.Engine
         }
         public Point MouseCheckPosition()
         {
-            return new Point(mouseState.X, mouseState.Y);
+                return new Point(mouseState.X, mouseState.Y);
         }
         public bool MouseButtonCheckDown(bool left)
         {

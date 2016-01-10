@@ -14,28 +14,23 @@ namespace MetroidClone.Metroid
     {
         public bool StartGame = false;
         public bool ExitGame = false;
-        MouseState mouseState;
-        MouseState previousMouseState;
-        private Vector2 startButtonPosition;
-        private Vector2 exitButtonPosition;
-
+        InputHelper inputHelper = InputHelper.Instance;
 
         public void Update(GameTime gameTime)
         {
+
+            
             //wait for mouseclick
-            mouseState = Mouse.GetState();
-            if (previousMouseState.LeftButton == ButtonState.Pressed &&
-                mouseState.LeftButton == ButtonState.Released)
+            if (inputHelper.MouseButtonCheckPressed(true))
             {
-                MouseClicked(mouseState.X, mouseState.Y);
+                MouseClicked(inputHelper.MouseCheckPosition().X, inputHelper.MouseCheckPosition().Y);
             }
-            previousMouseState = mouseState;
         }
         public void Draw2()
         {
 
             Drawing.DrawRectangle(new Rectangle((int)(Drawing.ScreenSize.X / 2), (int)(Drawing.ScreenSize.Y / 2) - 50, 200, 100), Color.Black);
-            Drawing.DrawRectangle(new Rectangle((int)(Drawing.ScreenSize.X / 2), (int)(Drawing.ScreenSize.X / 2), 200, 100), Color.Black);
+            Drawing.DrawRectangle(new Rectangle((int)(Drawing.ScreenSize.X / 2), (int)(Drawing.ScreenSize.Y / 2) + 100, 200, 100), Color.Black);
             //draw the Mainmenu
 
 
@@ -46,9 +41,8 @@ namespace MetroidClone.Metroid
         {
             //creates a rectangle of 10x10 around the place where the mouse was clicked
             Rectangle mouseClickRect = new Rectangle(x, y, 10, 10);
-
             Rectangle startButtonRect = new Rectangle((int)(Drawing.ScreenSize.X / 2), (int)(Drawing.ScreenSize.Y / 2) - 50, 200, 100);
-            Rectangle exitButtonRect = new Rectangle((int)(Drawing.ScreenSize.X / 2), (int)(Drawing.ScreenSize.X / 2), 200, 100);
+            Rectangle exitButtonRect = new Rectangle((int)(Drawing.ScreenSize.X / 2), (int)(Drawing.ScreenSize.Y / 2) + 100, 200, 100);
             if (mouseClickRect.Intersects(startButtonRect)) //player clicked start button
             {
                 StartGame = true;

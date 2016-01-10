@@ -213,7 +213,7 @@ namespace MetroidClone.Metroid
             base.Draw();
             //mouse pointer, disabled when controller in use
             if (!Input.ControllerInUse)
-                Drawing.DrawRectangle(new Rectangle(Input.MouseCheckPosition().X - 5, Input.MouseCheckPosition().Y - 5, 10, 10), Color.DarkKhaki);
+                Drawing.DrawRectangle(new Rectangle((int)Input.MouseCheckPosition().X - 5, (int)Input.MouseCheckPosition().Y - 5, 10, 10), Color.DarkKhaki);
             //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
         }
 

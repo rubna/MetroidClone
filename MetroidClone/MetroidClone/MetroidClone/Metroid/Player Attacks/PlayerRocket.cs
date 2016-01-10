@@ -21,7 +21,7 @@ namespace MetroidClone.Metroid.Player_Attacks
             if (Input.ControllerInUse)
                 direction = Input.ThumbStickCheckDirection(false);
             else
-                direction = Input.MouseCheckPosition().ToVector2() - Position;
+                direction = Input.MouseCheckPosition() - Position;
 
             direction.Normalize();
             Speed = direction;

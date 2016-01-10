@@ -27,7 +27,7 @@ namespace MetroidClone.Engine
         public Player Player;
         public static Random Random;
         public Vector2 Camera;
-        public GameState PlayingState = GameState.MainMenu;
+        public GameState PlayingState = GameState.Playing;
 
         public float Width { get; protected set; } = 8000;
         public float Height { get; protected set; } = 8000;

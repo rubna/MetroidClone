@@ -11,7 +11,7 @@ namespace MetroidClone.Engine
 {
     class MainGame : Game
     {
-        GraphicsDeviceManager graphics;
+        public GraphicsDeviceManager Graphics;
         AssetManager assetManager;
         SpriteBatch spriteBatch;
 
@@ -29,7 +29,7 @@ namespace MetroidClone.Engine
 
         public MainGame()
         {
-            graphics = new GraphicsDeviceManager(this);
+            Graphics = new GraphicsDeviceManager(this);
             assetManager = new AssetManager(Content);
 
             Profiler = new Profiler();
@@ -43,12 +43,12 @@ namespace MetroidClone.Engine
             drawWrapper = new DrawWrapper(spriteBatch, GraphicsDevice, assetManager);
 
             world = new World();
-            graphics.PreferMultiSampling = true;
-            graphics.SynchronizeWithVerticalRetrace = true;
-            graphics.PreferredBackBufferWidth = 24 * 20 * 2;
-            graphics.PreferredBackBufferHeight = 24 * 15 * 2;
+            Graphics.PreferMultiSampling = true;
+            Graphics.SynchronizeWithVerticalRetrace = true;
+            Graphics.PreferredBackBufferWidth = 24 * 20 * 2;
+            Graphics.PreferredBackBufferHeight = 24 * 15 * 2;
 
-            graphics.ApplyChanges();
+            Graphics.ApplyChanges();
            
             IsFixedTimeStep = true;
             
@@ -61,21 +61,21 @@ namespace MetroidClone.Engine
 
         protected void SwitchFullscreen()
         {
-            if (! graphics.IsFullScreen)
+            if (! Graphics.IsFullScreen)
             {
-                graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-                graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-                graphics.IsFullScreen = true;
+                Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                Graphics.IsFullScreen = true;
             }
             else
             {
-                graphics.PreferredBackBufferWidth = 24 * 20 * 2;
-                graphics.PreferredBackBufferHeight = 24 * 15 * 2;
-                graphics.IsFullScreen = false;
+                Graphics.PreferredBackBufferWidth = 24 * 20 * 2;
+                Graphics.PreferredBackBufferHeight = 24 * 15 * 2;
+                Graphics.IsFullScreen = false;
             }
-            drawWrapper.SmartScale(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
+            drawWrapper.SmartScale(Graphics.PreferredBackBufferWidth, Graphics.PreferredBackBufferHeight);
 
-            graphics.ApplyChanges();
+            Graphics.ApplyChanges();
         }
 
         protected override void LoadContent()
