@@ -13,7 +13,6 @@ namespace MetroidClone.Engine
 
         public DrawWrapper DrawWrapper { get; set; }
         public AssetManager AssetManager { get; set; }
-        public Level Level;
         public Player Player;
         public static Random Random;
         public Vector2 Camera;

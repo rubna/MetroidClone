@@ -87,7 +87,6 @@ namespace MetroidClone.Engine
         {
             int BlockID = random.Next(int.MaxValue);
 
-            Level level = world.Level;
             for (int i = 0; i < Width; i++)
             {
                 for (int j = 0; j < Height; j++)

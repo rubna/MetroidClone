@@ -55,7 +55,8 @@ namespace MetroidClone.Metroid
             footRight = new AnimationBone(kneeRight, new Vector2(0, 8));
 
             World.AddObject(body);
-            //body.PlayAnimation("RobotSpriteBody", 0);
+            //body.SetSprite()
+            //body.PlayAnimation("RobotSpriteBody", speed: 0);
             World.AddObject(hipLeft);
             World.AddObject(kneeLeft);
             World.AddObject(footLeft);
@@ -63,7 +64,6 @@ namespace MetroidClone.Metroid
             World.AddObject(kneeRight);
             World.AddObject(footRight);
 
-            PlayAnimation("tempplayer", speed: 0f);
 
             Friction = new Vector2(0.85f, 1);
             Gravity = 0.3f;
@@ -75,6 +75,7 @@ namespace MetroidClone.Metroid
 
             movementSpeedModifier = 1;
             jumpHeightModifier = 1;
+            PlayAnimation("tempplayer", speed: 0f);
         }
 
         public override void Update(GameTime gameTime)

@@ -26,6 +26,14 @@ namespace MetroidClone.Engine
                     return Parent.Position + pos.ToCartesian();
             }
         }
+
+        public Vector2 TargetDrawPosition
+        {
+            get
+            {
+                return Position - World.Camera;
+            }
+        }
         public float DepthOffset = -1;
 
         public AnimationBone(PhysicsObject parent, Vector2 offset)
@@ -53,8 +61,9 @@ namespace MetroidClone.Engine
         public override void Draw()
         {
             base.Draw();
-            Drawing.DrawLine(TargetPosition, Parent.Position, 2, Color.Pink);
-            Drawing.DrawCircle(Position, 3, Color.Purple);
+
+            //Drawing.DrawLine(TargetDrawPosition, Parent.DrawPosition, 2, Color.Pink);
+            //Drawing.DrawCircle(DrawPosition, 3, Color.Purple);
         }
     }
 }
