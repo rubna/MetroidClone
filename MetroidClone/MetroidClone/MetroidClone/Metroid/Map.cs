@@ -22,8 +22,36 @@ namespace MetroidClone.Metroid
             hasVisitedCell = new bool[WorldGenerator.WorldWidth, WorldGenerator.WorldHeight];
         }
 
-        public void DrawMap()
+        public void DrawMap(Point mapCenter)
         {
+            const int mapSquareSize = 8;
+
+            //The cell with the player should always be at the center.
+            Vector2 positionModifier = getCell(new Vector2(World.Player.Position.X, World.Player.Position.Y)).ToVector2() + new Vector2(0.5f, 0.5f);
+            positionModifier.X *= mapSquareSize * WorldGenerator.LevelWidth;
+            positionModifier.Y *= mapSquareSize * WorldGenerator.LevelHeight;
+            positionModifier = mapCenter.ToVector2() - positionModifier;
+
+            //Draw all visited game cells
+            Point playerPos = getCell(World.Player.Position);
+            for (int i = 0; i < WorldGenerator.WorldWidth; i++)
+                for (int j = 0; j < WorldGenerator.WorldHeight; j++)
+                {
+                    if (hasVisitedCell[i, j])
+                    {
+                        Color drawColor = Color.Black; //By default, game cells are black.
+
+                        //However, if the player is here, it's blueish.
+                        if (playerPos.X == i && playerPos.Y == j)
+                            drawColor = new Color(0, 0, 80);
+
+                        Drawing.DrawRectangleUnscaled(new Rectangle(i * WorldGenerator.LevelWidth * mapSquareSize + (int) positionModifier.X,
+                            j * WorldGenerator.LevelHeight * mapSquareSize + (int) positionModifier.Y,
+                            mapSquareSize * WorldGenerator.LevelWidth, mapSquareSize * WorldGenerator.LevelHeight), drawColor);
+                    }
+                }
+
+            //Draw all game objects (except some that shouldn't be drawn).
             foreach (GameObject gameObject in World.GameObjects)
             {
                 Point cell = getCell(gameObject.CenterPosition);
@@ -33,7 +61,7 @@ namespace MetroidClone.Metroid
                     Point position = gameObject.Position.ToPoint();
                     if (gameObject is Wall)
                     {
-                        drawColor = Color.Gray;
+                        drawColor = Color.White;
                         position = (gameObject as Wall).BoundingBox.Location;
                     }
                     else if (gameObject is Player)
@@ -49,8 +77,8 @@ namespace MetroidClone.Metroid
                     else
                         continue;
 
-                    Drawing.DrawRectangle(new Rectangle((int) (position.X /  World.TileWidth) * 4,
-                        (int) (position.Y / World.TileHeight) * 4, 4, 4), drawColor);
+                    Drawing.DrawRectangleUnscaled(new Rectangle((int) (position.X /  World.TileWidth) * mapSquareSize + (int) positionModifier.X,
+                        (int) (position.Y / World.TileHeight) * mapSquareSize + (int) positionModifier.Y, mapSquareSize, mapSquareSize), drawColor);
                 }
             }
         }
@@ -58,7 +86,13 @@ namespace MetroidClone.Metroid
         public override void DrawGUI()
         {
             if (Input.KeyboardCheckDown(Keys.M) || Input.GamePadCheckDown(Buttons.Back))
-                DrawMap();
+            {
+                //Draw a black background (and get the center position of the map)
+                Point mapCenter = Drawing.DrawOverlayStart();
+
+                //Draw the map
+                DrawMap(mapCenter);
+            }
         }
 
         public override void Update(GameTime gameTime)

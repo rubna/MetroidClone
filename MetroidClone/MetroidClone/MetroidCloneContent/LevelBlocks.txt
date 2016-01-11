@@ -186,6 +186,13 @@ BLOCK UD 0.5
 
 THEMESTART Cramped
 
+BLOCK DLR
+11111
+1....
+2.a\.
+1..1\
+11.a1
+
 BLOCK UD
 1α2α1
 1...1

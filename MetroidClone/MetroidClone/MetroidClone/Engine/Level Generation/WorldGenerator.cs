@@ -80,7 +80,7 @@ namespace MetroidClone.Engine
                     if (j != startingY)
                     {
                         isRoom[i, j] = true;
-                        area[i, j] = 3;
+                        area[i, j] = 2;
                         CanHaveBottomExit[i, j] = false;
 
                         //Set if we need a right exit.
@@ -114,7 +114,7 @@ namespace MetroidClone.Engine
                         if (area[i, j] < area[i + 1, j])
                             guaranteedSpecialBlocks[i, j].Add(areaBorderNameRight[area[i + 1, j] - 1]);
                         else if (area[i, j] > area[i + 1, j])
-                            guaranteedSpecialBlocks[i, j].Add(areaBorderNameLeft[area[i, j] - 1]);
+                            guaranteedSpecialBlocks[i + 1, j].Add(areaBorderNameLeft[area[i, j] - 1]);
                     }
                     if (j < WorldHeight - 1 && isRoom[i, j] && isRoom[i, j + 1] && CanHaveBottomExit[i, j] && (area[i, j] == area[i, j + 1]))
                     {
