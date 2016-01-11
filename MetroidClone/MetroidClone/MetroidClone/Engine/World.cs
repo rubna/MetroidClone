@@ -30,6 +30,7 @@ namespace MetroidClone.Engine
         public static Random Random;
         public Vector2 Camera;
         public GameState PlayingState = GameState.MainMenu;
+        private bool worldInitialized = false;
 
         //The width and height of the world.
         public float Width { get; protected set; } = WorldGenerator.LevelWidth * WorldGenerator.WorldWidth * TileWidth + 200;
@@ -174,16 +175,19 @@ namespace MetroidClone.Engine
             {
                 PauseMenu.Update(gameTime);
             }
-            if (MainMenu.StartGame)
+            if (MainMenu.StartGame && worldInitialized == false)
             {
                 Initialize();
                 PlayingState = GameState.Playing;
+                worldInitialized = true;
             }
             if (PauseMenu.ResumeGame)
                 PlayingState = GameState.Playing;
             if (PauseMenu.ExitGame)
+            {
+                worldInitialized = false;
                 PlayingState = GameState.MainMenu;
-            
+            }
         }
 
         void UpdateCamera(bool jumpToGoal = false)
