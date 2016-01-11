@@ -32,7 +32,6 @@ namespace MetroidClone.Metroid
                 Speed.Normalize();
                 Speed *= 5;
             }
-            Speed = 5 * direction;
         }
         public override void Update(GameTime gameTime)
         {
