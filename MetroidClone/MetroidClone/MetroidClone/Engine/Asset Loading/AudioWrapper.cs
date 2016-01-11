@@ -13,9 +13,10 @@ namespace MetroidClone.Engine
 
         public AssetManager Assets;
 
-        public AudioWrapper()
+        public AudioWrapper(AssetManager assetsManager)
         {
             AudioIsEnabled = true;
+            Assets = assetsManager;
         }
 
         public void Play(Sound sound)

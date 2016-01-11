@@ -70,6 +70,11 @@ namespace MetroidClone.Metroid
                 PlayAnimation("tempplayer", Direction.Right, speed: 0.2f);
             }
 
+            if (Input.KeyboardCheckPressed(Keys.T))
+            {
+                Audio.Play("Audio/Opname");
+            }
+
             //You can still jump a small time after having walked from a platform
             if (OnGround)
                 timeSinceOnGround = 0;

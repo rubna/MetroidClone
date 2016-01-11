@@ -27,6 +27,7 @@ namespace MetroidClone.Engine
         //Various useful objects
         public World World { protected get; set; }
         public DrawWrapper Drawing { protected get; set; }
+        public AudioWrapper Audio { protected get; set; }
         public AssetManager Assets { protected get; set; }
         protected InputHelper Input;
         public bool Visible = true;

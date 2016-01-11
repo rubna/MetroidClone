@@ -15,6 +15,7 @@ namespace MetroidClone.Engine
         List<GameObject> RemovedGameObjects = new List<GameObject>();
         
         public DrawWrapper DrawWrapper { get; set; }
+        public AudioWrapper AudioWrapper { get; set; }
         public AssetManager AssetManager { get; set; }
         public Level Level;
         public Player Player;
@@ -104,6 +105,7 @@ namespace MetroidClone.Engine
         {
             gameObject.World = this;
             gameObject.Drawing = DrawWrapper;
+            gameObject.Audio = AudioWrapper;
             gameObject.Position = position;
             gameObject.Assets = AssetManager;
             GameObjects.Add(gameObject);

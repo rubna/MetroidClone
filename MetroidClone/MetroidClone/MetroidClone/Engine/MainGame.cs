@@ -18,6 +18,7 @@ namespace MetroidClone.Engine
         public static Profiler Profiler;
 
         private DrawWrapper drawWrapper;
+        private AudioWrapper audioWrapper;
 
         private World world;
 
@@ -41,6 +42,7 @@ namespace MetroidClone.Engine
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             drawWrapper = new DrawWrapper(spriteBatch, GraphicsDevice, assetManager);
+            audioWrapper = new AudioWrapper(assetManager);
 
             world = new World();
             graphics.PreferMultiSampling = true;
@@ -81,6 +83,7 @@ namespace MetroidClone.Engine
         protected override void LoadContent()
         {
             world.DrawWrapper = drawWrapper;
+            world.AudioWrapper = audioWrapper;
             world.AssetManager = assetManager;
 
             world.Initialize();
