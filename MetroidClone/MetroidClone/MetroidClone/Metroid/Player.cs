@@ -94,9 +94,9 @@ namespace MetroidClone.Metroid
                 Speed.Y *= 0.9f;
                 startedSlowingDownJump = true;
             }
-
+            
             //drop through jumpthroughs
-            if ((Input.KeyboardCheckPressed(Keys.S) || Input.KeyboardCheckPressed(Keys.Down) || Input.ThumbStickCheckDirection(true).Y < 0) && OnJumpThrough)
+            if ((Input.KeyboardCheckDown(Keys.S) || Input.KeyboardCheckDown(Keys.Down) || Input.ThumbStickCheckDirection(true).Y < 0) && OnJumpThrough)
                 Position.Y++;
 
             //attack
@@ -203,8 +203,9 @@ namespace MetroidClone.Metroid
         {
             base.Draw();
             //mouse pointer, disabled when controller in use
+            Point mousePos = Input.MouseCheckUnscaledPosition(Drawing);
             if (!Input.ControllerInUse)
-                Drawing.DrawRectangle(new Rectangle(Input.MouseCheckPosition().X - 5, Input.MouseCheckPosition().Y - 5, 10, 10), Color.DarkKhaki);
+                Drawing.DrawRectangle(new Rectangle(mousePos.X - 5, mousePos.Y - 5, 10, 10), Color.DarkKhaki);
             //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
         }
 
@@ -223,7 +224,7 @@ namespace MetroidClone.Metroid
                 {
                         if (RocketAmmo > 0)
                         {
-                            World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
+                    World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
                             RocketAmmo --;
                         }
                     break;

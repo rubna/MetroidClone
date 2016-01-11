@@ -22,7 +22,7 @@ namespace MetroidClone.Engine
 
         //HadCollision stores whether there was a collision with a wall in the last update.
         public bool HadHCollision = false, HadVCollision = false;
-        public Engine.Direction LastHCollisionDirection = Engine.Direction.Left, LastVCollisionDirection = Engine.Direction.Up; //In what direction was the last collision?
+        public Direction LastHCollisionDirection = Direction.Left, LastVCollisionDirection = Direction.Up; //In what direction was the last collision?
 
         const float maxSpeed = 15; //The maximum speed.
 
@@ -80,7 +80,7 @@ namespace MetroidClone.Engine
                     OnGround = true;
                     if (Speed.Y > 0)
                         Speed.Y = 0;
-                    LastVCollisionDirection = Engine.Direction.Down;
+                    LastVCollisionDirection = Direction.Down;
                     HadVCollision = true;
                     if (solid is JumpThrough)
                         OnJumpThrough = true;
@@ -117,9 +117,9 @@ namespace MetroidClone.Engine
                     else
                     {
                         if (Speed.X < 0)
-                            LastHCollisionDirection = Engine.Direction.Left;
+                            LastHCollisionDirection = Direction.Left;
                         else if (Speed.X > 0)
-                            LastHCollisionDirection = Engine.Direction.Right;
+                            LastHCollisionDirection = Direction.Right;
                         Speed.X *= -WallBounce.X;
                         HadHCollision = true;
                         break;
@@ -137,9 +137,9 @@ namespace MetroidClone.Engine
                 if (InsideWall(0, Math.Sign(roundedSpeed.Y), TranslatedBoundingBox))
                 {
                     if (Speed.Y < 0)
-                        LastVCollisionDirection = Engine.Direction.Up;
+                        LastVCollisionDirection = Direction.Up;
                     else if (Speed.Y > 0)
-                        LastVCollisionDirection = Engine.Direction.Down;
+                        LastVCollisionDirection = Direction.Down;
                     Speed.Y *= -WallBounce.Y;
                     HadVCollision = true;
                     break;
