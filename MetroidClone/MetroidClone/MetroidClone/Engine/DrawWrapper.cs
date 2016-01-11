@@ -30,6 +30,8 @@ namespace MetroidClone.Engine
         float displayLeft = 0, displayTop = 0, displayWidth = 0, displayHeight = 0;
         public Vector2 GUISize { get { return new Vector2(displayWidth + displayLeft * 2, displayHeight + displayTop * 2); } }
 
+        public Rectangle DisplayRect { get { return new Rectangle((int) displayLeft, (int) displayTop, (int) displayWidth, (int) displayHeight); } }
+
         public AssetManager Assets;
 
         public DrawWrapper(SpriteBatch batch, GraphicsDevice device, AssetManager assetsManager)
@@ -89,8 +91,8 @@ namespace MetroidClone.Engine
 
         public void DrawRectangleUnscaled(Rectangle rectangle, Color color)
         {
-            DrawRectangle(new Rectangle((int) (rectangle.Left / GlobalScale), (int) (rectangle.Top / GlobalScale), (int) (rectangle.Width / GlobalScale),
-                (int) (rectangle.Height / GlobalScale)), color);
+            DrawRectangle(new Rectangle((int) Math.Round(rectangle.Left / GlobalScale), (int) Math.Round(rectangle.Top / GlobalScale), (int) Math.Ceiling(rectangle.Width / GlobalScale),
+                (int) Math.Ceiling(rectangle.Height / GlobalScale)), color);
         }
 
         public void DrawCircle(Vector2 position, float radius, Color color, int precision = 24)
@@ -290,6 +292,13 @@ namespace MetroidClone.Engine
             displayTop = (height - displayHeight) / 2;
 
             SetProjectionMatrix(width, height);
+        }
+
+        //For drawing an overlay. Returns the center of the overlay.
+        public Point DrawOverlayStart()
+        {
+            DrawRectangleUnscaled(DisplayRect, new Color(0, 0, 0, 0.7f));
+            return DisplayRect.Center;
         }
     }
 }

@@ -12,7 +12,7 @@ namespace MetroidClone.Engine
     {
         LevelGenerator levelGenerator;
         public const int LevelWidth = 20, LevelHeight = 15;
-        public const int WorldWidth = 7, WorldHeight = 7;
+        public const int WorldWidth = 9, WorldHeight = 7;
 
         public WorldGenerator()
         {
@@ -21,12 +21,15 @@ namespace MetroidClone.Engine
 
         public void Generate(World world)
         {
-            string[] areaBorderName = { "FirstRightBorder", "SecondRightBorder" }; //The names of area borders.
+            string[] areaBorderNameRight = { "SecondRightBorder", "ThirdRightBorder" }; //The names of area borders.
+            string[] areaBorderNameLeft = { "SecondLeftBorder", "ThirdLeftBorder" };
 
             //Define and initialize variables
             bool[,] isRoom = new bool[WorldWidth, WorldHeight]; //Whether this is a room.
             int[,] area = new int[WorldWidth, WorldHeight]; //The area (for example, 0 for the starting area)
             string[,] theme = new string[WorldWidth, WorldHeight]; //The general appearance.
+            bool[,] CanHaveRightExit = new bool[WorldWidth, WorldHeight]; //Whether this room can potentially have a right exit.
+            bool[,] CanHaveBottomExit = new bool[WorldWidth, WorldHeight]; //Whether this room can potentially have a right exit.
             List<RoomExit>[,] roomExits = new List<RoomExit>[WorldWidth, WorldHeight];
             List<string>[,] guaranteedSpecialBlocks = new List<string>[WorldWidth, WorldHeight]; //Guaranteed blocks.
             for (int i = 0; i < WorldWidth; i++)
@@ -37,6 +40,8 @@ namespace MetroidClone.Engine
                     isRoom[i, j] = false;
                     area[i, j] = 0;
                     theme[i, j] = "";
+                    CanHaveRightExit[i, j] = true;
+                    CanHaveBottomExit[i, j] = true;
                 }
 
             int startingY = WorldHeight / 2 + World.Random.Next(-2, 3);
@@ -47,38 +52,71 @@ namespace MetroidClone.Engine
 
             isRoom[1, startingY] = true; //Room right of starting room.
 
-            //Areas
-            for (int i = 0; i < areaBorderName.Length; i++)
-            {
-                //TODO
-            }
-
-            //Other rooms.
+            //Other rooms (main areas).
+            int areaTwoBorderStart = 3, areaThreeBorderStart = 6;
             for (int i = 2; i < WorldWidth; i++)
                 for (int j = 0; j < WorldHeight; j++)
                 {
+                    bool isTopOrBottomArea = j == 0 || j == WorldHeight - 1;
                     isRoom[i, j] = true;
-                    if (World.Random.Next(100) < (j == 0 || j == WorldHeight - 1 ? 60 : 20)) //Generate cramped rooms. There are more of 'em at the top and bottom.
+                    if (World.Random.Next(100) < (isTopOrBottomArea ? 60 : 20)) //Generate cramped rooms. There are more of 'em at the top and bottom.
                         theme[i, j] = "Cramped";
                     else if (World.Random.Next(100) < 20) //Generate an open room
                         theme[i, j] = "Open";
+
+                    //Set the area
+                    if (i >= areaThreeBorderStart + World.Random.Next(2) - (isTopOrBottomArea ? 1 : 0))
+                        area[i, j] = 2;
+                    else if (i >= areaTwoBorderStart + World.Random.Next(2) - (isTopOrBottomArea ? 1 : 0))
+                        area[i, j] = 1;
+                    else
+                        area[i, j] = 0;
                 }
+
+            //Other rooms (secondary areas)
+            for (int i = 0; i < 2; i++)
+                for (int j = 0; j < WorldHeight; j++)
+                {
+                    if (j != startingY)
+                    {
+                        isRoom[i, j] = true;
+                        area[i, j] = 2;
+                        CanHaveBottomExit[i, j] = false;
+
+                        //Set if we need a right exit.
+                        if ((j == startingY - 1 || j == startingY + 1) && i == 0)
+                            CanHaveRightExit[i, j] = true;
+                        else if ((j == 0 || j == WorldHeight - 1) && i == 1)
+                            CanHaveRightExit[i, j] = true;
+                        else
+                            CanHaveRightExit[i, j] = false;
+
+                        //And do the same for the bottom exit.
+                        if (j != startingY - 1)
+                            CanHaveBottomExit[i, j] = true;
+                        else
+                            CanHaveBottomExit[i, j] = false;
+                    }
+                }
+
 
             //Place the exits
             for (int i = 0; i < WorldWidth; i++)
                 for (int j = 0; j < WorldHeight; j++)
                 {
                     //Place exits.
-                    if (i < WorldWidth - 1 && isRoom[i, j] && isRoom[i + 1, j])
+                    if (i < WorldWidth - 1 && isRoom[i, j] && isRoom[i + 1, j] && CanHaveRightExit[i, j])
                     {
                         int nextY = World.Random.Next(LevelHeight / LevelGenerator.BlockHeight);
                         roomExits[i, j].Add(new RoomExit(new Point(LevelWidth / LevelGenerator.BlockWidth - 1, nextY), Direction.Right));
                         roomExits[i + 1, j].Add(new RoomExit(new Point(0, nextY), Direction.Left));
 
-                        if (area[i, j] != area[i + 1, j])
-                            guaranteedSpecialBlocks[i, j].Add(areaBorderName[area[i, j]]);
+                        if (area[i, j] < area[i + 1, j])
+                            guaranteedSpecialBlocks[i, j].Add(areaBorderNameRight[area[i + 1, j] - 1]);
+                        else if (area[i, j] > area[i + 1, j])
+                            guaranteedSpecialBlocks[i + 1, j].Add(areaBorderNameLeft[area[i, j] - 1]);
                     }
-                    if (j < WorldHeight - 1 && isRoom[i, j] && isRoom[i, j + 1] && area[i, j] == area[i, j + 1])
+                    if (j < WorldHeight - 1 && isRoom[i, j] && isRoom[i, j + 1] && CanHaveBottomExit[i, j] && (area[i, j] == area[i, j + 1]))
                     {
                         int nextX = World.Random.Next(LevelWidth / LevelGenerator.BlockWidth);
                         roomExits[i, j].Add(new RoomExit(new Point(nextX, LevelHeight / LevelGenerator.BlockHeight - 1), Direction.Down));
@@ -179,7 +217,7 @@ namespace MetroidClone.Engine
                 }
             }
 
-            for (int i = 0; i < LevelWidth * WorldWidth; i++)
+            /*for (int i = 0; i < LevelWidth * WorldWidth; i++)
                 for (int j = 0; j < LevelHeight * WorldHeight; j++)
                 {
                     if (!doNotCreateBackground[i, j])
@@ -189,7 +227,7 @@ namespace MetroidClone.Engine
                         world.AddObject(bgt);
                         bgt.SetSprite("BackgroundTileset/background" + World.Random.Next(1, 5));
                     }
-                }
+                }*/
         }
     }
 }

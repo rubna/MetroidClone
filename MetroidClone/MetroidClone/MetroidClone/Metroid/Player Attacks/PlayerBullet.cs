@@ -10,8 +10,6 @@ namespace MetroidClone.Metroid
 {
     class PlayerBullet : PhysicsObject, IPlayerAttack
     {
-        private Vector2 direction;
-
         public override void Create()
         {
             base.Create();
@@ -20,13 +18,18 @@ namespace MetroidClone.Metroid
             Gravity = 0;
             CollideWithWalls = false;
             if (Input.ControllerInUse)
-                direction = Input.ThumbStickCheckDirection(false);
+            {
+                Vector2 dir = Input.ThumbStickCheckDirection(false);
+                dir.Y = -dir.Y;
+                dir.Normalize();
+                Speed = 5 * dir;
+            }
             else
             {
-                direction = Input.MouseCheckPosition().ToVector2() - DrawPosition;
-                direction.Normalize();
+                Speed = Input.MouseCheckUnscaledPosition(Drawing).ToVector2() - DrawPosition;
+                Speed.Normalize();
+                Speed *= 5;
             }
-            Speed = 5 * direction;
         }
         public override void Update(GameTime gameTime)
         {

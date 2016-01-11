@@ -18,9 +18,10 @@ namespace MetroidClone.Engine
 
         public List<GameObject> GameObjects; //Gameobjects that have been created before this update
         List<GameObject> GameObjectsToUpdate; //Gameobjects that should be updated during Update.
+        List<GameObject> GameObjectsWithGUI; //Gameobjects with a GUI event.
         List<GameObject> AddedGameObjects = new List<GameObject>();
         List<GameObject> RemovedGameObjects = new List<GameObject>();
-
+        
         public DrawWrapper DrawWrapper { get; set; }
         public AssetManager AssetManager { get; set; }
         public Level Level;
@@ -55,6 +56,7 @@ namespace MetroidClone.Engine
         {
             GameObjects = new List<GameObject>();
             GameObjectsToUpdate = new List<GameObject>();
+            GameObjectsWithGUI = new List<GameObject>();
 
             Random = new Random();
 
@@ -66,6 +68,7 @@ namespace MetroidClone.Engine
 
         public void Initialize()
         {
+            GameObjects.Clear();
             AddObject(MainMenu);
             AddObject(PauseMenu);
             (new WorldGenerator()).Generate(this);
@@ -99,7 +102,7 @@ namespace MetroidClone.Engine
                         if (!(solids[k] is Wall) || solids[k].CollidesWith(boundingbox))
                         {
                             SolidGrid[i, j].Add(solids[k]);
-                        }
+        }
                     }
                 }
             }
@@ -124,23 +127,16 @@ namespace MetroidClone.Engine
             GameObjects.Add(gameObject);
             gameObject.Create();
             AddedGameObjects.Add(gameObject);
-        }
-
-        public void AddObject(GameObject gameObject, Vector2 position, Vector2 direction)
-        {
-            gameObject.World = this;
-            gameObject.Drawing = DrawWrapper;
-            gameObject.Position = position;
-            gameObject.Assets = AssetManager;
-            GameObjects.Add(gameObject);
-            gameObject.Create();
-            AddedGameObjects.Add(gameObject);
+            if (gameObject.ShouldDrawGUI)
+                GameObjectsWithGUI.Add(gameObject);
         }
 
         public void RemoveObject(GameObject gameObject)
         {
             GameObjects.Remove(gameObject);
             RemovedGameObjects.Add(gameObject);
+            if (gameObject.ShouldDrawGUI)
+                GameObjectsWithGUI.Remove(gameObject);
         }
 
         public void Update(GameTime gameTime)
@@ -150,19 +146,19 @@ namespace MetroidClone.Engine
 
             if (PlayingState == GameState.Playing)
             {
-                foreach (GameObject gameObject in GameObjectsToUpdate)
-                    gameObject.Update(gameTime);
+            foreach (GameObject gameObject in GameObjectsToUpdate)
+                gameObject.Update(gameTime);
 
-                foreach (GameObject gameObject in AddedGameObjects)
-                {
-                    if (gameObject.ShouldUpdate)
-                        GameObjectsToUpdate.Add(gameObject);
-                }
+            foreach (GameObject gameObject in AddedGameObjects)
+            {
+                if (gameObject.ShouldUpdate)
+                    GameObjectsToUpdate.Add(gameObject);
+            }
 
-                foreach (GameObject gameObject in RemovedGameObjects)
-                    GameObjectsToUpdate.Remove(gameObject);
+            foreach (GameObject gameObject in RemovedGameObjects)
+                GameObjectsToUpdate.Remove(gameObject);
 
-                UpdateCamera(); //Update the position of the camera.
+            UpdateCamera(); //Update the position of the camera.
                 PauseMenu.ResumeGame = false;
                 MainMenu.StartGame = false;
             }
@@ -170,7 +166,7 @@ namespace MetroidClone.Engine
             {
                 MainMenu.Update(gameTime);
                 PauseMenu.ExitGame = false;
-            }
+        }
             if (PlayingState == GameState.Paused)
             {
                 PauseMenu.Update(gameTime);
@@ -234,19 +230,32 @@ namespace MetroidClone.Engine
 
         public void Draw()
         {
+            //Draw the background.
+            float removeFromX = Camera.X % TileWidth, removeFromY = Camera.Y % TileHeight;
+            int startX = (int)Camera.X / (int)TileWidth, startY = (int)Camera.Y / (int)TileHeight;
+            Vector2 tileSize = new Vector2(TileWidth, TileHeight);
+
+            //Make the tile placement look random (it isn't)
+            for (int i = 0; i < WorldGenerator.LevelWidth + 1; i++)
+                for (int j = 0; j < WorldGenerator.LevelHeight + 1; j++)
+                {
+                    int xpos = startX + i, ypos = startY + j;
+                    DrawWrapper.DrawSprite("BackgroundTileset/background" + ((xpos % 3 + xpos % 9 + ypos + ypos % 5 + ypos % 9) % 4 + 1), new Vector2(i * 48 - removeFromX, j * 48 - removeFromY), 0f, tileSize);
+                }
+
             //Only draw objects that are visible (within the view)
             if (PlayingState == GameState.Playing)
             {
-                foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
+            foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
+            {
+                Vector2 drawPos = gameObject.CenterPosition - Camera;
+                if (drawPos.X > -100 && drawPos.Y > -100 &&
+                    drawPos.X < WorldGenerator.LevelWidth * TileWidth + 100 &&
+                    drawPos.Y < WorldGenerator.LevelHeight * TileHeight + 100)
                 {
-                    Vector2 drawPos = gameObject.CenterPosition - Camera;
-                    if (drawPos.X > -100 && drawPos.Y > -100 &&
-                        drawPos.X < WorldGenerator.LevelWidth * TileWidth + 100 &&
-                        drawPos.Y < WorldGenerator.LevelHeight * TileHeight + 100)
-                    {
-                        gameObject.Draw();
-                    }
+                    gameObject.Draw();
                 }
+            }
             }
             if (PlayingState == GameState.Paused)
                 PauseMenu.Draw2();
@@ -256,8 +265,8 @@ namespace MetroidClone.Engine
 
         public void DrawGUI()
         {
-            //Call the Draw GUI event of all objects..
-            foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
+            //Call the Draw GUI event of all objects that have one.
+            foreach (GameObject gameObject in GameObjectsWithGUI.OrderByDescending(x => x.Depth))
                 gameObject.DrawGUI();
         }
 
