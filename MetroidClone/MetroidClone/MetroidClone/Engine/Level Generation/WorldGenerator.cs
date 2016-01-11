@@ -50,7 +50,7 @@ namespace MetroidClone.Engine
             //Areas
             for (int i = 0; i < areaBorderName.Length; i++)
             {
-
+                //TODO
             }
 
             //Other rooms.
@@ -91,7 +91,7 @@ namespace MetroidClone.Engine
                 for (int j = 0; j < WorldHeight; j++)
                 {
                     if (isRoom[i, j])
-                        levelGenerator.Generate(world, new Vector2(LevelWidth * world.TileWidth * i, LevelHeight * world.TileHeight * j), roomExits[i, j],
+                        levelGenerator.Generate(world, new Vector2(LevelWidth * World.TileWidth * i, LevelHeight * World.TileHeight * j), roomExits[i, j],
                             guaranteedSpecialBlocks[i, j], theme[i, j]);
                 }
 
@@ -100,6 +100,96 @@ namespace MetroidClone.Engine
 
             //Add the map object
             world.AddObject(new Map());
+
+            //Autotile the world.
+            Autotile(world);
+        }
+
+        //Automatically choose the correct tiles for relevant objects within the game world.
+        void Autotile(World world)
+        {
+            //Create an array for objects that are walls and initialize it.
+            bool[,] isWall = new bool[LevelWidth * WorldWidth, LevelHeight * WorldHeight];
+            isWall.Initialize();
+
+            //Do the same for an array that defines background tile positions.
+            bool[,] doNotCreateBackground = new bool[LevelWidth * WorldWidth, LevelHeight * WorldHeight];
+            doNotCreateBackground.Initialize();
+
+            //Set the isWall variable to true at the position of all walls.
+            IEnumerable<Wall> walls = world.GameObjects.Where(w => w is Wall).Select(w => w as Wall);
+            foreach (Wall wall in walls)
+            {
+                isWall[wall.BoundingBox.X / (int) World.TileWidth, wall.BoundingBox.Y / (int) World.TileHeight] = true;
+            }
+
+            foreach (Wall wall in walls)
+            {
+                string tileName = "Tileset/foreground";
+                wall.BasicConnectionSprite = "Tileset/connection";
+
+                Point positionIndex = new Point(wall.BoundingBox.Left / (int) World.TileWidth,
+                    wall.BoundingBox.Top / (int) World.TileHeight);
+
+                bool isTop = positionIndex.Y <= 0,
+                    isRight = positionIndex.X >= LevelWidth * WorldWidth - 1,
+                    isBottom = positionIndex.Y >= LevelHeight * WorldHeight - 1,
+                    isLeft = positionIndex.X <= 0;
+
+                if (isTop || isWall[positionIndex.X, positionIndex.Y - 1])
+                {
+                    tileName += "U";
+                }
+                if (isRight || isWall[positionIndex.X + 1, positionIndex.Y])
+                {
+                    tileName += "R";
+                }
+                if (isBottom || isWall[positionIndex.X, positionIndex.Y + 1])
+                {
+                    tileName += "D";
+                }
+                if (isLeft || isWall[positionIndex.X - 1, positionIndex.Y])
+                {
+                    tileName += "L";
+                }
+
+                if (!isTop && !isLeft && tileName.Contains("U") && tileName.Contains("L") && ! isWall[positionIndex.X - 1, positionIndex.Y - 1])
+                {
+                    wall.ShouldShowTopLeftConnection = true;
+                }
+                if (!isTop && !isRight && tileName.Contains("U") && tileName.Contains("R") && !isWall[positionIndex.X + 1, positionIndex.Y - 1])
+                {
+                    wall.ShouldShowTopRightConnection = true;
+                }
+                if (!isBottom && !isLeft && tileName.Contains("D") && tileName.Contains("L") && !isWall[positionIndex.X - 1, positionIndex.Y + 1])
+                {
+                    wall.ShouldShowBottomLeftConnection = true;
+                }
+                if (!isBottom && !isRight && tileName.Contains("D") && tileName.Contains("R") && !isWall[positionIndex.X + 1, positionIndex.Y + 1])
+                {
+                    wall.ShouldShowBottomRightConnection = true;
+                }
+
+                wall.SetSprite(tileName);
+
+                //Create a background image
+                if (tileName.Contains("URDL"))
+                {
+                    doNotCreateBackground[positionIndex.X, positionIndex.Y] = true;
+                }
+            }
+
+            for (int i = 0; i < LevelWidth * WorldWidth; i++)
+                for (int j = 0; j < LevelHeight * WorldHeight; j++)
+                {
+                    if (!doNotCreateBackground[i, j])
+                    {
+                        BackgroundTile bgt = new BackgroundTile(new Rectangle(i * (int) World.TileWidth, j * (int) World.TileHeight,
+                            (int) World.TileWidth, (int) World.TileHeight));
+                        world.AddObject(bgt);
+                        bgt.SetSprite("BackgroundTileset/background" + World.Random.Next(1, 5));
+                    }
+                }
         }
     }
 }

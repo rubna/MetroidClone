@@ -1,5 +1,5 @@
 ﻿#if DEBUG
-#define USING_PROFILER
+//#define USING_PROFILER
 #endif
 
 using System;

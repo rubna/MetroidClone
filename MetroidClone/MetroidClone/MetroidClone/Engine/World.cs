@@ -8,9 +8,11 @@ namespace MetroidClone.Engine
 {
     class World
     {
-        public List<GameObject> GameObjects;
-        List<GameObject> newGameObjects;
-
+        public List<GameObject> GameObjects; //Gameobjects that have been created before this update
+        List<GameObject> GameObjectsToUpdate; //Gameobjects that should be updated during Update.
+        List<GameObject> AddedGameObjects = new List<GameObject>();
+        List<GameObject> RemovedGameObjects = new List<GameObject>();
+        
         public DrawWrapper DrawWrapper { get; set; }
         public AssetManager AssetManager { get; set; }
         public Level Level;
@@ -18,16 +20,16 @@ namespace MetroidClone.Engine
         public static Random Random;
         public Vector2 Camera;
 
-        public float Width { get; protected set; } = 8000;
-        public float Height { get; protected set; } = 8000;
+        //The width and height of the world.
+        public float Width { get; protected set; } = WorldGenerator.LevelWidth * WorldGenerator.WorldWidth * TileWidth + 200;
+        public float Height { get; protected set; } = WorldGenerator.LevelHeight * WorldGenerator.WorldHeight * TileWidth + 200;
 
-        public float TileWidth => 48;
-        public float TileHeight => 48;
+        //The width and height of a tile.
+        public const float TileWidth = 48;
+        public const float TileHeight = 48;
 
         const float GridSize = 100f;
         public List<ISolid>[,] SolidGrid;
-
-        bool shouldUpdateSolidGrid; //Whether we should update the solid grid during the next Update.
 
         public List<ISolid> Solids
         {
@@ -40,9 +42,7 @@ namespace MetroidClone.Engine
         public World()
         {
             GameObjects = new List<GameObject>();
-            newGameObjects = new List<GameObject>();
-
-            shouldUpdateSolidGrid = false;
+            GameObjectsToUpdate = new List<GameObject>();
 
             Random = new Random();
 
@@ -54,7 +54,14 @@ namespace MetroidClone.Engine
             (new WorldGenerator()).Generate(this);
             UpdateCamera(true);
 
-            shouldUpdateSolidGrid = true;
+            foreach (GameObject gameObject in GameObjects)
+            {
+                gameObject.Create();
+                if (gameObject.ShouldUpdate)
+                    GameObjectsToUpdate.Add(gameObject);
+            }
+
+            UpdateSolidGrid();
         }
 
         public void UpdateSolidGrid()
@@ -97,7 +104,9 @@ namespace MetroidClone.Engine
             gameObject.Drawing = DrawWrapper;
             gameObject.Position = position;
             gameObject.Assets = AssetManager;
-            newGameObjects.Add(gameObject);
+            GameObjects.Add(gameObject);
+            gameObject.Create();
+            AddedGameObjects.Add(gameObject);
         }
 
         public void AddObject(GameObject gameObject, Vector2 position, Vector2 direction)
@@ -106,30 +115,33 @@ namespace MetroidClone.Engine
             gameObject.Drawing = DrawWrapper;
             gameObject.Position = position;
             gameObject.Assets = AssetManager;
-            newGameObjects.Add(gameObject);
+            GameObjects.Add(gameObject);
+            gameObject.Create();
+            AddedGameObjects.Add(gameObject);
         }
 
         public void RemoveObject(GameObject gameObject)
         {
-            newGameObjects.Remove(gameObject);
+            GameObjects.Remove(gameObject);
+            RemovedGameObjects.Add(gameObject);
         }
 
         public void Update(GameTime gameTime)
         {
-            foreach (GameObject gameObject in GameObjects)
+            AddedGameObjects.Clear();
+            RemovedGameObjects.Clear();
+
+            foreach (GameObject gameObject in GameObjectsToUpdate)
                 gameObject.Update(gameTime);
 
-            List<GameObject> addedObjects = newGameObjects.Select(x => x).ToList();
-            addedObjects = addedObjects.Except(GameObjects).ToList();
-            foreach (GameObject gameObject in addedObjects)
-                gameObject.Create();
-            GameObjects = newGameObjects.Select(x => x).ToList();
-
-            if (shouldUpdateSolidGrid)
+            foreach (GameObject gameObject in AddedGameObjects)
             {
-                shouldUpdateSolidGrid = false;
-                UpdateSolidGrid();
+                if (gameObject.ShouldUpdate)
+                    GameObjectsToUpdate.Add(gameObject);
             }
+
+            foreach (GameObject gameObject in RemovedGameObjects)
+                GameObjectsToUpdate.Remove(gameObject);
 
             UpdateCamera(); //Update the position of the camera.
         }
@@ -178,13 +190,22 @@ namespace MetroidClone.Engine
 
         public void Draw()
         {
-            //TODO: Only draw objects that are visible.
+            //Only draw objects that are visible (within the view).
             foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
-                gameObject.Draw();
+            {
+                Vector2 drawPos = gameObject.CenterPosition - Camera;
+                if (drawPos.X > -100 && drawPos.Y > -100 &&
+                    drawPos.X < WorldGenerator.LevelWidth * TileWidth + 100 &&
+                    drawPos.Y < WorldGenerator.LevelHeight * TileHeight + 100)
+                {
+                    gameObject.Draw();
+                }
+            }
         }
 
         public void DrawGUI()
         {
+            //Call the Draw GUI event of all objects..
             foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
                 gameObject.DrawGUI();
         }
@@ -196,6 +217,5 @@ namespace MetroidClone.Engine
             else
                 return new List<ISolid>(); //Nothing here.
         }
-
     }
 }

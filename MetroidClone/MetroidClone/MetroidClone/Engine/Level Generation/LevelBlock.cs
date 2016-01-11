@@ -141,9 +141,9 @@ namespace MetroidClone.Engine
                         }
                     }
 
-                    int baseX = x + (int)world.TileWidth * i, baseY = y + (int)world.TileHeight * j;
-                    float centerX = baseX + world.TileWidth / 2, centerY = baseY + world.TileHeight / 2;
-                    Rectangle stdCollisionRect = new Rectangle(baseX, baseY, (int)world.TileWidth, (int)world.TileHeight);
+                    int baseX = x + (int)World.TileWidth * i, baseY = y + (int)World.TileHeight * j;
+                    float centerX = baseX + World.TileWidth / 2, centerY = baseY + World.TileHeight / 2;
+                    Rectangle stdCollisionRect = new Rectangle(baseX, baseY, (int)World.TileWidth, (int)World.TileHeight);
 
                     if (data == '1') //A wall
                         world.AddObject(new Wall(stdCollisionRect));
@@ -153,7 +153,7 @@ namespace MetroidClone.Engine
                         world.AddObject(world.Player, centerX, centerY);
                     }
                     else if (data == 'J') //A jumpthrough block
-                        world.AddObject(new JumpThrough(new Rectangle(baseX, baseY, (int)world.TileWidth, 1)));
+                        world.AddObject(new JumpThrough(new Rectangle(baseX, baseY, (int)World.TileWidth, 1)));
                     else if (data == 'G') //A gun pickup block
                         world.AddObject(new GunPickup(), centerX, centerY);
                     else if (data == '\\') //A slope
