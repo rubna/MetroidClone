@@ -100,8 +100,18 @@ namespace MetroidClone.Engine
             if (inputHelper.KeyboardCheckReleased(Keys.F12))
                 Profiler.ShowOutput();
             if (inputHelper.KeyboardCheckReleased(Keys.F4))
+            {
                 SwitchFullscreen();
+                if (world.MainMenu.FullScreen == false)
+                    world.MainMenu.FullScreen = true;
+                else
+                    world.MainMenu.FullScreen = true;
+                if (world.PauseMenu.FullScreen == false)
+                    world.PauseMenu.FullScreen = true;
+                else
+                    world.PauseMenu.FullScreen = true;
 
+            }
             Profiler.LogGameStepStart();
 
             Profiler.LogEventStart("Update");
