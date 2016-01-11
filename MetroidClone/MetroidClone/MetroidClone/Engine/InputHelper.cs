@@ -28,8 +28,11 @@ namespace MetroidClone.Engine
                 keyBoardState = Keyboard.GetState();
                 lastMouseState = mouseState;
                 mouseState = Mouse.GetState();
-                if (KeyboardCheckDown(Keys.Enter))
+                if (KeyboardCheckPressed (Keys.Enter))
+                {
                     ControllerInUse = true;
+                    GamePadVibrate(1, 1, 200);
+                }
             }
             else
             {
@@ -79,6 +82,16 @@ namespace MetroidClone.Engine
                 return mouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton == ButtonState.Released;
             return mouseState.RightButton == ButtonState.Pressed && lastMouseState.RightButton == ButtonState.Released;
         }
+        public bool MouseWheelCheckScroll(bool up)
+        {
+            if (up)
+                return mouseState.ScrollWheelValue > lastMouseState.ScrollWheelValue;
+            return mouseState.ScrollWheelValue < lastMouseState.ScrollWheelValue;
+        }
+        public bool MouseWheelPressed()
+        {
+            return mouseState.MiddleButton == ButtonState.Pressed && lastMouseState.MiddleButton == ButtonState.Released;
+        }
 
         public bool ControllerCheckConnected()
         {
@@ -86,26 +99,41 @@ namespace MetroidClone.Engine
         }
         public Vector2 ThumbStickCheckDirection(bool left)
         {
+            if (!ControllerInUse)
+                return Vector2.Zero;
+
             if (left)
-                return gamePadState.ThumbSticks.Left * (1 / gamePadState.ThumbSticks.Left.Length());
-            return new Vector2(gamePadState.ThumbSticks.Right.X, -gamePadState.ThumbSticks.Right.Y) * (1 / gamePadState.ThumbSticks.Right.Length());
+                return gamePadState.ThumbSticks.Left;
+            return gamePadState.ThumbSticks.Right;
         }
         public bool ThumbStickCheckDown(bool left)
         {
+            if (!ControllerInUse)
+                return false;
+
             if (left)
                 return (gamePadState.ThumbSticks.Left.X != 0 || gamePadState.ThumbSticks.Left.Y != 0);
             return (gamePadState.ThumbSticks.Right.X != 0 || gamePadState.ThumbSticks.Right.Y != 0);
         }
         public bool GamePadCheckDown(Buttons b)
         {
+            if (!ControllerInUse)
+                return false;
+
             return gamePadState.IsButtonDown(b);
         }
         public bool GamePadCheckReleased(Buttons b)
         {
+            if (!ControllerInUse)
+                return false;
+
             return gamePadState.IsButtonUp(b) && lastGamePadState.IsButtonDown(b);
         }
         public bool GamePadCheckPressed(Buttons b)
         {
+            if (!ControllerInUse)
+                return false;
+
             return gamePadState.IsButtonDown(b) && lastGamePadState.IsButtonUp(b);
         }
         public bool GamePadTriggerCheckDown(bool left)
