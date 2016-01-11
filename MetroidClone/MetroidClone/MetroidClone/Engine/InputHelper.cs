@@ -20,6 +20,10 @@ namespace MetroidClone.Engine
         private Stopwatch vibrateStopwatch = new Stopwatch();
         private double vibrateTime;
 
+        /// <summary>
+        /// updates the keyboard and mouse states or the gamepad state. can be switched between by pressing Enter on keyboard or
+        /// Start on gamepad. If there is no controller connected, it will automatically switch back to keyboard controls.
+        /// </summary>
         public void Update()
         {
             if (!ControllerInUse)
