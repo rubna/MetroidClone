@@ -10,6 +10,9 @@ namespace MetroidClone.Engine
 {
     public class DrawWrapper
     {
+        const int standardWidth = 24 * 20 * 2;
+        const int standardHeight = 24 * 15 * 2;
+
         private SpriteBatch spriteBatch;
         private GraphicsDevice graphicsDevice;
         
@@ -18,15 +21,20 @@ namespace MetroidClone.Engine
 
         public float GlobalScale { get; set; }
 
-        private BasicEffect basicEffect;
+        private BasicEffect basicEffect, guiEffect;
+        private BasicEffect currentEffect;
 
         private int deviceWidth, lastDeviceWidth;
+
+        //The size of the whole game view (excluding black bars), and the size of the GUI (including black bars).
+        float displayLeft = 0, displayTop = 0, displayWidth = 0, displayHeight = 0;
+        public Vector2 GUISize { get { return new Vector2(displayWidth + displayLeft * 2, displayHeight + displayTop * 2); } }
 
         public AssetManager Assets;
 
         public DrawWrapper(SpriteBatch batch, GraphicsDevice device, AssetManager assetsManager)
         {
-            GlobalScale = 2f;
+            GlobalScale = 1f;
 
             spriteBatch = batch;
             graphicsDevice = device;
@@ -41,8 +49,13 @@ namespace MetroidClone.Engine
                 View = Matrix.Identity,
             };
 
-            SetProjectionMatrix();
+            guiEffect = (BasicEffect) basicEffect.Clone();
+
+            SetProjectionMatrix(standardWidth, standardHeight);
             ScreenSize = new Vector2(graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
+
+            displayWidth = standardWidth;
+            displayHeight = standardHeight;
         }
 
         public void DrawPrimitive(PrimitiveType primitiveType, IEnumerable<Vector2> vertices, Color color)
@@ -53,7 +66,8 @@ namespace MetroidClone.Engine
         private void DrawPrimitive(PrimitiveType primitiveType, IEnumerable<VertexPositionColor> vertices)
         {
             EndSpriteBatch();
-            basicEffect.CurrentTechnique.Passes[0].Apply();
+
+            currentEffect.CurrentTechnique.Passes[0].Apply();
 
             var data = vertices.ToArray();
 
@@ -71,6 +85,12 @@ namespace MetroidClone.Engine
             };
 
             DrawPrimitive(PrimitiveType.TriangleStrip, verts, color);
+        }
+
+        public void DrawRectangleUnscaled(Rectangle rectangle, Color color)
+        {
+            DrawRectangle(new Rectangle((int) (rectangle.Left / GlobalScale), (int) (rectangle.Top / GlobalScale), (int) (rectangle.Width / GlobalScale),
+                (int) (rectangle.Height / GlobalScale)), color);
         }
 
         public void DrawCircle(Vector2 position, float radius, Color color, int precision = 24)
@@ -131,8 +151,9 @@ namespace MetroidClone.Engine
             //Draw the given subimage of the sprite with the given parameters.
             //The position and scaling are affected by the global scaling.
             //Some parameters are optional, so they are set to the default if not specified.
-            spriteBatch.Draw(sprite.Texture, GlobalScale * position, sprite.GetImageRectangle(subimage ?? new Vector2(0f, 0f)),
-                color ?? Color.White, rotation, sprite.Origin * sprite.Size, usedSize / sprite.Size * GlobalScale, usedSpriteEffect, 0f);
+            spriteBatch.Draw(sprite.Texture, GlobalScale * position + new Vector2(displayLeft, displayTop),
+                sprite.GetImageRectangle(subimage ?? new Vector2(0f, 0f)), color ?? Color.White, rotation,
+                sprite.Origin * sprite.Size, usedSize / sprite.Size * GlobalScale, usedSpriteEffect, 0f);
         }
 
         public void DrawSprite(string sprite, Vector2 position, Vector2? subimage = null, Vector2? size = null, Color? color = null, float rotation = 0f)
@@ -149,6 +170,48 @@ namespace MetroidClone.Engine
         {
             Sprite drawSprite = Assets.GetSprite(sprite);
             DrawSprite(drawSprite, position, new Vector2(subimage % drawSprite.SheetSize.X, (int)subimage / (int)drawSprite.SheetSize.X), size, color, rotation);
+        }
+
+        //Methods to draw text.
+
+        public void DrawText(Font font, string text, Vector2 position, Color? color = null, float rotation = 0f, Vector2? origin = null, float scale = 1f, Font.Alignment alignment = Font.Alignment.TopLeft)
+        {
+            BeginSpriteBatch();
+
+            Vector2 finalOrigin = origin ?? new Vector2(0f, 0f);
+
+            //Apply the alignment.
+            if (alignment != Font.Alignment.TopLeft)
+            {
+                Vector2 textMeasure = font.Measure(text);
+                if (alignment == Font.Alignment.MiddleLeft || alignment == Font.Alignment.MiddleCenter || alignment == Font.Alignment.MiddleRight)
+                    finalOrigin.Y += textMeasure.Y / 2;
+                if (alignment == Font.Alignment.BottomLeft || alignment == Font.Alignment.BottomCenter || alignment == Font.Alignment.BottomRight)
+                    finalOrigin.Y += textMeasure.Y;
+                if (alignment == Font.Alignment.TopCenter || alignment == Font.Alignment.MiddleCenter || alignment == Font.Alignment.BottomCenter)
+                    finalOrigin.X += textMeasure.X / 2;
+                if (alignment == Font.Alignment.TopRight || alignment == Font.Alignment.MiddleRight || alignment == Font.Alignment.BottomRight)
+                    finalOrigin.X += textMeasure.X;
+            }
+
+            spriteBatch.DrawString(font.SpriteFont, text, position, color ?? Color.Black, rotation, finalOrigin, scale, SpriteEffects.None, 0f);
+        }
+
+        public void DrawText(string font, string text, Vector2 position, Color? color = null, float rotation = 0f, Vector2? origin = null, float scale = 1f, Font.Alignment alignment = Font.Alignment.TopLeft)
+        {
+            BeginSpriteBatch();
+
+            DrawText(Assets.GetFont(font), text, position, color, rotation, origin, scale, alignment);
+        }
+
+        public Vector2 MeasureText(Font font, string text)
+        {
+            return font.Measure(text);
+        }
+
+        public Vector2 MeasureText(string font, string text)
+        {
+            return MeasureText(Assets.GetFont(font), text);
         }
 
         private void BeginSpriteBatch()
@@ -169,9 +232,34 @@ namespace MetroidClone.Engine
             }
         }
 
-        public void EndOfDraw()
+        public void BeginDraw()
+        {
+            currentEffect = basicEffect;
+        }
+
+        public void BeginDrawGUI()
         {
             EndSpriteBatch();
+
+            //Draw the GUI/HUD
+            currentEffect = guiEffect;
+            DrawBlackBars(); //Black bars around the view.
+        }
+
+        public void EndOfDraw()
+        {
+            EndSpriteBatch(); //End the sprite batch.
+
+            currentEffect = basicEffect; //Then reset the draw effect.
+        }
+
+        //Draw black bars around the view
+        protected void DrawBlackBars()
+        {
+            DrawRectangleUnscaled(new Rectangle(0, 0, (int)displayLeft, (int)displayHeight), Color.Black);
+            DrawRectangleUnscaled(new Rectangle(0, 0, (int)displayWidth, (int)displayTop), Color.Black);
+            DrawRectangleUnscaled(new Rectangle((int)displayWidth + (int) displayLeft, 0, (int)displayLeft, (int)displayHeight), Color.Black);
+            DrawRectangleUnscaled(new Rectangle(0, (int)displayHeight + (int) displayTop, (int)displayWidth, (int)displayTop), Color.Black);
         }
 
         private int GetPrimitiveCount(PrimitiveType primitiveType, int count)
@@ -190,13 +278,30 @@ namespace MetroidClone.Engine
             return -1;
         }
 
-        public void SetProjectionMatrix()
+        public void SetProjectionMatrix(int width, int height)
         {
-            var projection = Matrix.CreateOrthographicOffCenter(0, graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height, 0, 0, 1);
-            var halfPixelOffset = Matrix.CreateTranslation(-0.5f, -0.5f, 0);
-            basicEffect.Projection = halfPixelOffset * projection;
+            Matrix projection = Matrix.CreateOrthographicOffCenter(0, width, height, 0, 0, 1);
+            
+            Matrix offset = Matrix.CreateTranslation(-0.5f + displayLeft, -0.5f + displayTop, 0);
+            basicEffect.Projection = offset * projection;
+
+            Matrix offset2 = Matrix.CreateTranslation(-0.5f, -0.5f, 0);
+            guiEffect.Projection = offset2 * projection;
         }
 
+        // Scales the game to a certain width and height.
+        public void SmartScale(int width, int height)
+        {
+            float maxWidth = width, maxHeight = height;
+
+            GlobalScale = Math.Min(maxWidth / standardWidth, maxHeight / standardHeight);
+            
+            displayWidth = maxWidth * GlobalScale / (maxWidth / standardWidth);
+            displayHeight = maxHeight * GlobalScale / (maxHeight / standardHeight);
+            displayLeft = (width - displayWidth) / 2;
+            displayTop = (height - displayHeight) / 2;
         
+            SetProjectionMatrix(width, height);
+        }
     }
 }

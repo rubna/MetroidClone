@@ -82,7 +82,7 @@ namespace MetroidClone.Metroid
             {
                 Drawing.DrawCircle(point, 2, Color.Blue, 4);
             }
-            Drawing.DrawRectangle(TranslatedBoundingBox, Color.Purple);
+            Drawing.DrawRectangle(DrawBoundingBox, Color.Purple);
         }
     }
     public enum DroneState

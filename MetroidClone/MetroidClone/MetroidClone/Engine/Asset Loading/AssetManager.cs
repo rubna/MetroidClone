@@ -122,9 +122,18 @@ namespace MetroidClone.Engine
         {
             if (! assets.ContainsKey(name))
             {
-                assets[name] = new Sound(content.Load<SoundEffect>(name));
+                assets[name] = new Sound(content.Load<SoundEffect>("Content/" + name));
             }
             return assets[name] as Sound;
+        }
+
+        public Font GetFont(string name)
+        {
+            if (!assets.ContainsKey(name))
+            {
+                assets[name] = new Font(content.Load<SpriteFont>("Content/" + name));
+            }
+            return assets[name] as Font;
         }
     }
 }
