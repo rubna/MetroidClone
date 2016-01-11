@@ -30,7 +30,7 @@ namespace MetroidClone.Engine
         public Player Player;
         public static Random Random;
         public Vector2 Camera;
-        public GameState PlayingState = GameState.MainMenu;
+        public GameState PlayingState = GameState.Playing;
         private bool worldInitialized = false;
 
         //The width and height of the world.
