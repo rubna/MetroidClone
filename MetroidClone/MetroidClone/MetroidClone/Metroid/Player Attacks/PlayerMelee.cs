@@ -22,6 +22,7 @@ namespace MetroidClone.Metroid.Player_Attacks
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+            Position = World.Player.Position + World.Player.GetFlip * Vector2.UnitX * 20;
             removeCounter += 0.1f;
             if (removeCounter >= 1)
                 Destroy();

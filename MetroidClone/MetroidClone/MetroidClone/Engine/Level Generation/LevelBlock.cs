@@ -83,7 +83,7 @@ namespace MetroidClone.Engine
         // if the level has the wall type (for example, preferLeftWall can be ignored if HasLeftWall is false).
         //If a wall isn't preferred at a position, an exit is used instead if Has*Exit is true.
         public void Place(World world, Dictionary<char, ISpecialTileDefinition> specialTiles, int x, int y, bool preferLeftWall = true,
-            bool preferRightWall = true, bool preferTopWall = true, bool preferBottomWall = true)
+            bool preferRightWall = true, bool preferTopWall = true, bool preferBottomWall = true, bool isBottomOfRoom = false)
         {
             int BlockID = random.Next(int.MaxValue);
 
@@ -140,9 +140,13 @@ namespace MetroidClone.Engine
                         }
                     }
 
-                    int baseX = x + (int)world.TileWidth * i, baseY = y + (int)world.TileHeight * j;
-                    float centerX = baseX + world.TileWidth / 2, centerY = baseY + world.TileHeight / 2;
-                    Rectangle stdCollisionRect = new Rectangle(baseX, baseY, (int)world.TileWidth, (int)world.TileHeight);
+                    int baseX = x + (int)World.TileWidth * i, baseY = y + (int)World.TileHeight * j;
+                    float centerX = baseX + World.TileWidth / 2, centerY = baseY + World.TileHeight / 2;
+                    Rectangle stdCollisionRect = new Rectangle(baseX, baseY, (int)World.TileWidth, (int)World.TileHeight);
+
+                    //If it's nothing or something the player can move through, and the bottom of the room, then add a jumpthrough.
+                    if (data == '.' | data == '/' | data == '\\' && j == Height - 1 && isBottomOfRoom)
+                        world.AddObject(new JumpThrough(new Rectangle(baseX, baseY, (int)World.TileWidth, 1)));
 
                     if (data == '1') //A wall
                         world.AddObject(new Wall(stdCollisionRect));
@@ -152,7 +156,7 @@ namespace MetroidClone.Engine
                         world.AddObject(world.Player, centerX, centerY);
                     }
                     else if (data == 'J') //A jumpthrough block
-                        world.AddObject(new JumpThrough(new Rectangle(baseX, baseY, (int)world.TileWidth, 1)));
+                        world.AddObject(new JumpThrough(new Rectangle(baseX, baseY, (int)World.TileWidth, 1)));
                     else if (data == 'G') //A gun pickup block
                         world.AddObject(new GunPickup(), centerX, centerY);
                     else if (data == '\\') //A slope

@@ -18,7 +18,7 @@ namespace MetroidClone.Metroid
         const int maxFromPlatformTimeForJump = 5; //The maximum time you can still jump after having moved from a platform.
         float attackTimer = 0;
 
-        int timeSinceLastJumpIntention = 0;
+        int timeSinceLastJumpIntention = 10;
         const int maxTimeSinceLastJumpIntention = 5; //The maximum time you can press the jump button before landing on a platform.
 
         public int TimeSinceHWallCollision, TimeSinceVWallCollision;
@@ -102,7 +102,7 @@ namespace MetroidClone.Metroid
                 timeSinceOnGround++;
 
             //You can press jump a small time before landing on a platform and you'll still jump
-            if (Input.KeyboardCheckDown(Keys.W) || Input.KeyboardCheckDown(Keys.Up) || Input.ThumbStickCheckDirection(true).Y > 0.9f || Input.GamePadCheckDown(Buttons.A))
+            if (Input.KeyboardCheckPressed(Keys.W) || Input.KeyboardCheckPressed(Keys.Up) || Input.ThumbStickCheckDirection(true).Y > 0.75f || Input.GamePadCheckPressed(Buttons.A))
                 timeSinceLastJumpIntention = 0;
             else
                 timeSinceLastJumpIntention++;
@@ -114,20 +114,14 @@ namespace MetroidClone.Metroid
                 startedSlowingDownJump = false;
                 }
 
-            //jump
-            if ((Input.KeyboardCheckPressed(Keys.W) || Input.KeyboardCheckPressed(Keys.Up) || Input.ThumbStickCheckDirection(true).Y > 0.9f || Input.GamePadCheckPressed(Buttons.A)) && OnGround)
-            {
-                Speed.Y = -10f * jumpHeightModifier;
-                startedSlowingDownJump = true;
-            }
-            if ((Speed.Y < 0 && (!Input.KeyboardCheckDown(Keys.W) && !Input.KeyboardCheckDown(Keys.Up) && Input.ThumbStickCheckDirection(true).Y <= 0.9f && !Input.GamePadCheckDown(Buttons.A))) && (Speed.Y < -3 || startedSlowingDownJump))
+            if ((Speed.Y < 0 && (!Input.KeyboardCheckDown(Keys.W) && !Input.KeyboardCheckDown(Keys.Up) && Input.ThumbStickCheckDirection(true).Y <= 0.75f && !Input.GamePadCheckDown(Buttons.A))) && (Speed.Y < -3 || startedSlowingDownJump))
             {
                 Speed.Y *= 0.9f;
                 startedSlowingDownJump = true;
             }
 
             //drop through jumpthroughs
-            if ((Input.KeyboardCheckPressed(Keys.S) || Input.KeyboardCheckPressed(Keys.Down) || Input.ThumbStickCheckDirection(true).Y < 0) && OnJumpThrough)
+            if ((Input.KeyboardCheckDown(Keys.S) || Input.KeyboardCheckDown(Keys.Down) || Input.ThumbStickCheckDirection(true).Y < 0) && OnJumpThrough)
                 Position.Y++;
 
             //attack
@@ -135,22 +129,17 @@ namespace MetroidClone.Metroid
             {
                 if (attackTimer == 0)
                 {
-                Attack();
+                    Attack();
                     switch ((int)CurrentWeapon)
                     {
-                        case 0:
+                        case (int)Weapon.Nothing:
                             break;
-                        case 1:
+                        case (int)Weapon.Gun:
                             {
                                 attackTimer = 0.1f;
                                 break;
                             }
-                        case 2:
-                            {
-                                attackTimer = 0.1f;
-                                break;
-                            }
-                        case 3:
+                        case (int)Weapon.Rocket:
                             {
                                 attackTimer = 0.2f;
                                 break;
@@ -159,14 +148,23 @@ namespace MetroidClone.Metroid
                 }
             }
 
+            if (Input.KeyboardCheckPressed(Keys.F) || Input.MouseWheelPressed() || Input.GamePadCheckPressed(Buttons.B))
+            {
+                if (attackTimer == 0 && UnlockedWeapons.Contains(Weapon.Wrench))
+                {
+                    World.AddObject(new PlayerMelee(), Position + GetFlip * Vector2.UnitX * 20);
+                    attackTimer = 0.1f;
+                }
+            }
+
             //switch weapons
-            if (Input.KeyboardCheckPressed(Keys.C) || Input.MouseButtonCheckPressed(false) || Input.GamePadCheckPressed(Buttons.Y))
+            if (Input.KeyboardCheckPressed(Keys.C) || Input.MouseWheelCheckScroll(true) || Input.MouseWheelCheckScroll(false) || Input.GamePadCheckPressed(Buttons.Y))
             {
                 NextWeapon();
                 Console.WriteLine(CurrentWeapon);
             }
 
-            if (Input.KeyboardCheckPressed(Keys.Space) || Input.GamePadCheckPressed(Buttons.B))
+            if (Input.KeyboardCheckPressed(Keys.Space) || Input.GamePadCheckPressed(Buttons.X))
             {
                 CreateDrone();
             }
@@ -175,16 +173,9 @@ namespace MetroidClone.Metroid
 
             //check for getting hurt
             if (blinkTimer == 0)
-            {
                 foreach (Monster monster in World.GameObjects.OfType<Monster>().ToList())
-                {
                     if (TranslatedBoundingBox.Intersects(monster.TranslatedBoundingBox))
-                    {
-                        HitPoints = HitPoints - monster.Damage;
-                        Hurt(Math.Sign(Position.X - monster.Position.X));
-            }
-                }
-            }
+                        Hurt(Math.Sign(Position.X - monster.Position.X), monster.Damage);
 
             //Collect scrap
             foreach (Scrap scrap in World.GameObjects.OfType<Scrap>().ToList())
@@ -253,8 +244,9 @@ namespace MetroidClone.Metroid
             //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
             base.Draw();
             //mouse pointer, disabled when controller in use
+            Point mousePos = Input.MouseCheckUnscaledPosition(Drawing);
             if (!Input.ControllerInUse)
-                Drawing.DrawRectangle(new Rectangle(Input.MouseCheckPosition().X - 5, Input.MouseCheckPosition().Y - 5, 10, 10), Color.DarkKhaki);
+                Drawing.DrawRectangle(new Rectangle(mousePos.X - 5, mousePos.Y - 5, 10, 10), Color.DarkKhaki);
             //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
         }
 
@@ -271,11 +263,6 @@ namespace MetroidClone.Metroid
                 }
                 case Weapon.Rocket:
                 {
-                    World.AddObject(new PlayerMelee(), Position + GetFlip * Vector2.UnitX * 20);
-                    break;
-                }
-                case Weapon.Wrench:
-                {
                         if (RocketAmmo > 0)
                         {
                     World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
@@ -287,8 +274,10 @@ namespace MetroidClone.Metroid
             }
         }
 
-        void Hurt(int xDirection)
+        void Hurt(int xDirection, int damage)
         {
+            HitPoints -= damage;
+            Input.GamePadVibrate(0.1f * (float)damage, 0.1f * (float)damage, 0.1f);
             blinkTimer = 1;
             Input.GamePadVibrate(0.5f, 0.5f, 100);
             Visible = false;
@@ -305,15 +294,10 @@ namespace MetroidClone.Metroid
 
         void NextWeapon()
         {
-            CurrentWeapon++;
-            if ((int)CurrentWeapon > 3)
-            {
-                CurrentWeapon = 0;
-                if (!UnlockedWeapons.Contains(CurrentWeapon))
-                    NextWeapon();
-            }
-            if (!UnlockedWeapons.Contains(CurrentWeapon))
-                NextWeapon();
+            if (CurrentWeapon == Weapon.Gun && UnlockedWeapons.Contains(Weapon.Rocket))
+                CurrentWeapon = Weapon.Rocket;
+            if (CurrentWeapon == Weapon.Rocket && UnlockedWeapons.Contains(Weapon.Gun))
+                CurrentWeapon = Weapon.Gun;
         }
     }
     public enum Weapon

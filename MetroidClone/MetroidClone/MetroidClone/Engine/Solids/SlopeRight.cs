@@ -6,18 +6,8 @@ using System.Text;
 
 namespace MetroidClone.Engine
 {
-    class SlopeRight : GameObject, ISolid
+    class SlopeRight : BoxObject, ISolid
     {
-        public Rectangle BoundingBox;
-        protected Rectangle DrawBoundingBox
-        {
-            get
-            {
-                return new Rectangle(BoundingBox.Left - (int)World.Camera.X, BoundingBox.Top - (int)World.Camera.Y,
-                    BoundingBox.Width, BoundingBox.Height);
-            }
-        }
-
         public SlopeRight(Rectangle boundingBox)
         {
             BoundingBox = boundingBox;

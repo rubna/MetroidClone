@@ -51,15 +51,6 @@ namespace MetroidClone.Engine
             {
                 for (int j = 0; j < vBlocks; j++)
                 {
-                    /*if (theme.Contains("Open"))
-                    {
-                        basicGrid[i, j] = new LevelBlockRequirements(SideType.Exit);
-                        if (i == 0) basicGrid[i, j].LeftSideType = SideType.Wall;
-                        if (i == hBlocks - 1) basicGrid[i, j].RightSideType = SideType.Wall;
-                        if (j == 0) basicGrid[i, j].TopSideType = SideType.Wall;
-                        if (j == vBlocks - 1) basicGrid[i, j].BottomSideType = SideType.Wall;
-                    }
-                    else*/
                     basicGrid[i, j] = new LevelBlockRequirements(SideType.Wall);
                 }
             }
@@ -112,7 +103,7 @@ namespace MetroidClone.Engine
                 }
             }
 
-            //Handle guaranteed blocks
+            //Handle any other guaranteed blocks
             foreach (string guaranteedBlock in guaranteedSpecialBlocks)
             {
                 int i = 0, j = 0;
@@ -151,10 +142,10 @@ namespace MetroidClone.Engine
             {
                 for (int j = 0; j < vBlocks; j++)
                 {
-                    levelGrid[i, j].Place(World, specialTiles, (int) position.X + i * BlockWidth * (int) world.TileWidth,
-                        (int) position.Y + j * BlockHeight * (int) world.TileHeight, basicGrid[i, j].LeftSideType == SideType.Wall,
+                    levelGrid[i, j].Place(World, specialTiles, (int) position.X + i * BlockWidth * (int) World.TileWidth,
+                        (int) position.Y + j * BlockHeight * (int) World.TileHeight, basicGrid[i, j].LeftSideType == SideType.Wall,
                         basicGrid[i, j].RightSideType == SideType.Wall, basicGrid[i, j].TopSideType == SideType.Wall,
-                        basicGrid[i, j].BottomSideType == SideType.Wall);
+                        basicGrid[i, j].BottomSideType == SideType.Wall, j == vBlocks - 1);
                 }
             }
         }
@@ -572,7 +563,7 @@ namespace MetroidClone.Engine
         {
             List<char> knownWallCharacters = new List<char>();
 
-            knownWallCharacters.Add('1'); //'1' is the normal character for a wall, so this is always a wall.
+            knownWallCharacters.Add('1'); //'1' is the normal character for a wall, so this is always a wall
 
             foreach (KeyValuePair<char, ISpecialTileDefinition> specialTile in specialTiles)
             {

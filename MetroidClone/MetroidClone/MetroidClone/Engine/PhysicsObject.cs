@@ -8,21 +8,8 @@ using System.Text;
 
 namespace MetroidClone.Engine
 {
-    /// <summary>
-    /// GameObject with physics, collisions and a BoundingBox.
-    /// </summary>
-    class PhysicsObject : GameObject
+    class PhysicsObject : BoxObject
     {
-        public Rectangle BoundingBox { get; protected set; }
-        public Rectangle TranslatedBoundingBox
-        {
-            get
-            {
-                Rectangle translatedBoundingBox = BoundingBox;
-                translatedBoundingBox.Offset(Position.ToPoint());
-                return translatedBoundingBox;
-            }
-        }
         public bool CollideWithWalls = true;
         public Vector2 Speed = Vector2.Zero;
         Vector2 subPixelSpeed = Vector2.Zero;
@@ -34,17 +21,11 @@ namespace MetroidClone.Engine
         protected bool OnSlope = false;
         protected Vector2 WallBounce = Vector2.Zero;
 
-        protected Rectangle DrawBoundingBox { get {
-            return new Rectangle(TranslatedBoundingBox.Left - (int)World.Camera.X, TranslatedBoundingBox.Top - (int)World.Camera.Y,
-                TranslatedBoundingBox.Width, TranslatedBoundingBox.Height); } }
-
         //HadCollision stores whether there was a collision with a wall in the last update.
         public bool HadHCollision = false, HadVCollision = false;
-        public Engine.Direction LastHCollisionDirection = Engine.Direction.Left, LastVCollisionDirection = Engine.Direction.Up; //In what direction was the last collision?
+        public Direction LastHCollisionDirection = Direction.Left, LastVCollisionDirection = Direction.Up; //In what direction was the last collision?
 
         const float maxSpeed = 15; //The maximum speed.
-
-        public override Vector2 CenterPosition { get { return BoundingBox.Center.ToVector2() + Position; } }
 
         public override void Update(GameTime gameTime)
         {
@@ -82,13 +63,6 @@ namespace MetroidClone.Engine
 
         }
 
-        public override void Draw()
-        {
-            //Draw the current image of the sprite. By default, the size of the bounding box is used.
-            if (CurrentSprite != null && Visible)
-                Drawing.DrawSprite(CurrentSprite, DrawPosition, (int)CurrentImage, ImageScaling * new Vector2(BoundingBox.Width, BoundingBox.Height));
-        }
-
         void CheckOnGround()
         {
             OnJumpThrough = false;
@@ -108,7 +82,7 @@ namespace MetroidClone.Engine
                     OnGround = true;
                     if (Speed.Y > 0)
                         Speed.Y = 0;
-                    LastVCollisionDirection = Engine.Direction.Down;
+                    LastVCollisionDirection = Direction.Down;
                     HadVCollision = true;
                     if (solid is JumpThrough)
                         OnJumpThrough = true;
@@ -137,7 +111,7 @@ namespace MetroidClone.Engine
             {
                 if (InsideWall(Math.Sign(roundedSpeed.X), 0, TranslatedBoundingBox))
                 {
-                    if (!InsideWall(Math.Sign(roundedSpeed.X), -1, TranslatedBoundingBox))
+                    if (!InsideWall(Math.Sign(roundedSpeed.X), -2, TranslatedBoundingBox)) //For slopes
                     {
                         Position.X += Math.Sign(roundedSpeed.X);
                         Position.Y--;
@@ -145,16 +119,18 @@ namespace MetroidClone.Engine
                     else
                     {
                         if (Speed.X < 0)
-                            LastHCollisionDirection = Engine.Direction.Left;
+                            LastHCollisionDirection = Direction.Left;
                         else if (Speed.X > 0)
-                            LastHCollisionDirection = Engine.Direction.Right;
+                            LastHCollisionDirection = Direction.Right;
                         Speed.X *= -WallBounce.X;
                         HadHCollision = true;
                         break;
                     }
                 }
                 else
+                {
                     Position.X += Math.Sign(roundedSpeed.X);
+            }
             }
 
             //move for Y until collision
@@ -163,9 +139,9 @@ namespace MetroidClone.Engine
                 if (InsideWall(0, Math.Sign(roundedSpeed.Y), TranslatedBoundingBox))
                 {
                     if (Speed.Y < 0)
-                        LastVCollisionDirection = Engine.Direction.Up;
+                        LastVCollisionDirection = Direction.Up;
                     else if (Speed.Y > 0)
-                        LastVCollisionDirection = Engine.Direction.Down;
+                        LastVCollisionDirection = Direction.Down;
                     Speed.Y *= -WallBounce.Y;
                     HadVCollision = true;
                     break;

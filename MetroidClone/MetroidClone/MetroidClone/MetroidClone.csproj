@@ -13,7 +13,7 @@
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
-    <XnaProfile>Reach</XnaProfile>
+    <XnaProfile>HiDef</XnaProfile>
     <XnaCrossPlatformGroupID>d67caa77-697d-4366-a942-f72d74a522c9</XnaCrossPlatformGroupID>
     <XnaOutputType>Game</XnaOutputType>
     <ApplicationIcon>Game.ico</ApplicationIcon>
@@ -79,6 +79,8 @@
     <Compile Include="Engine\Asset Loading\Asset\Font.cs" />
     <Compile Include="Engine\Asset Loading\Asset\Sprite.cs" />
     <Compile Include="Engine\Asset Loading\AudioWrapper.cs" />
+    <Compile Include="Engine\BackgroundTile.cs" />
+    <Compile Include="Engine\BoxObject.cs" />
     <Compile Include="Engine\Collections\RandomCollection.cs" />
     <Compile Include="Engine\Collections\FairRandomCollection.cs" />
     <Compile Include="Engine\Collections\IRandomCollection.cs" />
