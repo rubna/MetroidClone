@@ -331,7 +331,7 @@ SPECIAL SecondRightBorder
 BLOCK LRDU
 12221
 2...1
-2.1j2
+2.1.2
 2...1
 11221
 
