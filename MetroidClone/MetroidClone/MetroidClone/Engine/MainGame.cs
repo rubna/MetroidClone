@@ -76,6 +76,9 @@ namespace MetroidClone.Engine
             drawWrapper.SmartScale(Graphics.PreferredBackBufferWidth, Graphics.PreferredBackBufferHeight);
 
             Graphics.ApplyChanges();
+
+            world.MainMenu.FullScreen = !world.MainMenu.FullScreen;
+            world.PauseMenu.FullScreen = !world.PauseMenu.FullScreen;
         }
 
         protected override void LoadContent()
@@ -102,15 +105,6 @@ namespace MetroidClone.Engine
             if (inputHelper.KeyboardCheckReleased(Keys.F4))
             {
                 SwitchFullscreen();
-                if (world.MainMenu.FullScreen == false)
-                    world.MainMenu.FullScreen = true;
-                else
-                    world.MainMenu.FullScreen = true;
-                if (world.PauseMenu.FullScreen == false)
-                    world.PauseMenu.FullScreen = true;
-                else
-                    world.PauseMenu.FullScreen = true;
-
             }
             Profiler.LogGameStepStart();
 

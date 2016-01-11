@@ -21,8 +21,6 @@ namespace MetroidClone.Metroid
        
         public void Update(GameTime gameTime)
         {
-
-            
             //wait for mouseclick
             if (inputHelper.MouseButtonCheckPressed(true))
             {
@@ -35,9 +33,6 @@ namespace MetroidClone.Metroid
             Drawing.DrawRectangle(new Rectangle((int)(Drawing.ScreenSize.X / 2), (int)(Drawing.ScreenSize.Y / 2) - 50, 200, 100), Color.Black);
             Drawing.DrawRectangle(new Rectangle((int)(Drawing.ScreenSize.X / 2), (int)(Drawing.ScreenSize.Y / 2) + 100, 200, 100), Color.Black);
             //draw the Mainmenu
-
-
-
         }
 
         void MouseClicked(int x, int y)
