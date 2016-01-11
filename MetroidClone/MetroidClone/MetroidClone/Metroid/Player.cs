@@ -94,9 +94,9 @@ namespace MetroidClone.Metroid
                 Speed.Y *= 0.9f;
                 startedSlowingDownJump = true;
             }
-
+            
             //drop through jumpthroughs
-            if ((Input.KeyboardCheckPressed(Keys.S) || Input.KeyboardCheckPressed(Keys.Down) || Input.ThumbStickCheckDirection(true).Y < 0) && OnJumpThrough)
+            if ((Input.KeyboardCheckDown(Keys.S) || Input.KeyboardCheckDown(Keys.Down) || Input.ThumbStickCheckDirection(true).Y < 0) && OnJumpThrough)
                 Position.Y++;
 
             //attack
@@ -148,16 +148,9 @@ namespace MetroidClone.Metroid
 
             //check for getting hurt
             if (blinkTimer == 0)
-            {
                 foreach (Monster monster in World.GameObjects.OfType<Monster>().ToList())
-                {
                     if (TranslatedBoundingBox.Intersects(monster.TranslatedBoundingBox))
-                    {
-                        HitPoints = HitPoints - monster.Damage;
-                        Hurt(Math.Sign(Position.X - monster.Position.X));
-            }
-                }
-            }
+                        Hurt(Math.Sign(Position.X - monster.Position.X), monster.Damage);
 
             foreach (Scrap scrap in World.GameObjects.OfType<Scrap>().ToList())
                 if (TranslatedBoundingBox.Intersects(scrap.TranslatedBoundingBox))
@@ -210,8 +203,9 @@ namespace MetroidClone.Metroid
         {
             base.Draw();
             //mouse pointer, disabled when controller in use
+            Point mousePos = Input.MouseCheckUnscaledPosition(Drawing);
             if (!Input.ControllerInUse)
-                Drawing.DrawRectangle(new Rectangle(Input.MouseCheckPosition().X - 5, Input.MouseCheckPosition().Y - 5, 10, 10), Color.DarkKhaki);
+                Drawing.DrawRectangle(new Rectangle(mousePos.X - 5, mousePos.Y - 5, 10, 10), Color.DarkKhaki);
             //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
         }
 
@@ -230,7 +224,7 @@ namespace MetroidClone.Metroid
                 {
                         if (RocketAmmo > 0)
                         {
-                            World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
+                    World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
                             RocketAmmo --;
                         }
                     break;
@@ -239,8 +233,10 @@ namespace MetroidClone.Metroid
             }
         }
 
-        void Hurt(int xDirection)
+        void Hurt(int xDirection, int damage)
         {
+            HitPoints -= damage;
+            Input.GamePadVibrate(0.1f * (float)damage, 0.1f * (float)damage, 0.1f);
             blinkTimer = 1;
             Input.GamePadVibrate(0.5f, 0.5f, 100);
             Visible = false;

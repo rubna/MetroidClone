@@ -37,6 +37,8 @@ namespace MetroidClone.Metroid
         bool hasWinner;
         float timeUntilChoiceEnd = 0, timeLeftToDrawChoice = 0;
 
+        public override bool ShouldDrawGUI => true;
+
         public HackThisGame()
         {
             //Set variables
@@ -184,7 +186,7 @@ namespace MetroidClone.Metroid
                 if (response["SUCCESS"] == "true")
                 {
                     //Success!
-                    nextActionTime = DateTime.Now.AddSeconds(chooseTime); //We should take the next action in 60 seconds.
+                    nextActionTime = DateTime.Now.AddSeconds(chooseTime); //We should take the next action in some seconds.
                     optionsAvailable = true;
                 }
             }

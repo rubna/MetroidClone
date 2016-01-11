@@ -43,6 +43,7 @@ namespace MetroidClone.Engine
         public event EventHandler AnimationFinished;
 
         public virtual bool ShouldUpdate => true; //Whether we should update this object.
+        public virtual bool ShouldDrawGUI => false;
 
         public virtual void Create()
         {
