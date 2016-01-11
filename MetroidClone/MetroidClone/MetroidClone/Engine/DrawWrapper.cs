@@ -30,6 +30,8 @@ namespace MetroidClone.Engine
         float displayLeft = 0, displayTop = 0, displayWidth = 0, displayHeight = 0;
         public Vector2 GUISize { get { return new Vector2(displayWidth + displayLeft * 2, displayHeight + displayTop * 2); } }
 
+        public Rectangle DisplayRect { get { return new Rectangle((int) displayLeft, (int) displayTop, (int) displayWidth, (int) displayHeight); } }
+
         public AssetManager Assets;
 
         public DrawWrapper(SpriteBatch batch, GraphicsDevice device, AssetManager assetsManager)

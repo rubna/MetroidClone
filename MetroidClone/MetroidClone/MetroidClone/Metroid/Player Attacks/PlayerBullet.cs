@@ -26,7 +26,7 @@ namespace MetroidClone.Metroid
             }
             else
             {
-                Speed = Input.MouseCheckPosition().ToVector2() - DrawPosition;
+                Speed = Input.MouseCheckUnscaledPosition(Drawing).ToVector2() - DrawPosition;
                 Speed.Normalize();
                 Speed *= 5;
             }

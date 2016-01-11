@@ -190,10 +190,12 @@ namespace MetroidClone.Engine
             int startX = (int)Camera.X / (int)TileWidth, startY = (int)Camera.Y / (int)TileHeight;
             Vector2 tileSize = new Vector2(TileWidth, TileHeight);
 
+            //Make the tile placement look random (it isn't)
             for (int i = 0; i < WorldGenerator.LevelWidth + 1; i++)
                 for (int j = 0; j < WorldGenerator.LevelHeight + 1; j++)
                 {
-                    DrawWrapper.DrawSprite("BackgroundTileset/background" + (((startX + i) % 3 + (startY + j) % 5) % 4 + 1), new Vector2(i * 48 - removeFromX, j * 48 - removeFromY), 0f, tileSize);
+                    int xpos = startX + i, ypos = startY + j;
+                    DrawWrapper.DrawSprite("BackgroundTileset/background" + ((xpos % 3 + xpos % 9 + ypos + ypos % 5 + ypos % 9) % 4 + 1), new Vector2(i * 48 - removeFromX, j * 48 - removeFromY), 0f, tileSize);
                 }
 
             //Only draw objects that are visible (within the view).
@@ -211,7 +213,7 @@ namespace MetroidClone.Engine
 
         public void DrawGUI()
         {
-            //Call the Draw GUI event of all objects..
+            //Call the Draw GUI event of all objects that have one.
             foreach (GameObject gameObject in GameObjectsWithGUI.OrderByDescending(x => x.Depth))
                 gameObject.DrawGUI();
         }

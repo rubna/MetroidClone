@@ -57,10 +57,20 @@ namespace MetroidClone.Engine
         {
             return keyBoardState.IsKeyDown(k) && lastKeyboardState.IsKeyUp(k);
         }
+        
+        //Get the mouse position on the game window.
         public Point MouseCheckPosition()
         {
             return new Point(mouseState.X, mouseState.Y);
         }
+
+        //Get the mouse position within the game view.
+        public Point MouseCheckUnscaledPosition(DrawWrapper drawWrapper)
+        {
+            Rectangle displayRect = drawWrapper.DisplayRect;
+            return new Point((mouseState.X - displayRect.X) * ((int) World.TileWidth * WorldGenerator.LevelWidth) / displayRect.Width, (mouseState.Y - displayRect.Y) * ((int) World.TileHeight * WorldGenerator.LevelHeight) / displayRect.Height);
+        }
+
         public bool MouseButtonCheckDown(bool left)
         {
             if (left)

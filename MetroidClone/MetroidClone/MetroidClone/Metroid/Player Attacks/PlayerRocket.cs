@@ -26,7 +26,7 @@ namespace MetroidClone.Metroid.Player_Attacks
             }
             else
             {
-                direction = Input.MouseCheckPosition().ToVector2() - Position;
+                direction = Input.MouseCheckUnscaledPosition(Drawing).ToVector2() - Position;
             }
             direction.Normalize();
 
