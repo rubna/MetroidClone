@@ -148,16 +148,9 @@ namespace MetroidClone.Metroid
 
             //check for getting hurt
             if (blinkTimer == 0)
-            {
                 foreach (Monster monster in World.GameObjects.OfType<Monster>().ToList())
-                {
                     if (TranslatedBoundingBox.Intersects(monster.TranslatedBoundingBox))
-                    {
-                        HitPoints = HitPoints - monster.Damage;
-                        Hurt(Math.Sign(Position.X - monster.Position.X));
-            }
-                }
-            }
+                        Hurt(Math.Sign(Position.X - monster.Position.X), monster.Damage);
 
             foreach (Scrap scrap in World.GameObjects.OfType<Scrap>().ToList())
                 if (TranslatedBoundingBox.Intersects(scrap.TranslatedBoundingBox))
@@ -239,8 +232,10 @@ namespace MetroidClone.Metroid
             }
         }
 
-        void Hurt(int xDirection)
+        void Hurt(int xDirection, int damage)
         {
+            HitPoints -= damage;
+            Input.GamePadVibrate(0.1f * (float)damage, 0.1f * (float)damage, 0.1f);
             blinkTimer = 1;
             Input.GamePadVibrate(0.5f, 0.5f, 100);
             Visible = false;
