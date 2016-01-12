@@ -2,12 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using MetroidClone.Metroid;
 
 namespace MetroidClone.Engine
 {
     class World
     {
+        public enum GameState
+        {
+            MainMenu,
+            Playing,
+            Paused
+        }
+
         public List<GameObject> GameObjects; //Gameobjects that have been created before this update
         List<GameObject> GameObjectsToUpdate; //Gameobjects that should be updated during Update.
         List<GameObject> GameObjectsWithGUI; //Gameobjects with a GUI event.
@@ -18,9 +26,13 @@ namespace MetroidClone.Engine
         public AudioWrapper AudioWrapper { get; set; }
         public AssetManager AssetManager { get; set; }
         public Level Level;
+        public MainMenu MainMenu;
+        public PauseMenu PauseMenu;
         public Player Player;
         public static Random Random;
         public Vector2 Camera;
+        public GameState PlayingState = GameState.Playing;
+        private bool worldInitialized = false;
 
         //The width and height of the world.
         public float Width { get; protected set; } = WorldGenerator.LevelWidth * WorldGenerator.WorldWidth * TileWidth + 200;
@@ -50,10 +62,16 @@ namespace MetroidClone.Engine
             Random = new Random();
 
             Camera = new Vector2(0);
+
+            MainMenu = new MainMenu();
+            PauseMenu = new PauseMenu();
         }
 
         public void Initialize()
         {
+            GameObjects.Clear();
+            AddObject(MainMenu);
+            AddObject(PauseMenu);
             (new WorldGenerator()).Generate(this);
             UpdateCamera(true);
 
@@ -128,6 +146,8 @@ namespace MetroidClone.Engine
             AddedGameObjects.Clear();
             RemovedGameObjects.Clear();
 
+            if (PlayingState == GameState.Playing)
+            {
             foreach (GameObject gameObject in GameObjectsToUpdate)
                 gameObject.Update(gameTime);
 
@@ -141,6 +161,31 @@ namespace MetroidClone.Engine
                 GameObjectsToUpdate.Remove(gameObject);
 
             UpdateCamera(); //Update the position of the camera.
+                PauseMenu.ResumeGame = false;
+                MainMenu.StartGame = false;
+            }
+            if (PlayingState == GameState.MainMenu)
+            {
+                MainMenu.Update(gameTime);
+                PauseMenu.ExitGame = false;
+        }
+            if (PlayingState == GameState.Paused)
+            {
+                PauseMenu.Update(gameTime);
+            }
+            if (MainMenu.StartGame && worldInitialized == false)
+            {
+                Initialize();
+                PlayingState = GameState.Playing;
+                worldInitialized = true;
+            }
+            if (PauseMenu.ResumeGame)
+                PlayingState = GameState.Playing;
+            if (PauseMenu.ExitGame)
+            {
+                worldInitialized = false;
+                PlayingState = GameState.MainMenu;
+            }
         }
 
         void UpdateCamera(bool jumpToGoal = false)
@@ -200,7 +245,9 @@ namespace MetroidClone.Engine
                     DrawWrapper.DrawSprite("BackgroundTileset/background" + ((xpos % 3 + xpos % 9 + ypos + ypos % 5 + ypos % 9) % 4 + 1), new Vector2(i * 48 - removeFromX, j * 48 - removeFromY), 0f, tileSize);
                 }
 
-            //Only draw objects that are visible (within the view).
+            //Only draw objects that are visible (within the view)
+            if (PlayingState == GameState.Playing)
+            {
             foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
             {
                 Vector2 drawPos = gameObject.CenterPosition - Camera;
@@ -211,6 +258,11 @@ namespace MetroidClone.Engine
                     gameObject.Draw();
                 }
             }
+            }
+            if (PlayingState == GameState.Paused)
+                PauseMenu.Draw2();
+            if (PlayingState == GameState.MainMenu)
+                    MainMenu.Draw2();
         }
 
         public void DrawGUI()

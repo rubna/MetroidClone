@@ -147,7 +147,6 @@ namespace MetroidClone.Metroid
             base.Update(gameTime);
 
             //check for getting hurt
-
             if (blinkTimer == 0)
                 foreach (Monster monster in World.GameObjects.OfType<Monster>())
                     if (TranslatedBoundingBox.Intersects(monster.TranslatedBoundingBox))
@@ -207,7 +206,7 @@ namespace MetroidClone.Metroid
             //mouse pointer, disabled when controller in use
             Point mousePos = Input.MouseCheckUnscaledPosition(Drawing);
             if (!Input.ControllerInUse)
-                Drawing.DrawRectangle(new Rectangle(mousePos.X - 5, mousePos.Y - 5, 10, 10), Color.DarkKhaki);
+                Drawing.DrawRectangle(new Rectangle((int)Input.MouseCheckPosition().X - 5, (int)Input.MouseCheckPosition().Y -5, 10, 10), Color.DarkKhaki);
             //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
         }
 

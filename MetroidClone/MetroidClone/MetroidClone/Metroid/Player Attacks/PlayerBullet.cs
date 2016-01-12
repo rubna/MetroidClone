@@ -10,8 +10,6 @@ namespace MetroidClone.Metroid
 {
     class PlayerBullet : PhysicsObject, IPlayerAttack
     {
-        private Vector2 direction;
-
         public override void Create()
         {
             base.Create();
