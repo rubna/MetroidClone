@@ -70,11 +70,6 @@ namespace MetroidClone.Metroid
                 PlayAnimation("tempplayer", Direction.Right, speed: 0.2f);
             }
 
-            if (Input.KeyboardCheckPressed(Keys.T))
-            {
-                Audio.Play("Audio/Opname");
-            }
-
             //You can still jump a small time after having walked from a platform
             if (OnGround)
                 timeSinceOnGround = 0;
@@ -152,12 +147,14 @@ namespace MetroidClone.Metroid
             base.Update(gameTime);
 
             //check for getting hurt
+
             if (blinkTimer == 0)
-                foreach (Monster monster in World.GameObjects.OfType<Monster>().ToList())
+                foreach (Monster monster in World.GameObjects.OfType<Monster>())
                     if (TranslatedBoundingBox.Intersects(monster.TranslatedBoundingBox))
                         Hurt(Math.Sign(Position.X - monster.Position.X), monster.Damage);
 
-            foreach (Scrap scrap in World.GameObjects.OfType<Scrap>().ToList())
+            //And check for scrap
+            foreach (Scrap scrap in World.GameObjects.OfType<Scrap>())
                 if (TranslatedBoundingBox.Intersects(scrap.TranslatedBoundingBox))
                     Collect(scrap);
 
@@ -222,14 +219,15 @@ namespace MetroidClone.Metroid
                     break;
                 case Weapon.Gun:
                 {
-                    World.AddObject(new PlayerBullet() { FlipX = FlipX }, Position);
+                    Audio.Play("Audio/Gun shooting");
+                    World.AddObject(new PlayerBullet(), Position);
                     break;
                 }
                 case Weapon.Rocket:
                 {
                         if (RocketAmmo > 0)
                         {
-                    World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
+                            World.AddObject(new PlayerRocket(), Position);
                             RocketAmmo --;
                         }
                     break;

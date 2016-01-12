@@ -194,11 +194,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Audio\Opname.wav">
-      <Name>Opname</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
+    <Compile Include="placeholders\smoke.png">
+      <Name>smoke</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Audio\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -113,6 +113,7 @@
     <Compile Include="Metroid\Hack This Game system\IHackingOpportunity.cs" />
     <Compile Include="Metroid\HealthDrop.cs" />
     <Compile Include="Metroid\Map.cs" />
+    <Compile Include="Metroid\Player Attacks\Smoke.cs" />
     <Compile Include="Metroid\RocketAmmo.cs" />
     <Compile Include="Metroid\Collectible.cs" />
     <Compile Include="Metroid\Drone.cs" />

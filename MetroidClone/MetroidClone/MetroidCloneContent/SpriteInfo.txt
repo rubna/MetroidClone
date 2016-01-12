@@ -9,3 +9,4 @@ tempplayer middle 4x1
 foreground* topleft 1x1
 connection* topleft 1x1
 background* topleft 1x1
+smoke center 1x1
