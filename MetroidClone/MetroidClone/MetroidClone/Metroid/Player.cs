@@ -219,7 +219,7 @@ namespace MetroidClone.Metroid
                     break;
                 case Weapon.Gun:
                 {
-                    Audio.Play("Audio/Gun shooting");
+                    //Audio.Play("Audio/Gun shooting");
                     World.AddObject(new PlayerBullet(), Position);
                     break;
                 }
