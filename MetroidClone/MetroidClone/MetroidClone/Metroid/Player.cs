@@ -78,7 +78,9 @@ namespace MetroidClone.Metroid
 
             //You can press jump a small time before landing on a platform and you'll still jump
             if (Input.KeyboardCheckPressed(Keys.W) || Input.KeyboardCheckPressed(Keys.Up) || Input.ThumbStickCheckDirection(true).Y > 0.75f || Input.GamePadCheckPressed(Buttons.A))
+            {
                 timeSinceLastJumpIntention = 0;
+            }
             else
                 timeSinceLastJumpIntention++;
 
@@ -218,7 +220,7 @@ namespace MetroidClone.Metroid
                     break;
                 case Weapon.Gun:
                 {
-                    //Audio.Play("Audio/Gun shooting");
+                    Audio.Play("Audio/Combat/Gunshots/Laser/Laser_Shoot01");
                     World.AddObject(new PlayerBullet(), Position);
                     break;
                 }
@@ -226,6 +228,7 @@ namespace MetroidClone.Metroid
                 {
                         if (RocketAmmo > 0)
                         {
+                            Audio.Play("Audio/Combat/Gunshots/Rocket/Rocket_Shoot");
                             World.AddObject(new PlayerRocket(), Position);
                             RocketAmmo --;
                         }
@@ -237,13 +240,20 @@ namespace MetroidClone.Metroid
 
         void Hurt(int xDirection, int damage)
         {
+            Audio.Play("Audio/Combat/Hit_Hurt");
             HitPoints -= damage;
             Input.GamePadVibrate(0.1f * (float)damage, 0.1f * (float)damage, 0.1f);
             blinkTimer = 1;
-            Input.GamePadVibrate(0.5f, 0.5f, 100);
             Visible = false;
             Speed = new Vector2(xDirection * 3, -2);
             if (HitPoints <= 0)
+                Die();
+        }
+
+        void Die()
+        {
+            Audio.Play("Audio/GameSounds/Game_Over");
+            Input.GamePadVibrate(1, 1, 1000);
             Console.Write("You are dead");
         }
 

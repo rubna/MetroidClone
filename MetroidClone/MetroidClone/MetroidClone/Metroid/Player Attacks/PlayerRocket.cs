@@ -61,6 +61,7 @@ namespace MetroidClone.Metroid.Player_Attacks
         public override void Destroy()
         {
             base.Destroy();
+            Audio.Play("Audio/Combat/Gunshots/Rocket/Explosion");
             World.AddObject(new PlayerExplosion(), Position);
         }
     }
