@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace MetroidClone.Engine
 {
@@ -142,8 +141,8 @@ namespace MetroidClone.Engine
             {
                 for (int j = 0; j < vBlocks; j++)
                 {
-                    levelGrid[i, j].Place(World, specialTiles, (int) position.X + i * BlockWidth * (int) World.TileWidth,
-                        (int) position.Y + j * BlockHeight * (int) World.TileHeight, basicGrid[i, j].LeftSideType == SideType.Wall,
+                    levelGrid[i, j].Place(World, specialTiles, (int) position.X + i * BlockWidth * World.TileWidth,
+                        (int) position.Y + j * BlockHeight * World.TileHeight, basicGrid[i, j].LeftSideType == SideType.Wall,
                         basicGrid[i, j].RightSideType == SideType.Wall, basicGrid[i, j].TopSideType == SideType.Wall,
                         basicGrid[i, j].BottomSideType == SideType.Wall, j == vBlocks - 1);
                 }

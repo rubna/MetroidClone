@@ -1,8 +1,4 @@
 ﻿using MetroidClone.Engine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 
 namespace MetroidClone.Metroid
@@ -28,7 +24,7 @@ namespace MetroidClone.Metroid
         public override void Draw()
         {
             base.Draw();
-            Drawing.DrawRectangle(DrawBoundingBox, Color.Gray);
+            Drawing.DrawRectangle(DrawBoundingBox, Color.DarkBlue);
         }
     }
 }

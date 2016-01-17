@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using MetroidClone.Metroid;
 
@@ -48,9 +47,10 @@ namespace MetroidClone.Engine
 
             isRoom[0, startingY] = true; //Starting room
             guaranteedSpecialBlocks[0, startingY].Add("PlayerStart");
-            guaranteedSpecialBlocks[1, startingY].Add("GunPickup");
-
+           
             isRoom[1, startingY] = true; //Room right of starting room.
+            guaranteedSpecialBlocks[1, startingY].Add("GunPickup");
+            guaranteedSpecialBlocks[1, startingY].Add(areaBorderNameRight[0]);
 
             //Other rooms (main areas).
             int areaTwoBorderStart = 3, areaThreeBorderStart = 6;
@@ -72,6 +72,19 @@ namespace MetroidClone.Engine
                     else
                         area[i, j] = 0;
                 }
+
+            //Add a wrench pickup and a rocket pickup. The rocket pickup should have some distance from the starting area.
+            int wrenchPos, rocketPos;
+            do
+            {
+                wrenchPos = World.Random.Next(1, WorldHeight - 1);
+            }
+            while (Math.Abs(wrenchPos - startingY) < 2);
+
+            rocketPos = World.Random.Next(1, WorldHeight - 1);
+
+            guaranteedSpecialBlocks[areaTwoBorderStart + 1, wrenchPos].Add("WrenchPickup");
+            guaranteedSpecialBlocks[areaThreeBorderStart + 1, rocketPos].Add("RocketPickup");
 
             //Other rooms (secondary areas)
             for (int i = 0; i < 2; i++)
@@ -139,6 +152,9 @@ namespace MetroidClone.Engine
             //Add the map object
             world.AddObject(new Map());
 
+            //Add the GUI object
+            world.AddObject(new GUI());
+
             //Autotile the world.
             Autotile(world);
         }
@@ -158,7 +174,7 @@ namespace MetroidClone.Engine
             IEnumerable<Wall> walls = world.GameObjects.Where(w => w is Wall).Select(w => w as Wall);
             foreach (Wall wall in walls)
             {
-                isWall[wall.BoundingBox.X / (int) World.TileWidth, wall.BoundingBox.Y / (int) World.TileHeight] = true;
+                isWall[wall.BoundingBox.X / World.TileWidth, wall.BoundingBox.Y / World.TileHeight] = true;
             }
 
             foreach (Wall wall in walls)
@@ -166,8 +182,8 @@ namespace MetroidClone.Engine
                 string tileName = "Tileset/foreground";
                 wall.BasicConnectionSprite = "Tileset/connection";
 
-                Point positionIndex = new Point(wall.BoundingBox.Left / (int) World.TileWidth,
-                    wall.BoundingBox.Top / (int) World.TileHeight);
+                Point positionIndex = new Point(wall.BoundingBox.Left / World.TileWidth,
+                    wall.BoundingBox.Top / World.TileHeight);
 
                 bool isTop = positionIndex.Y <= 0,
                     isRight = positionIndex.X >= LevelWidth * WorldWidth - 1,

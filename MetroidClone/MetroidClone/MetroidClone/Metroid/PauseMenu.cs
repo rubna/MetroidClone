@@ -1,11 +1,4 @@
-﻿using MetroidClone.Engine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
 
 // creates the pause menu. A large part of the code is based on code made by Nico Vermeir.
 namespace MetroidClone.Engine
@@ -19,14 +12,14 @@ namespace MetroidClone.Engine
         Rectangle resumeButtonRect;
         Rectangle exitButtonRect;
 
-        public void Update(GameTime gameTime)
+        public void UpdateMenu(GameTime gameTime)
         {
 
 
             //wait for mouseclick
             if (inputHelper.MouseButtonCheckPressed(true))
             {
-                MouseClicked((int)inputHelper.MouseCheckPosition().X, (int)inputHelper.MouseCheckPosition().Y);
+                MouseClicked(inputHelper.MouseCheckPosition().X, inputHelper.MouseCheckPosition().Y);
             }
         }
         public void Draw2()

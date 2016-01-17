@@ -2,8 +2,6 @@
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace MetroidClone.Engine
 {
@@ -87,7 +85,6 @@ namespace MetroidClone.Engine
         {
             int BlockID = random.Next(int.MaxValue);
 
-            Level level = world.Level;
             for (int i = 0; i < Width; i++)
             {
                 for (int j = 0; j < Height; j++)
@@ -141,25 +138,33 @@ namespace MetroidClone.Engine
                         }
                     }
 
-                    int baseX = x + (int)World.TileWidth * i, baseY = y + (int)World.TileHeight * j;
+                    int baseX = x + World.TileWidth * i, baseY = y + World.TileHeight * j;
                     float centerX = baseX + World.TileWidth / 2, centerY = baseY + World.TileHeight / 2;
-                    Rectangle stdCollisionRect = new Rectangle(baseX, baseY, (int)World.TileWidth, (int)World.TileHeight);
+                    Rectangle stdCollisionRect = new Rectangle(baseX, baseY, World.TileWidth, World.TileHeight);
 
                     //If it's nothing or something the player can move through, and the bottom of the room, then add a jumpthrough.
                     if (data == '.' | data == '/' | data == '\\' && j == Height - 1 && isBottomOfRoom)
-                        world.AddObject(new JumpThrough(new Rectangle(baseX, baseY, (int)World.TileWidth, 1)));
+                        world.AddObject(new JumpThrough(new Rectangle(baseX, baseY, World.TileWidth, 1)));
 
                     if (data == '1') //A wall
                         world.AddObject(new Wall(stdCollisionRect));
+                    else if (data == 'D') //A gun door
+                        world.AddObject(new GunDoor(), baseX + World.TileWidth / 2, baseY);
+                    else if (data == 'M') //A melee door
+                        world.AddObject(new MeleeDoor(), baseX + World.TileWidth / 2, baseY);
+                    else if (data == 'G') //A gun pickup block
+                        world.AddObject(new GunPickup(), centerX, centerY);
+                    else if (data == 'W') //A wrench pickup block
+                        world.AddObject(new WrenchPickup(), centerX, centerY);
+                    else if (data == 'R') //A rocket pickup block
+                        world.AddObject(new RocketPickup(), centerX, centerY);
                     else if (data == 'P') //The player
                     {
                         world.Player = new Player();
                         world.AddObject(world.Player, centerX, centerY);
                     }
                     else if (data == 'J') //A jumpthrough block
-                        world.AddObject(new JumpThrough(new Rectangle(baseX, baseY, (int)World.TileWidth, 1)));
-                    else if (data == 'G') //A gun pickup block
-                        world.AddObject(new GunPickup(), centerX, centerY);
+                        world.AddObject(new JumpThrough(new Rectangle(baseX, baseY, World.TileWidth, 1)));
                     else if (data == '\\') //A slope
                         world.AddObject(new SlopeLeft(stdCollisionRect));
                     else if (data == '/') //A slope

@@ -24,7 +24,7 @@ namespace MetroidClone.Engine
         private BasicEffect basicEffect, guiEffect;
         private BasicEffect currentEffect;
 
-        private int deviceWidth, lastDeviceWidth;
+        private int deviceWidth;
 
         //The size of the whole game view (excluding black bars), and the size of the GUI (including black bars).
         float displayLeft = 0, displayTop = 0, displayWidth = 0, displayHeight = 0;
@@ -89,10 +89,18 @@ namespace MetroidClone.Engine
             DrawPrimitive(PrimitiveType.TriangleStrip, verts, color);
         }
 
+        //Draw a rectangle without taking scaling into account.
         public void DrawRectangleUnscaled(Rectangle rectangle, Color color)
         {
-            DrawRectangle(new Rectangle((int) Math.Round(rectangle.Left / GlobalScale), (int) Math.Round(rectangle.Top / GlobalScale), (int) Math.Ceiling(rectangle.Width / GlobalScale),
-                (int) Math.Ceiling(rectangle.Height / GlobalScale)), color);
+            var verts = new List<Vector2>
+            {
+                new Vector2(rectangle.X / GlobalScale, rectangle.Bottom / GlobalScale),
+                new Vector2(rectangle.X / GlobalScale, rectangle.Y / GlobalScale),
+                new Vector2(rectangle.Right / GlobalScale, rectangle.Bottom / GlobalScale),
+                new Vector2(rectangle.Right / GlobalScale, rectangle.Y / GlobalScale)
+            };
+
+            DrawPrimitive(PrimitiveType.TriangleStrip, verts, color);
         }
 
         public void DrawCircle(Vector2 position, float radius, Color color, int precision = 24)

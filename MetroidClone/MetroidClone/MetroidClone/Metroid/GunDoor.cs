@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MetroidClone.Metroid
 {
-    class MeleeDoor : Door
+    class GunDoor : Door
     {
         protected override string closedSprite { get { return "doorspriteclosedgreen"; } }
         protected override string standardSprite { get { return "doorspriteopen"; } }

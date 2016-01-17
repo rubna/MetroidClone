@@ -24,7 +24,6 @@ namespace MetroidClone.Engine
         
         public DrawWrapper DrawWrapper { get; set; }
         public AssetManager AssetManager { get; set; }
-        public Level Level;
         public MainMenu MainMenu;
         public PauseMenu PauseMenu;
         public Player Player;
@@ -38,8 +37,8 @@ namespace MetroidClone.Engine
         public float Height { get; protected set; } = WorldGenerator.LevelHeight * WorldGenerator.WorldHeight * TileWidth + 200;
 
         //The width and height of a tile.
-        public const float TileWidth = 48;
-        public const float TileHeight = 48;
+        public const int TileWidth = 48;
+        public const int TileHeight = 48;
 
         const float GridSize = 100f;
         public List<ISolid>[,] SolidGrid;
@@ -82,6 +81,8 @@ namespace MetroidClone.Engine
             }
 
             UpdateSolidGrid();
+
+            MakePathfindingGrid();
         }
 
         public void UpdateSolidGrid()
@@ -102,10 +103,26 @@ namespace MetroidClone.Engine
                         if (!(solids[k] is Wall) || solids[k].CollidesWith(boundingbox))
                         {
                             SolidGrid[i, j].Add(solids[k]);
-        }
+                        }
                     }
                 }
             }
+        }
+
+        public bool[,] MakePathfindingGrid()
+        {
+            bool[,] isSolid = new bool[WorldGenerator.LevelWidth * WorldGenerator.WorldWidth, WorldGenerator.LevelHeight * WorldGenerator.WorldHeight];
+
+            foreach (ISolid solid in Solids)
+            {
+                if (solid is Wall)
+                {
+                    Wall wall = solid as Wall;
+                    isSolid[wall.BoundingBox.Left / TileWidth, wall.BoundingBox.Top / TileHeight] = true;
+                }
+            }
+
+            return isSolid;
         }
 
         public void AddObject(GameObject gameObject)
@@ -146,30 +163,30 @@ namespace MetroidClone.Engine
 
             if (PlayingState == GameState.Playing)
             {
-            foreach (GameObject gameObject in GameObjectsToUpdate)
-                gameObject.Update(gameTime);
+                foreach (GameObject gameObject in GameObjectsToUpdate)
+                    gameObject.Update(gameTime);
 
-            foreach (GameObject gameObject in AddedGameObjects)
-            {
-                if (gameObject.ShouldUpdate)
-                    GameObjectsToUpdate.Add(gameObject);
-            }
+                foreach (GameObject gameObject in AddedGameObjects)
+                {
+                    if (gameObject.ShouldUpdate)
+                        GameObjectsToUpdate.Add(gameObject);
+                }
 
-            foreach (GameObject gameObject in RemovedGameObjects)
-                GameObjectsToUpdate.Remove(gameObject);
+                foreach (GameObject gameObject in RemovedGameObjects)
+                    GameObjectsToUpdate.Remove(gameObject);
 
-            UpdateCamera(); //Update the position of the camera.
+                UpdateCamera(); //Update the position of the camera.
                 PauseMenu.ResumeGame = false;
                 MainMenu.StartGame = false;
             }
             if (PlayingState == GameState.MainMenu)
             {
-                MainMenu.Update(gameTime);
+                MainMenu.UpdateMenu(gameTime);
                 PauseMenu.ExitGame = false;
-        }
+            }
             if (PlayingState == GameState.Paused)
             {
-                PauseMenu.Update(gameTime);
+                PauseMenu.UpdateMenu(gameTime);
             }
             if (MainMenu.StartGame && worldInitialized == false)
             {
@@ -232,7 +249,7 @@ namespace MetroidClone.Engine
         {
             //Draw the background.
             float removeFromX = Camera.X % TileWidth, removeFromY = Camera.Y % TileHeight;
-            int startX = (int)Camera.X / (int)TileWidth, startY = (int)Camera.Y / (int)TileHeight;
+            int startX = (int)Camera.X / TileWidth, startY = (int)Camera.Y / TileHeight;
             Vector2 tileSize = new Vector2(TileWidth, TileHeight);
 
             //Make the tile placement look random (it isn't)
@@ -246,21 +263,21 @@ namespace MetroidClone.Engine
             //Only draw objects that are visible (within the view)
             if (PlayingState == GameState.Playing)
             {
-            foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
-            {
-                Vector2 drawPos = gameObject.CenterPosition - Camera;
-                if (drawPos.X > -100 && drawPos.Y > -100 &&
-                    drawPos.X < WorldGenerator.LevelWidth * TileWidth + 100 &&
-                    drawPos.Y < WorldGenerator.LevelHeight * TileHeight + 100)
+                foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
                 {
-                    gameObject.Draw();
+                    Vector2 drawPos = gameObject.CenterPosition - Camera;
+                    if (drawPos.X > -100 && drawPos.Y > -100 &&
+                        drawPos.X < WorldGenerator.LevelWidth * TileWidth + 100 &&
+                        drawPos.Y < WorldGenerator.LevelHeight * TileHeight + 100)
+                    {
+                        gameObject.Draw();
+                    }
                 }
-            }
             }
             if (PlayingState == GameState.Paused)
                 PauseMenu.Draw2();
             if (PlayingState == GameState.MainMenu)
-                    MainMenu.Draw2();
+                MainMenu.Draw2();
         }
 
         public void DrawGUI()
@@ -276,6 +293,15 @@ namespace MetroidClone.Engine
                 return SolidGrid[(int)(position.X / GridSize), (int)(position.Y / GridSize)];
             else
                 return new List<ISolid>(); //Nothing here.
+        }
+
+        //Returns whether a point is at least offset pixels away from the view border.
+        public bool PointOutOfView(Vector2 point, int offset = 0)
+        {
+            Vector2 drawPos = point - Camera;
+            return !(drawPos.X > -offset && drawPos.Y > -offset &&
+                drawPos.X < WorldGenerator.LevelWidth * TileWidth + offset &&
+                drawPos.Y < WorldGenerator.LevelHeight * TileHeight + offset);
         }
     }
 }

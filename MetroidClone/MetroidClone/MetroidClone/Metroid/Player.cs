@@ -1,19 +1,17 @@
 ﻿using MetroidClone.Engine;
-using MetroidClone.Engine.Asset;
 using MetroidClone.Metroid.Player_Attacks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace MetroidClone.Metroid
 {
     class Player : PhysicsObject
     {
         float blinkTimer = 0;
-        int collectedScrap = 100;
+        public int CollectedScrap = 100;
         int timeSinceOnGround = 0;
         const int maxFromPlatformTimeForJump = 5; //The maximum time you can still jump after having moved from a platform.
         float attackTimer = 0;
@@ -27,12 +25,15 @@ namespace MetroidClone.Metroid
 
         public Weapon CurrentWeapon = Weapon.Nothing;
         public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
-        public int HitPoints = 100;
+        public int HitPoints = 50, MaxHitPoints = 100;
         public int RocketAmmo = 5;
         public int Score = 0;
 
         public float movementSpeedModifier; //This can be used to change the movement speed.
         public float jumpHeightModifier; //This can be used to change the jump height.
+
+        const float jumpSpeed = 8f; //The base jumping speed. Was: 10f
+        const float gravity = 0.2f; //The base gravity. Was: 0.3f
 
         public override void Create()
         {
@@ -42,7 +43,7 @@ namespace MetroidClone.Metroid
             PlayAnimation("tempplayer", speed: 0f);
 
             Friction = new Vector2(0.85f, 1);
-            Gravity = 0.3f;
+            Gravity = gravity;
 
             startedSlowingDownJump = false;
 
@@ -85,7 +86,7 @@ namespace MetroidClone.Metroid
             //jump
             if (timeSinceLastJumpIntention < maxTimeSinceLastJumpIntention && timeSinceOnGround < maxFromPlatformTimeForJump && Speed.Y >= 0)
             {
-                Speed.Y = -10f * jumpHeightModifier;
+                Speed.Y = - jumpSpeed * jumpHeightModifier;
                 startedSlowingDownJump = false;
             }
 
@@ -193,10 +194,10 @@ namespace MetroidClone.Metroid
 
         void CreateDrone()
         {
-            if (collectedScrap < 25)
+            if (CollectedScrap < 25)
                 return;
             World.AddObject(new Drone(), Position);
-            collectedScrap -= 25;
+            CollectedScrap -= 25;
         }
 
         public override void Draw()
@@ -205,7 +206,7 @@ namespace MetroidClone.Metroid
             //mouse pointer, disabled when controller in use
             Point mousePos = Input.MouseCheckUnscaledPosition(Drawing);
             if (!Input.ControllerInUse)
-                Drawing.DrawRectangle(new Rectangle((int)Input.MouseCheckPosition().X - 5, (int)Input.MouseCheckPosition().Y -5, 10, 10), Color.DarkKhaki);
+                Drawing.DrawRectangle(new Rectangle(Input.MouseCheckUnscaledPosition(Drawing).X - 5, Input.MouseCheckUnscaledPosition(Drawing).Y - 5, 10, 10), Color.DarkKhaki);
             //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
         }
 
@@ -222,32 +223,31 @@ namespace MetroidClone.Metroid
                 }
                 case Weapon.Rocket:
                 {
-                        if (RocketAmmo > 0)
-                        {
-                            World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
-                            RocketAmmo --;
-                        }
+                    if (RocketAmmo > 0)
+                    {
+                        World.AddObject(new PlayerRocket() { FlipX = FlipX }, Position);
+                        RocketAmmo --;
+                    }
                     break;
                 }
-                default: break;
             }
         }
 
         void Hurt(int xDirection, int damage)
         {
             HitPoints -= damage;
-            Input.GamePadVibrate(0.1f * (float)damage, 0.1f * (float)damage, 0.1f);
+            Input.GamePadVibrate(0.1f * damage, 0.1f * damage, 0.1f);
             blinkTimer = 1;
             Input.GamePadVibrate(0.5f, 0.5f, 100);
             Visible = false;
             Speed = new Vector2(xDirection * 3, -2);
             if (HitPoints <= 0)
-            Console.Write("You are dead");
+                Console.Write("You are dead");
         }
 
         void Collect(Scrap scrap)
         {
-            collectedScrap += scrap.ScrapAmount;
+            CollectedScrap += scrap.ScrapAmount;
             scrap.Destroy();
         }
 

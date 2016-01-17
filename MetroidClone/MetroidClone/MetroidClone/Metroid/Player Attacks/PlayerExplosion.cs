@@ -1,10 +1,6 @@
 ﻿using MetroidClone.Engine;
 using MetroidClone.Metroid.Abstract;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace MetroidClone.Metroid.Player_Attacks
 {

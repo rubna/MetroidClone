@@ -1,10 +1,7 @@
-﻿using MetroidClone.Metroid;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace MetroidClone.Engine
 {
@@ -147,6 +144,19 @@ namespace MetroidClone.Engine
                 else
                     Position.Y += Math.Sign(roundedSpeed.Y);
             }
+        }
+
+        // Get the first collision with the specified type.
+        protected ISolid GetCollisionWithSolid<T>(Rectangle boundingbox)
+        {
+            foreach (ISolid collider in World.GetNearSolids(Position).OfType<T>())
+            {
+                if (!(collider is JumpThrough && Speed.Y < 0) && collider.CollidesWith(boundingbox) && !(collider == this))
+                {
+                    return collider;
+                }
+            }
+            return null;
         }
 
         protected bool InsideWall(Rectangle boundingbox)

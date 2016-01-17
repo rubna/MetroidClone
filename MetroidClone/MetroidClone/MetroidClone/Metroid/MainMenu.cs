@@ -1,11 +1,5 @@
 ﻿using MetroidClone.Engine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 // creates the main menu. A large part of the code is based on code made by Nico Vermeir.
 namespace MetroidClone.Metroid
@@ -19,7 +13,7 @@ namespace MetroidClone.Metroid
         Rectangle exitButtonRect;
         InputHelper inputHelper = InputHelper.Instance;
        
-        public void Update(GameTime gameTime)
+        public void UpdateMenu(GameTime gameTime)
         {
             //wait for mouseclick
             if (inputHelper.MouseButtonCheckPressed(true))
@@ -27,9 +21,9 @@ namespace MetroidClone.Metroid
                 MouseClicked(inputHelper.MouseCheckPosition().X, inputHelper.MouseCheckPosition().Y);
             }
         }
+
         public void Draw2()
         {
-
             Drawing.DrawRectangle(new Rectangle((int)(Drawing.ScreenSize.X / 2), (int)(Drawing.ScreenSize.Y / 2) - 50, 200, 100), Color.Black);
             Drawing.DrawRectangle(new Rectangle((int)(Drawing.ScreenSize.X / 2), (int)(Drawing.ScreenSize.Y / 2) + 100, 200, 100), Color.Black);
             //draw the Mainmenu

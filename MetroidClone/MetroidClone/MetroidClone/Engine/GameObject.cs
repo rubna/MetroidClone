@@ -8,18 +8,12 @@ namespace MetroidClone.Engine
     class GameObject
     {
         public Vector2 Position = Vector2.Zero; //The position where this object is located in the game world.
-        public Vector2 DrawPosition { get { return Position - World.Camera; } } //The position where this object is drawn.
-        public virtual Vector2 CenterPosition { get { return Position; } } 
+        public Vector2 DrawPosition => Position - World.Camera; //The position where this object is drawn.
+        public virtual Vector2 CenterPosition => Position;
         public bool FlipX = false;
         public int GetFlip
         {
-            get
-            {
-                if (FlipX)
-                    return -1;
-                else
-                    return 1;
-            }
+            get { return FlipX ? -1 : 1; }
         }
 
         public float Depth = 0;
@@ -37,7 +31,7 @@ namespace MetroidClone.Engine
         protected bool AnimationIsRepeating = false;
         protected float AnimationSpeed = 0;
         protected Vector2 ImageScaling;
-        protected float ImageRotation;
+        protected float ImageRotation = 0f;
 
         //Event handlers
         public event EventHandler AnimationFinished;

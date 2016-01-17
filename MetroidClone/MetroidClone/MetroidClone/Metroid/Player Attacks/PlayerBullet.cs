@@ -1,8 +1,4 @@
 ﻿using MetroidClone.Engine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using MetroidClone.Metroid.Abstract;
 
@@ -34,7 +30,18 @@ namespace MetroidClone.Metroid
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+
+            ISolid doorCollision = GetCollisionWithSolid<GunDoor>(TranslatedBoundingBox);
+            
+            if (doorCollision != null)
+            {
+                (doorCollision as Door).Activated = true;
+            }
+
             if (InsideWall(TranslatedBoundingBox))
+                Destroy();
+
+            if (World.PointOutOfView(Position, -10))
                 Destroy();
         }
 

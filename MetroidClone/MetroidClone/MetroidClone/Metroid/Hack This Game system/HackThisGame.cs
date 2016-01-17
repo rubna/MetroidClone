@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using System.Net;
 using System.IO;
@@ -106,9 +105,9 @@ namespace MetroidClone.Metroid
                 else
                 {
                     //Get the new hacking opportunities.
-                    IEnumerable possibleHackingOpportunities = hackingOpportunities.Where(h => h.CanUse(World)); //Get the possible opportunities first.
-                    currentFirstChoice = hackingOpportunities.GetRandomItem();
-                    currentSecondChoice = hackingOpportunities.Where(h => h != currentFirstChoice).ToList().GetRandomItem();
+                    List<IHackingOpportunity> possibleHackingOpportunities = hackingOpportunities.Where(h => h.CanUse(World)).ToList(); //Get the possible opportunities first.
+                    currentFirstChoice = possibleHackingOpportunities.GetRandomItem();
+                    currentSecondChoice = possibleHackingOpportunities.Where(h => h != currentFirstChoice).ToList().GetRandomItem();
                     SetOptions(currentFirstChoice.Text, currentSecondChoice.Text);
                 }
             }
@@ -230,7 +229,7 @@ namespace MetroidClone.Metroid
         }
 
         //Helper function to create a dictionary from the keypair format.
-        Dictionary<string, string> ReadKeyPair(string keyPairString)
+        static Dictionary<string, string> ReadKeyPair(string keyPairString)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
             string[] keyPairs = keyPairString.Split('\n');
@@ -241,7 +240,7 @@ namespace MetroidClone.Metroid
                 for (int i = 1; i < keyPairs.Length; i++)
                 {
                     string keyPair = keyPairs[i];
-                    int equalsSignIndex = keyPair.IndexOf("=");
+                    int equalsSignIndex = keyPair.IndexOf("=", StringComparison.Ordinal);
                     if (equalsSignIndex != -1)
                     {
                         result[keyPair.Substring(0, equalsSignIndex)] = keyPair.Substring(equalsSignIndex + 1);
