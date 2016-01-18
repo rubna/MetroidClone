@@ -11,10 +11,15 @@ namespace MetroidClone.Metroid
     abstract class Monster : PhysicsObject
     {
         public int HitPoints = 1;
-        public int Damage = 1;
+        public int Damage = 10;
         protected int ScoreOnKill = 1;
         protected Vector2 SpeedOnHit = Vector2.Zero;
+
         int randomLoot;
+
+        public Monster()
+        {
+        }
 
         public override void Update(GameTime gameTime)
         {
@@ -42,7 +47,7 @@ namespace MetroidClone.Metroid
                 Destroy();
                 if (hitByPlayer)
                 {
-                    World.Player.Score = World.Player.Score + ScoreOnKill;
+                    World.Player.Score += ScoreOnKill;
                     Console.Write("Score: ");
                     Console.WriteLine(World.Player.Score);
                 }

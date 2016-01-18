@@ -134,6 +134,12 @@ namespace MetroidClone.Metroid
                 }
             }
 
+            //testing: adds monster
+            if (Input.MouseButtonCheckPressed(false))
+            {
+                World.AddObject(new ShootingMonster(), Input.MouseCheckPosition().ToVector2() + World.Camera);
+                Console.WriteLine("Monster Added");
+            }
             //switch weapons
             if (Input.KeyboardCheckPressed(Keys.C) || Input.MouseWheelCheckScroll(true) || Input.MouseWheelCheckScroll(false) || Input.GamePadCheckPressed(Buttons.Y))
             {
@@ -150,9 +156,14 @@ namespace MetroidClone.Metroid
 
             //check for getting hurt
             if (blinkTimer == 0)
+            {
                 foreach (Monster monster in World.GameObjects.OfType<Monster>())
                     if (TranslatedBoundingBox.Intersects(monster.TranslatedBoundingBox))
                         Hurt(Math.Sign(Position.X - monster.Position.X), monster.Damage);
+                foreach (MonsterBullet bullet in World.GameObjects.OfType<MonsterBullet>())
+                    if (TranslatedBoundingBox.Intersects(bullet.TranslatedBoundingBox))
+                        Hurt(Math.Sign(Position.X - bullet.Position.X), bullet.Damage);
+            }
 
             //And check for scrap
             foreach (Scrap scrap in World.GameObjects.OfType<Scrap>())
