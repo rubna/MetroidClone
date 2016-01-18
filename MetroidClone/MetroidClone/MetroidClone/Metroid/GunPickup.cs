@@ -15,6 +15,7 @@ namespace MetroidClone.Metroid
         {
             if (CollidesWith(Position, World.Player))
             {
+                Audio.Play("Audio/PickUps/Powerup01");
                 World.Player.UnlockedWeapons.Remove(Weapon.Nothing);
                 World.Player.UnlockedWeapons.Add(Weapon.Gun);
                 World.Player.CurrentWeapon = Weapon.Gun;

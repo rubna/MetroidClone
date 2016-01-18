@@ -23,6 +23,7 @@ namespace MetroidClone.Engine
         List<GameObject> RemovedGameObjects = new List<GameObject>();
         
         public DrawWrapper DrawWrapper { get; set; }
+        public AudioWrapper AudioWrapper { get; set; }
         public AssetManager AssetManager { get; set; }
         public MainMenu MainMenu;
         public PauseMenu PauseMenu;
@@ -42,6 +43,9 @@ namespace MetroidClone.Engine
 
         const float GridSize = 100f;
         public List<ISolid>[,] SolidGrid;
+
+        //A*
+        public AStarMap AStarMap;
 
         public List<ISolid> Solids
         {
@@ -71,6 +75,7 @@ namespace MetroidClone.Engine
             AddObject(MainMenu);
             AddObject(PauseMenu);
             (new WorldGenerator()).Generate(this);
+            AudioWrapper.PlayLooping("Audio/Music/Area 1");
             UpdateCamera(true);
 
             foreach (GameObject gameObject in GameObjects)
@@ -81,8 +86,8 @@ namespace MetroidClone.Engine
             }
 
             UpdateSolidGrid();
-
-            MakePathfindingGrid();
+            PathfindingGrid();
+            AStarMap = new AStarMap(PathfindingGrid());
         }
 
         public void UpdateSolidGrid()
@@ -109,7 +114,7 @@ namespace MetroidClone.Engine
             }
         }
 
-        public bool[,] MakePathfindingGrid()
+        public bool[,] PathfindingGrid()
         {
             bool[,] isSolid = new bool[WorldGenerator.LevelWidth * WorldGenerator.WorldWidth, WorldGenerator.LevelHeight * WorldGenerator.WorldHeight];
 
@@ -118,7 +123,7 @@ namespace MetroidClone.Engine
                 if (solid is Wall)
                 {
                     Wall wall = solid as Wall;
-                    isSolid[wall.BoundingBox.Left / TileWidth, wall.BoundingBox.Top / TileHeight] = true;
+                    isSolid[wall.BoundingBox.Left / (int)TileWidth, wall.BoundingBox.Top / (int)TileHeight] = true;
                 }
             }
 
@@ -139,6 +144,7 @@ namespace MetroidClone.Engine
         {
             gameObject.World = this;
             gameObject.Drawing = DrawWrapper;
+            gameObject.Audio = AudioWrapper;
             gameObject.Position = position;
             gameObject.Assets = AssetManager;
             GameObjects.Add(gameObject);
@@ -163,19 +169,19 @@ namespace MetroidClone.Engine
 
             if (PlayingState == GameState.Playing)
             {
-                foreach (GameObject gameObject in GameObjectsToUpdate)
-                    gameObject.Update(gameTime);
+            foreach (GameObject gameObject in GameObjectsToUpdate)
+                gameObject.Update(gameTime);
 
-                foreach (GameObject gameObject in AddedGameObjects)
-                {
-                    if (gameObject.ShouldUpdate)
-                        GameObjectsToUpdate.Add(gameObject);
-                }
+            foreach (GameObject gameObject in AddedGameObjects)
+            {
+                if (gameObject.ShouldUpdate)
+                    GameObjectsToUpdate.Add(gameObject);
+            }
 
-                foreach (GameObject gameObject in RemovedGameObjects)
-                    GameObjectsToUpdate.Remove(gameObject);
+            foreach (GameObject gameObject in RemovedGameObjects)
+                GameObjectsToUpdate.Remove(gameObject);
 
-                UpdateCamera(); //Update the position of the camera.
+            UpdateCamera(); //Update the position of the camera.
                 PauseMenu.ResumeGame = false;
                 MainMenu.StartGame = false;
             }
@@ -183,7 +189,7 @@ namespace MetroidClone.Engine
             {
                 MainMenu.UpdateMenu(gameTime);
                 PauseMenu.ExitGame = false;
-            }
+        }
             if (PlayingState == GameState.Paused)
             {
                 PauseMenu.UpdateMenu(gameTime);
@@ -263,21 +269,21 @@ namespace MetroidClone.Engine
             //Only draw objects that are visible (within the view)
             if (PlayingState == GameState.Playing)
             {
-                foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
+            foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
+            {
+                Vector2 drawPos = gameObject.CenterPosition - Camera;
+                if (drawPos.X > -100 && drawPos.Y > -100 &&
+                    drawPos.X < WorldGenerator.LevelWidth * TileWidth + 100 &&
+                    drawPos.Y < WorldGenerator.LevelHeight * TileHeight + 100)
                 {
-                    Vector2 drawPos = gameObject.CenterPosition - Camera;
-                    if (drawPos.X > -100 && drawPos.Y > -100 &&
-                        drawPos.X < WorldGenerator.LevelWidth * TileWidth + 100 &&
-                        drawPos.Y < WorldGenerator.LevelHeight * TileHeight + 100)
-                    {
-                        gameObject.Draw();
-                    }
+                    gameObject.Draw();
                 }
+            }
             }
             if (PlayingState == GameState.Paused)
                 PauseMenu.Draw2();
             if (PlayingState == GameState.MainMenu)
-                MainMenu.Draw2();
+                    MainMenu.Draw2();
         }
 
         public void DrawGUI()

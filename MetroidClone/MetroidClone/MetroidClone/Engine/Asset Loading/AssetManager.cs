@@ -8,12 +8,14 @@ using Microsoft.Xna.Framework.Audio;
 using MetroidClone.Engine.Asset;
 using System.IO;
 using System.Text.RegularExpressions;
+using Microsoft.Xna.Framework.Media;
 
 namespace MetroidClone.Engine
 {
     public class AssetManager
     {
         Dictionary<string, IAsset> assets;
+        Dictionary<string, SoundEffect> music;
         ContentManager content;
         Dictionary<string, Dictionary<string, Vector2>> spriteInfo;
 
@@ -21,6 +23,7 @@ namespace MetroidClone.Engine
         {
             this.content = content;
             assets = new Dictionary<string, IAsset>();
+            music = new Dictionary<string, SoundEffect>();
             spriteInfo = new Dictionary<string, Dictionary<string, Vector2>>();
             LoadSpriteInfo();
         }
@@ -122,11 +125,20 @@ namespace MetroidClone.Engine
 
         public Sound GetSound(string name)
         {
-            if (! assets.ContainsKey(name))
+            if (!assets.ContainsKey(name))
             {
                 assets[name] = new Sound(content.Load<SoundEffect>("Content/" + name));
             }
             return assets[name] as Sound;
+        }
+
+        public SoundEffect GetSong(string name)
+        {
+            if (!music.ContainsKey(name))
+            {
+                music[name] = content.Load<SoundEffect>("Content/" + name);
+            }
+            return music[name];
         }
 
         public Font GetFont(string name)
