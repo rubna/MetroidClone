@@ -7,64 +7,95 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-// creates the pause menu. A large part of the code is based on code made by Nico Vermeir.
-namespace MetroidClone.Engine
+// creates the pause menu. A large part of the code is based on code made by Nico Vermeir. link: http://www.spikie.be/blog/page/Building-a-main-menu-and-loading-screens-in-XNA.aspx
+namespace MetroidClone.Metroid
 {
-    class PauseMenu : GameObject
+    class PauseMenu : Menu
     {
-        public bool ResumeGame = false;
-        public bool ExitGame = false;
-        public bool FullScreen = false;
-        InputHelper inputHelper = InputHelper.Instance;
-        Rectangle resumeButtonRect;
-        Rectangle exitButtonRect;
 
-        public void Update(GameTime gameTime)
+        private int resumeButtonCheck = 1;
+        private int optionsButtonCheck = 1;
+        private int exitButtonCheck = 1;
+        public bool ResumeButtonIntersects;
+        public bool OptionsButtonIntersects;
+        public bool ExitButtonIntersects;
+
+        public override void Update2(GameTime gameTime)
         {
-
-
-            //wait for mouseclick
-            if (inputHelper.MouseButtonCheckPressed(true))
+            base.Update2(gameTime);
+            Paused = false;
+            MouseCheck((int)Input.MouseCheckPosition().X, (int)Input.MouseCheckPosition().Y);
+            // change the color of the buttons if the mouse is on them and changes the gamestate if a button is clicked
+            if (ResumeButtonIntersects)
             {
-                MouseClicked((int)inputHelper.MouseCheckPosition().X, (int)inputHelper.MouseCheckPosition().Y);
-            }
-        }
-        public void Draw2()
-        {
-
-            Drawing.DrawRectangle(new Rectangle((int)(Drawing.ScreenSize.X / 2), (int)(Drawing.ScreenSize.Y / 2) - 50, 200, 100), Color.Black);
-            Drawing.DrawRectangle(new Rectangle((int)(Drawing.ScreenSize.X / 2), (int)(Drawing.ScreenSize.Y / 2) + 150, 200, 100), Color.Black);
-
-            //draw the pause menu
-
-
-
-        }
-
-        void MouseClicked(int x, int y)
-        {
-            //creates a rectangle of 10x10 around the place where the mouse was clicked
-            Rectangle mouseClickRect = new Rectangle(x, y, 10, 10);
-
-            if (!FullScreen)
-            {
-                resumeButtonRect = new Rectangle((int)(Drawing.ScreenSize.X / 2), (int)(Drawing.ScreenSize.Y / 2) - 50, 200, 100);
-                exitButtonRect = new Rectangle((int)(Drawing.ScreenSize.X / 2), (int)(Drawing.ScreenSize.Y / 2) + 150, 200, 100);
+                resumeButtonCheck = 2;
+                if (Input.MouseButtonCheckPressed(true))
+                {
+                    ResumeGame = true;
+                }
             }
             else
+                resumeButtonCheck = 1;
+            if (OptionsButtonIntersects)
             {
-                resumeButtonRect = new Rectangle((int)(Drawing.ScreenSize.X) + 50, (int)(Drawing.ScreenSize.Y / 1.7f) + 25, 290, 125);
-                exitButtonRect = new Rectangle((int)(Drawing.ScreenSize.X) + 50, (int)(Drawing.ScreenSize.Y / 1.7f) + 310, 290, 140);
+                optionsButtonCheck = 2;
+                if (Input.MouseButtonCheckPressed(true))
+                {
+                    GoToOptions = true;
+                }
             }
-            if (mouseClickRect.Intersects(resumeButtonRect)) //player clicked Resume button
+            else
+                optionsButtonCheck = 1;
+
+            if (ExitButtonIntersects)
             {
-                ResumeGame = true;
+                exitButtonCheck = 2;
+                if (Input.MouseButtonCheckPressed(true))
+                {
+                    ExitMenu = true;
+                }
             }
-            else if (mouseClickRect.Intersects(exitButtonRect)) //player clicked exit button
+            else
+                exitButtonCheck = 1;
+            // resumes the game if the resume button is pressed
+            if (ResumeGame)
             {
-                ExitGame = true;
+                World.PlayingState = World.GameState.Playing;
+                ResumeGame = false;
             }
+            // goes to the options menu if the options button is pressed
+            if (GoToOptions)
+            {
+                World.PlayingState = World.GameState.OptionsMenu;
+                GoToOptions = false;
+                Paused = true;
+            }
+            // exits to main menu if the exit button is pressed
+            if (ExitMenu)
+            {
+                World.PlayingState = World.GameState.MainMenu;
+                ExitMenu = false;
+            }
+        }
+        public override void Draw2()
+        { //draw the Pause menu
+            ButtonNumber = 1;
+            base.Draw2();
+            DrawButton("resume", resumeButtonCheck);
+            DrawButton("options", optionsButtonCheck);
+            DrawButton("exit", exitButtonCheck);
+        }
+        void MouseCheck(int x, int y)
+        {
+            ButtonNumber = 1;
+            //creates a rectangle of 10x10 around the place where the mouse was clicked
+            Rectangle mouseClickRect = new Rectangle(x, y, 10, 10);
+            //creates rectangles for the buttons which make it possible to check if the button is pressed
+            ResumeButtonIntersects = ButtonStateCheck(mouseClickRect, ResumeButtonIntersects);
+            OptionsButtonIntersects = ButtonStateCheck(mouseClickRect, OptionsButtonIntersects);
+            ExitButtonIntersects = ButtonStateCheck(mouseClickRect, ExitButtonIntersects);
         }
     }
 }
+
 

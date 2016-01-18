@@ -13,7 +13,8 @@ namespace MetroidClone.Engine
         {
             MainMenu,
             Playing,
-            Paused
+            Paused,
+            OptionsMenu
         }
 
         public List<GameObject> GameObjects; //Gameobjects that have been created before this update
@@ -27,11 +28,11 @@ namespace MetroidClone.Engine
         public Level Level;
         public MainMenu MainMenu;
         public PauseMenu PauseMenu;
+        public OptionsMenu OptionsMenu;
         public Player Player;
         public static Random Random;
         public Vector2 Camera;
         public GameState PlayingState = GameState.MainMenu;
-        private bool worldInitialized = false;
 
         //The width and height of the world.
         public float Width { get; protected set; } = WorldGenerator.LevelWidth * WorldGenerator.WorldWidth * TileWidth + 200;
@@ -64,6 +65,7 @@ namespace MetroidClone.Engine
 
             MainMenu = new MainMenu();
             PauseMenu = new PauseMenu();
+            OptionsMenu = new OptionsMenu();
         }
 
         public void Initialize()
@@ -71,6 +73,7 @@ namespace MetroidClone.Engine
             GameObjects.Clear();
             AddObject(MainMenu);
             AddObject(PauseMenu);
+            AddObject(OptionsMenu);
             (new WorldGenerator()).Generate(this);
             UpdateCamera(true);
 
@@ -80,7 +83,6 @@ namespace MetroidClone.Engine
                 if (gameObject.ShouldUpdate)
                     GameObjectsToUpdate.Add(gameObject);
             }
-
             UpdateSolidGrid();
         }
 
@@ -159,30 +161,22 @@ namespace MetroidClone.Engine
                 GameObjectsToUpdate.Remove(gameObject);
 
             UpdateCamera(); //Update the position of the camera.
-                PauseMenu.ResumeGame = false;
-                MainMenu.StartGame = false;
             }
+            // update the main menu
             if (PlayingState == GameState.MainMenu)
             {
-                MainMenu.Update(gameTime);
-                PauseMenu.ExitGame = false;
-        }
-            if (PlayingState == GameState.Paused)
-            {
-                PauseMenu.Update(gameTime);
+                MainMenu.Update2(gameTime);
             }
-            if (MainMenu.StartGame && worldInitialized == false)
+            //update the pause menu
+           if (PlayingState == GameState.Paused)
             {
-                Initialize();
-                PlayingState = GameState.Playing;
-                worldInitialized = true;
+                PauseMenu.Update2(gameTime);
             }
-            if (PauseMenu.ResumeGame)
-                PlayingState = GameState.Playing;
-            if (PauseMenu.ExitGame)
+           // update the options menu
+           if (PlayingState == GameState.OptionsMenu)
             {
-                worldInitialized = false;
-                PlayingState = GameState.MainMenu;
+                OptionsMenu.Paused = PauseMenu.Paused;
+                OptionsMenu.Update2(gameTime);
             }
         }
 
@@ -246,21 +240,26 @@ namespace MetroidClone.Engine
             //Only draw objects that are visible (within the view)
             if (PlayingState == GameState.Playing)
             {
-            foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
-            {
-                Vector2 drawPos = gameObject.CenterPosition - Camera;
-                if (drawPos.X > -100 && drawPos.Y > -100 &&
+                foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
+                {
+                    Vector2 drawPos = gameObject.CenterPosition - Camera;
+                    if (drawPos.X > -100 && drawPos.Y > -100 &&
                     drawPos.X < WorldGenerator.LevelWidth * TileWidth + 100 &&
                     drawPos.Y < WorldGenerator.LevelHeight * TileHeight + 100)
                 {
                     gameObject.Draw();
                 }
+                }
             }
-            }
+            // draw the pause menu
             if (PlayingState == GameState.Paused)
                 PauseMenu.Draw2();
+            // draw the main menu
             if (PlayingState == GameState.MainMenu)
-                    MainMenu.Draw2();
+                MainMenu.Draw2();
+            // draw the options menu
+            if (PlayingState == GameState.OptionsMenu)
+                OptionsMenu.Draw2();
         }
 
         public void DrawGUI()

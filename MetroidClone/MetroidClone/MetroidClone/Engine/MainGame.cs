@@ -99,18 +99,13 @@ namespace MetroidClone.Engine
 
             if (inputHelper.KeyboardCheckReleased(Keys.F12))
                 Profiler.ShowOutput();
-            if (inputHelper.KeyboardCheckReleased(Keys.F4))
+            if (world.OptionsMenu.SwitchFullScreen || inputHelper.KeyboardCheckReleased(Keys.F4))
             {
                 SwitchFullscreen();
-                if (world.MainMenu.FullScreen == false)
-                    world.MainMenu.FullScreen = true;
-                else
-                    world.MainMenu.FullScreen = true;
-                if (world.PauseMenu.FullScreen == false)
-                    world.PauseMenu.FullScreen = true;
-                else
-                    world.PauseMenu.FullScreen = true;
-
+                world.MainMenu.FullScreen = !world.MainMenu.FullScreen;
+                world.PauseMenu.FullScreen = !world.PauseMenu.FullScreen;
+                world.OptionsMenu.FullScreen = !world.OptionsMenu.FullScreen;
+                world.OptionsMenu.SwitchFullScreen = false;
             }
             Profiler.LogGameStepStart();
 
@@ -122,7 +117,6 @@ namespace MetroidClone.Engine
             if (inputHelper.KeyboardCheckPressed(Keys.Escape) && world.PlayingState == World.GameState.Playing)
             {
                 world.PlayingState = World.GameState.Paused;
-                Console.WriteLine(world.PlayingState);
             }
             if (world.MainMenu.ExitGame)
                 Exit();
