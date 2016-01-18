@@ -35,12 +35,12 @@ namespace MetroidClone.Engine
         public bool Visible = true;
 
         //Information about the sprite. For objects without a sprite, CurrentSprite is null.
-        protected Sprite CurrentSprite = null;
-        protected float CurrentImage = 0;
+        public Sprite CurrentSprite = null;
+        public float CurrentImage = 0;
         protected bool AnimationIsRepeating = false;
         protected float AnimationSpeed = 0;
-        protected Vector2 ImageScaling = Vector2.One;
-        protected float ImageRotation = 0;
+        public Vector2 ImageScaling = Vector2.One;
+        public float ImageRotation = 0;
 
         //Event handlers
         public event EventHandler AnimationFinished;

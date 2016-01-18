@@ -136,26 +136,29 @@ namespace MetroidClone.Engine
             BeginSpriteBatch();
 
             Vector2 usedSize = size ?? sprite.Size; //The used size is either the specified size or the default size of the sprite.
-
+            Vector2 origin = sprite.Origin * sprite.Size;
             //Make it possible to mirror or flip the sprite by using a negative size.
             SpriteEffects usedSpriteEffect = SpriteEffects.None;
             if (usedSize.X < 0)
             {
                 usedSize.X = Math.Abs(usedSize.X);
                 usedSpriteEffect = usedSpriteEffect | SpriteEffects.FlipHorizontally;
+                origin.X = sprite.Size.X - origin.X;
             }
             if (usedSize.Y < 0)
             {
                 usedSize.Y = Math.Abs(usedSize.Y);
                 usedSpriteEffect = usedSpriteEffect | SpriteEffects.FlipVertically;
+                origin.Y = sprite.Size.Y - origin.Y;
             }
 
             //Draw the given subimage of the sprite with the given parameters.
             //The position and scaling are affected by the global scaling.
             //Some parameters are optional, so they are set to the default if not specified.
+            
             spriteBatch.Draw(sprite.Texture, GlobalScale * position + new Vector2(displayLeft, displayTop),
                 sprite.GetImageRectangle(subimage ?? new Vector2(0f, 0f)), color ?? Color.White, rotation,
-                sprite.Origin * sprite.Size, usedSize / sprite.Size * GlobalScale, usedSpriteEffect, 0f);
+                origin, usedSize / sprite.Size * GlobalScale, usedSpriteEffect, 0f);
         }
 
         public void DrawSprite(string sprite, Vector2 position, Vector2? subimage = null, Vector2? size = null, Color? color = null, float rotation = 0f)

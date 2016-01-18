@@ -57,7 +57,6 @@ namespace MetroidClone.Engine
 
             foreach (GameObject gameObject in GameObjects)
             {
-                gameObject.Create();
                 if (gameObject.ShouldUpdate)
                     GameObjectsToUpdate.Add(gameObject);
             }
@@ -83,7 +82,7 @@ namespace MetroidClone.Engine
                         if (!(solids[k] is Wall) || solids[k].CollidesWith(boundingbox))
                         {
                             SolidGrid[i, j].Add(solids[k]);
-        }
+                        }
                     }
                 }
             }

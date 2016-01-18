@@ -10,7 +10,7 @@ using System.Text;
 
 namespace MetroidClone.Metroid
 {
-    class Player : PhysicsObject
+    partial class Player : PhysicsObject
     {
         float blinkTimer = 0;
         int collectedScrap = 100;
@@ -25,7 +25,12 @@ namespace MetroidClone.Metroid
 
         bool startedSlowingDownJump; //This is used to make sure that the player will jump the maximum height if releasing the jump button slightly before reaching it.
 
-        public Weapon CurrentWeapon = Weapon.Nothing;
+        float moveXAxis = 0;
+        bool up = false;
+        bool upPressed = false;
+        bool down = false;
+
+        public Weapon CurrentWeapon = Weapon.Gun;
         public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
         public int HitPoints = 100;
         public int RocketAmmo = 5;
@@ -33,7 +38,12 @@ namespace MetroidClone.Metroid
 
         public float Rotation = 0;
         public float AnimationRotation = 0;
-        AnimationBone body, hipLeft, kneeLeft, footLeft, hipRight, kneeRight, footRight;
+        AnimationBone body, hipLeft, kneeLeft, footLeft, hipRight, kneeRight, footRight, head, 
+                    shoulderLeft, shoulderRight, elbowLeft, elbowRight, handLeft, handRight, gun;
+
+        float shotAnimationTimer = 0;
+        float shootDirection = 0;
+        float fellThroughTimer = 0;
 
         public float movementSpeedModifier; //This can be used to change the movement speed.
         public float jumpHeightModifier; //This can be used to change the jump height.
@@ -41,29 +51,63 @@ namespace MetroidClone.Metroid
         public override void Create()
         {
             base.Create();
-            BoundingBox = new Rectangle(-12, -16, 24, 32);
+            BoundingBox = new Rectangle(-10, -16, 20, 32);
+            Depth = -10;
 
             //make skeleton
-            body = new AnimationBone(this, new Vector2(0, 0));
-            body.Depth = Depth - 10;
-            hipLeft = new AnimationBone(body, new Vector2(-8, 5));
-            kneeLeft = new AnimationBone(hipLeft, new Vector2(0, 8));
+            body = new AnimationBone(this, new Vector2(0, -1));
+            head = new AnimationBone(body, new Vector2(0, -18));
+            hipLeft = new AnimationBone(body, new Vector2(-5, -1)) { DepthOffset = 1 };
+            hipRight = new AnimationBone(body, new Vector2(5, -1)) { DepthOffset = 1 };
+            kneeLeft = new AnimationBone(hipLeft, new Vector2(0, 8)) { DepthOffset = 1 };
+            kneeRight = new AnimationBone(hipRight, new Vector2(0, 8)) { DepthOffset = 1 };
             footLeft = new AnimationBone(kneeLeft, new Vector2(0, 8));
-
-            hipRight = new AnimationBone(body, new Vector2(8, 5));
-            kneeRight = new AnimationBone(hipRight, new Vector2(0, 8));
             footRight = new AnimationBone(kneeRight, new Vector2(0, 8));
 
-            World.AddObject(body);
-            //body.SetSprite()
-            //body.PlayAnimation("RobotSpriteBody", speed: 0);
-            World.AddObject(hipLeft);
-            World.AddObject(kneeLeft);
-            World.AddObject(footLeft);
-            World.AddObject(hipRight);
-            World.AddObject(kneeRight);
-            World.AddObject(footRight);
+            shoulderRight = new AnimationBone(body, new Vector2(-5.5f, -13.5f));
+            shoulderLeft = new AnimationBone(body, new Vector2(5.5f, -14)) { DepthOffset = 1 };
+            elbowRight = new AnimationBone(shoulderRight, new Vector2(-8, 0));
+            elbowLeft = new AnimationBone(shoulderLeft, new Vector2(8, 0)) { DepthOffset = 1 };
+            handRight = new AnimationBone(elbowRight, new Vector2(-7, 0)) { DepthOffset = 1 };
+            handLeft = new AnimationBone(elbowLeft, new Vector2(7, 0)) { DepthOffset = 1 };
 
+            gun = new AnimationBone(handRight, new Vector2(-2, 0)) { DepthOffset = -4 };
+
+            World.AddObject(body);
+            body.SetSprite("Robot/RobotSpriteBody");
+            World.AddObject(head);
+            head.SetSprite("Robot/RobotSpriteHead");
+
+            World.AddObject(hipLeft);
+            hipLeft.SetSprite("Robot/RobotSpriteLLeg1");
+            World.AddObject(hipRight);
+            hipRight.SetSprite("Robot/RobotSpriteRLeg1");
+            World.AddObject(kneeLeft);
+            kneeLeft.SetSprite("Robot/RobotSpriteLLeg2");
+            World.AddObject(kneeRight);
+            kneeRight.SetSprite("Robot/RobotSpriteRLeg2");
+            World.AddObject(footLeft);
+            footLeft.SetSprite("Robot/RobotSpriteLFoot");
+            World.AddObject(footRight);
+            footRight.SetSprite("Robot/RobotSpriteRFoot");
+
+            World.AddObject(shoulderLeft);
+            shoulderLeft.SetSprite("Robot/RobotSpriteLArm2");
+            World.AddObject(shoulderRight);
+            shoulderRight.SetSprite("Robot/RobotSpriteRArm2");
+            World.AddObject(elbowLeft);
+            elbowLeft.SetSprite("Robot/RobotSpriteLArm1");
+            World.AddObject(elbowRight);
+            elbowRight.SetSprite("Robot/RobotSpriteRArm1");
+            World.AddObject(handLeft);
+            handLeft.SetSprite("Robot/RobotSpriteLHand");
+            World.AddObject(handRight);
+            handRight.SetSprite("Robot/RobotSpriteRHand");
+
+            World.AddObject(gun);
+            gun.SetSprite("Items/gun");
+            gun.SpriteScale = 0.2f;
+            gun.TargetRotation = 90;
 
             Friction = new Vector2(0.85f, 1);
             Gravity = 0.3f;
@@ -75,25 +119,76 @@ namespace MetroidClone.Metroid
 
             movementSpeedModifier = 1;
             jumpHeightModifier = 1;
-            PlayAnimation("tempplayer", speed: 0f);
+            //PlayAnimation("tempplayer", speed: 0f);
         }
 
         public override void Update(GameTime gameTime)
         {
-            //move around
+            bool walking = false;
+
+            //set movement axes
+            moveXAxis = 0;
+            upPressed = false;
             if (Input.KeyboardCheckDown(Keys.A) || Input.KeyboardCheckDown(Keys.Left) || Input.ThumbStickCheckDirection(true).X < 0)
+                moveXAxis--;
+            if (Input.KeyboardCheckDown(Keys.D) || Input.KeyboardCheckDown(Keys.Right) || Input.ThumbStickCheckDirection(true).X > 0)
+                moveXAxis++;
+            if (Input.KeyboardCheckPressed(Keys.W) || Input.KeyboardCheckPressed(Keys.Up) || Input.ThumbStickCheckDirection(true).Y > 0.75f || Input.GamePadCheckPressed(Buttons.A))
             {
-                Speed.X -= movementSpeedModifier * 0.5f;
-                FlipX = true;
-                PlayAnimation("tempplayer", Direction.Left, speed: 0.2f);
+                upPressed = !up;
+                up = true;
+            }
+            else
+                up = false;
+            if (Input.KeyboardCheckDown(Keys.S) || Input.KeyboardCheckDown(Keys.Down) || Input.ThumbStickCheckDirection(true).Y < 0)
+                down = true;
+            else
+                down = false;
+
+            //move horizontally
+            if (moveXAxis != 0)
+            {
+                Speed.X += movementSpeedModifier * 0.5f * moveXAxis;
+                FlipX = moveXAxis < 0;
+                walking = true;
             }
 
-            if (Input.KeyboardCheckDown(Keys.D) || Input.KeyboardCheckDown(Keys.Right) || Input.ThumbStickCheckDirection(true).X > 0)
+            //play animations according to movement
+            if (shotAnimationTimer > 0)
             {
-                Speed.X += movementSpeedModifier * 0.5f;
-                FlipX = false;
-                PlayAnimation("tempplayer", Direction.Right, speed: 0.2f);
+                shotAnimationTimer -= 0.04f;
+                FlipX = new Vector2(1, shootDirection).ToCartesian().X < 0;
             }
+            if (walking && OnGround)
+            {
+                AnimationRotation += 8;
+                PlayAnimationWalking();
+            }
+            else
+            if (fellThroughTimer > 0)
+            {
+                AnimationRotation += 4;
+                PlayAnimationLegsDuck();
+                PlayAnimationArmsLooseDuck();
+            }
+            else
+            if (!OnGround)
+            {
+                PlayAnimationInAir();
+            }
+            else
+            if (Input.KeyboardCheckDown(Keys.Down))
+            {
+                AnimationRotation += 4;
+                PlayAnimationLegsDuck();
+                PlayAnimationArmsGunDuck();
+            }
+            else
+            {
+                AnimationRotation += 4;
+                PlayAnimationIdle();
+            }
+            AnimationRotation %= 360;
 
             //You can still jump a small time after having walked from a platform
             if (OnGround)
@@ -102,7 +197,7 @@ namespace MetroidClone.Metroid
                 timeSinceOnGround++;
 
             //You can press jump a small time before landing on a platform and you'll still jump
-            if (Input.KeyboardCheckPressed(Keys.W) || Input.KeyboardCheckPressed(Keys.Up) || Input.ThumbStickCheckDirection(true).Y > 0.75f || Input.GamePadCheckPressed(Buttons.A))
+            if (upPressed)
                 timeSinceLastJumpIntention = 0;
             else
                 timeSinceLastJumpIntention++;
@@ -121,8 +216,13 @@ namespace MetroidClone.Metroid
             }
 
             //drop through jumpthroughs
-            if ((Input.KeyboardCheckDown(Keys.S) || Input.KeyboardCheckDown(Keys.Down) || Input.ThumbStickCheckDirection(true).Y < 0) && OnJumpThrough)
+            if (down && OnJumpThrough)
+            {
                 Position.Y++;
+                fellThroughTimer = 1;
+            }
+            if (fellThroughTimer > 0)
+                fellThroughTimer -= 0.05f;
 
             //attack
             if (Input.MouseButtonCheckDown(true) || (Input.ThumbStickCheckDown(false)))
@@ -217,20 +317,6 @@ namespace MetroidClone.Metroid
                 TimeSinceVWallCollision++;
         }
 
-        void PlayAnimationWalking()
-        {
-            AnimationRotation += 8;
-            AnimationRotation %= 360;
-
-            hipLeft.Offset = hipLeft.OriginalOffset + new Vector2(0.5f, 1) * new Vector2(4, AnimationRotation).ToCartesian();
-            hipRight.Offset = hipRight.OriginalOffset + new Vector2(0.5f, 1) * new Vector2(4, AnimationRotation + 180).ToCartesian();
-
-            hipLeft.ImageRotation = VectorExtensions.LengthDirectionX(45, AnimationRotation + 180);
-            hipRight.ImageRotation = VectorExtensions.LengthDirectionX(45, AnimationRotation);
-            kneeLeft.ImageRotation = Math.Max(VectorExtensions.LengthDirectionX(45, AnimationRotation + 180 - 90), kneeLeft.Parent.ImageRotation);
-            kneeRight.ImageRotation = VectorExtensions.LengthDirectionX(45, AnimationRotation - 90);
-
-        }
         void CreateDrone()
         {
             if (collectedScrap < 25)
@@ -241,17 +327,24 @@ namespace MetroidClone.Metroid
 
         public override void Draw()
         {
-            //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
+            Rectangle box = BoundingBox;
+            box.Offset(DrawPosition.ToPoint());
+            //Drawing.DrawRectangle(box, Color.Red);
             base.Draw();
             //mouse pointer, disabled when controller in use
             Point mousePos = Input.MouseCheckUnscaledPosition(Drawing);
             if (!Input.ControllerInUse)
                 Drawing.DrawRectangle(new Rectangle(mousePos.X - 5, mousePos.Y - 5, 10, 10), Color.DarkKhaki);
+
+            //Drawing.DrawSprite(gun, handRight.DrawPosition, 0);
             //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
         }
 
         void Attack()
         {
+            shootDirection = (Input.MouseCheckUnscaledPosition(Drawing).ToVector2() - DrawPosition).Angle();
+            shotAnimationTimer = 1;
+
             switch (CurrentWeapon)
             {
                 case Weapon.Nothing:
