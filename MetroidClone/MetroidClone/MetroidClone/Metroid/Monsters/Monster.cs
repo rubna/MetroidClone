@@ -11,10 +11,15 @@ namespace MetroidClone.Metroid
     abstract class Monster : PhysicsObject
     {
         public int HitPoints = 1;
-        public int Damage = 1;
+        public int Damage = 10;
         protected int ScoreOnKill = 1;
         protected Vector2 SpeedOnHit = Vector2.Zero;
-        int randomNumber;
+
+        int randomLoot;
+
+        public Monster()
+        {
+        }
 
         public override void Update(GameTime gameTime)
         {
@@ -42,7 +47,7 @@ namespace MetroidClone.Metroid
                 Destroy();
                 if (hitByPlayer)
                 {
-                    World.Player.Score = World.Player.Score + ScoreOnKill;
+                    World.Player.Score += ScoreOnKill;
                     Console.Write("Score: ");
                     Console.WriteLine(World.Player.Score);
                 }
@@ -54,16 +59,16 @@ namespace MetroidClone.Metroid
             // When a monster is destroyed, you have a chance that a rocket or a health pack will drop
             if (World.Player.UnlockedWeapons.Contains(Weapon.Rocket))
             {
-                randomNumber = World.Random.Next(100);
-                if (randomNumber < 5)
+                randomLoot = World.Random.Next(100);
+                if (randomLoot < 5)
                     World.AddObject(new RocketAmmo(), Position.X, Position.Y);
-                if (randomNumber > 4 && randomNumber < 10)
+                if (randomLoot > 4 && randomLoot < 10)
                     World.AddObject(new HealthDrop(), Position.X, Position.Y);
             }
             else
             {
-                randomNumber = World.Random.Next(100);
-                if (randomNumber < 5)
+                randomLoot = World.Random.Next(100);
+                if (randomLoot < 5)
                     World.AddObject(new HealthDrop(), Position.X, Position.Y);
             }
         }

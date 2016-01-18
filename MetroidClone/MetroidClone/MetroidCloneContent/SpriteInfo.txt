@@ -24,3 +24,4 @@ RobotSpriteLArm1 0.1x0.5 1x1
 RobotSpriteLArm2 0.2x0.8 1x1
 RobotSpriteLHand 0.1x0.5 1x1
 gun 0.175x0.5 1x1
+smoke center 1x1

@@ -48,7 +48,7 @@ namespace MetroidClone.Engine
 
             isRoom[0, startingY] = true; //Starting room
             guaranteedSpecialBlocks[0, startingY].Add("PlayerStart");
-            guaranteedSpecialBlocks[0, startingY].Add("GunPickup");
+            guaranteedSpecialBlocks[1, startingY].Add("GunPickup");
 
             isRoom[1, startingY] = true; //Room right of starting room.
 

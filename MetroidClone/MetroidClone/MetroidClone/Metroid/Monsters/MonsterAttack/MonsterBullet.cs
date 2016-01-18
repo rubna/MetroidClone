@@ -8,8 +8,14 @@ using MetroidClone.Metroid.Abstract;
 
 namespace MetroidClone.Metroid
 {
-    class PlayerBullet : PhysicsObject, IPlayerAttack
+    class MonsterBullet : PhysicsObject, IMonsterAttack
     {
+        public int Damage;
+
+        public MonsterBullet(int damage)
+        {
+            Damage = damage;
+        }
         public override void Create()
         {
             base.Create();
@@ -17,30 +23,20 @@ namespace MetroidClone.Metroid
             Friction.X = 1;
             Gravity = 0;
             CollideWithWalls = false;
-            if (Input.ControllerInUse)
-            {
-                Vector2 dir = Input.ThumbStickCheckDirection(false);
-                dir.Y = -dir.Y;
-                dir.Normalize();
-                Speed = 5 * dir;
-            }
-            else
-            {
-                Speed = Input.MouseCheckUnscaledPosition(Drawing).ToVector2() - DrawPosition;
-                Speed.Normalize();
-                Speed *= 5;
-            }
+            Vector2 dir = World.Player.Position - Position;
+            dir.Normalize();
+            Speed = 5 * dir;
         }
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            if (Speed.X < 0.01f || Position.Y != PositionPrevious.Y)
+            if (InsideWall(TranslatedBoundingBox))
                 Destroy();
         }
 
         public override void Draw()
         {
-            Drawing.DrawRectangle(DrawBoundingBox, Color.Blue);
+            Drawing.DrawRectangle(DrawBoundingBox, Color.Red);
             base.Draw();
         }
     }
