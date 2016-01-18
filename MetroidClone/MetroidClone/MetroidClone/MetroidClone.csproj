@@ -72,6 +72,7 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Engine\AnimationBone.cs" />
     <Compile Include="Engine\Asset Loading\Asset\IAsset.cs" />
     <Compile Include="Engine\Asset Loading\AssetManager.cs" />
     <Compile Include="Engine\Asset Loading\Asset\Sound.cs" />
@@ -119,8 +120,13 @@
     <Compile Include="Metroid\Map.cs" />
     <Compile Include="Metroid\MeleeDoor.cs" />
     <Compile Include="Metroid\MeleeSwitch.cs" />
+    <Compile Include="Engine\A star\AStarLink.cs" />
+    <Compile Include="Metroid\Monsters\MonsterAttack\MonsterBullet.cs" />
+    <Compile Include="Metroid\Monsters\MonsterAttack\MonsterAttack.cs" />
     <Compile Include="Metroid\Menu.cs" />
     <Compile Include="Metroid\PauseMenu.cs" />
+    <Compile Include="Metroid\Player Attacks\Smoke.cs" />
+    <Compile Include="Metroid\PlayerAnimations.cs" />
     <Compile Include="Metroid\RocketAmmo.cs" />
     <Compile Include="Metroid\Collectible.cs" />
     <Compile Include="Metroid\Drone.cs" />
@@ -131,7 +137,7 @@
     <Compile Include="Metroid\Player Attacks\PlayerExplosion.cs" />
     <Compile Include="Metroid\Player Attacks\PlayerBullet.cs" />
     <Compile Include="Metroid\Monsters\Monster.cs" />
-    <Compile Include="Metroid\Monsters\TestMonster.cs" />
+    <Compile Include="Metroid\Monsters\ShootingMonster.cs" />
     <Compile Include="Metroid\Player Attacks\PlayerMelee.cs" />
     <Compile Include="Metroid\Player Attacks\PlayerRocket.cs" />
     <Compile Include="Metroid\Player.cs" />

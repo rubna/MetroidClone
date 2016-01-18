@@ -9,12 +9,15 @@ using Microsoft.Xna.Framework.Audio;
 using MetroidClone.Engine.Asset;
 using System.IO;
 using System.Text.RegularExpressions;
+using Microsoft.Xna.Framework.Media;
+using System.Globalization;
 
 namespace MetroidClone.Engine
 {
     public class AssetManager
     {
         Dictionary<string, IAsset> assets;
+        Dictionary<string, SoundEffect> music;
         ContentManager content;
         Dictionary<string, Dictionary<string, Vector2>> spriteInfo;
 
@@ -22,6 +25,7 @@ namespace MetroidClone.Engine
         {
             this.content = content;
             assets = new Dictionary<string, IAsset>();
+            music = new Dictionary<string, SoundEffect>();
             spriteInfo = new Dictionary<string, Dictionary<string, Vector2>>();
             LoadSpriteInfo();
         }
@@ -94,12 +98,13 @@ namespace MetroidClone.Engine
         //Splits text like "1x0.5" into two parts; the 1 and the 0.5.
         private Vector2 GetSizeVector(string text)
         {
+            text = text.Replace('.', ',');
             string[] sizeParts = text.Split('x');
             if (sizeParts.Length == 2)
             {
                 try
                 {
-                    return new Vector2(float.Parse(sizeParts[0]), float.Parse(sizeParts[1]));
+                    return new Vector2(float.Parse(sizeParts[0], NumberStyles.Float), float.Parse(sizeParts[1], NumberStyles.Float));
                 }
                 catch (FormatException e)
                 {
@@ -116,18 +121,27 @@ namespace MetroidClone.Engine
             {
                 //Get the sprite info dictionary.
                 Dictionary<string, Vector2> thisSpriteInfo = spriteInfo.Where(si => Regex.IsMatch(name, si.Key)).First().Value;
-                assets[name] = new Sprite(content.Load<Texture2D>("Content/" + name), thisSpriteInfo["origin"], thisSpriteInfo["sheetsize"]);
+                assets[name] = new Sprite(content.Load<Texture2D>("Content/Sprites/" + name), thisSpriteInfo["origin"], thisSpriteInfo["sheetsize"]);
             }
             return assets[name] as Sprite;
         }
 
         public Sound GetSound(string name)
         {
-            if (! assets.ContainsKey(name))
+            if (!assets.ContainsKey(name))
             {
                 assets[name] = new Sound(content.Load<SoundEffect>("Content/" + name));
             }
             return assets[name] as Sound;
+        }
+
+        public SoundEffect GetSong(string name)
+        {
+            if (!music.ContainsKey(name))
+            {
+                music[name] = content.Load<SoundEffect>("Content/" + name);
+            }
+            return music[name];
         }
 
         public Font GetFont(string name)

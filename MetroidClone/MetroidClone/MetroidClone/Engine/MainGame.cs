@@ -18,6 +18,7 @@ namespace MetroidClone.Engine
         public static Profiler Profiler;
 
         private DrawWrapper drawWrapper;
+        private AudioWrapper audioWrapper;
 
         private World world;
 
@@ -41,6 +42,7 @@ namespace MetroidClone.Engine
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             drawWrapper = new DrawWrapper(spriteBatch, GraphicsDevice, assetManager);
+            audioWrapper = new AudioWrapper(assetManager);
 
             world = new World();
             Graphics.PreferMultiSampling = true;
@@ -76,11 +78,15 @@ namespace MetroidClone.Engine
             drawWrapper.SmartScale(Graphics.PreferredBackBufferWidth, Graphics.PreferredBackBufferHeight);
 
             Graphics.ApplyChanges();
+
+            world.MainMenu.FullScreen = !world.MainMenu.FullScreen;
+            world.PauseMenu.FullScreen = !world.PauseMenu.FullScreen;
         }
 
         protected override void LoadContent()
         {
             world.DrawWrapper = drawWrapper;
+            world.AudioWrapper = audioWrapper;
             world.AssetManager = assetManager;
 
             world.Initialize();

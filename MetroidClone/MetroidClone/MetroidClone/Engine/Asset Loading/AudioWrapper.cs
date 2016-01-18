@@ -1,4 +1,6 @@
 ﻿using MetroidClone.Engine.Asset;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +14,13 @@ namespace MetroidClone.Engine
         public bool AudioIsEnabled;
 
         public AssetManager Assets;
+        private SoundEffectInstance musicInstance;
 
-        public AudioWrapper()
+        public AudioWrapper(AssetManager assetsManager)
         {
             AudioIsEnabled = true;
+            MediaPlayer.IsRepeating = true;
+            Assets = assetsManager;
         }
 
         public void Play(Sound sound)
@@ -26,6 +31,18 @@ namespace MetroidClone.Engine
         public void Play(string sound)
         {
             Play(Assets.GetSound(sound));
+        }
+
+        public void PlayLooping(SoundEffect song)
+        {
+            musicInstance = song.CreateInstance();
+            musicInstance.IsLooped = true;
+            musicInstance.Play();
+        }
+
+        public void PlayLooping(string song)
+        {
+            PlayLooping(Assets.GetSong(song));
         }
     }
 }

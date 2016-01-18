@@ -5,16 +5,19 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using MetroidClone.Engine;
+using System.Timers;
 
 namespace MetroidClone.Metroid.Player_Attacks
 {
     class PlayerRocket : PhysicsObject, IPlayerAttack
     {
         private Vector2 direction;
+        int smokeTrailTime;
 
         public override void Create()
         {
             base.Create();
+            smokeTrailTime = 0;
             Gravity = 0f;
             Friction.X = 0.99f;
             BoundingBox = new Rectangle(-4, -2, 8, 4);
@@ -24,11 +27,10 @@ namespace MetroidClone.Metroid.Player_Attacks
             {
                 direction = Input.ThumbStickCheckDirection(false);
                 direction.Y = -direction.Y;
-;
             }
             else
             {
-                direction = Input.MouseCheckUnscaledPosition(Drawing).ToVector2() - Position;
+                direction = Input.MouseCheckUnscaledPosition(Drawing).ToVector2() - DrawPosition;
             }
             direction.Normalize();
 
@@ -37,6 +39,13 @@ namespace MetroidClone.Metroid.Player_Attacks
 
         public override void Update(GameTime gameTime)
         {
+            if (smokeTrailTime > 5)
+            {
+                World.AddObject(new Smoke(), Position);
+                smokeTrailTime = 0;
+            }
+            else
+                smokeTrailTime++;
             Speed += direction * 0.2f;
             base.Update(gameTime);
             if (HadHCollision || HadVCollision)
@@ -52,6 +61,7 @@ namespace MetroidClone.Metroid.Player_Attacks
         public override void Destroy()
         {
             base.Destroy();
+            Audio.Play("Audio/Combat/Gunshots/Rocket/Explosion");
             World.AddObject(new PlayerExplosion(), Position);
         }
     }
