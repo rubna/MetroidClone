@@ -11,3 +11,4 @@ connection* topleft 1x1
 background* topleft 1x1
 doorsprite* topleft 1x1
 platform topleft 1x1
+slope* topleft 1x1

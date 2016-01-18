@@ -163,8 +163,9 @@ namespace MetroidClone.Engine
         void Autotile(World world)
         {
             //Create an array for objects that are walls and initialize it.
-            bool[,] isWall = new bool[LevelWidth * WorldWidth, LevelHeight * WorldHeight];
-            isWall.Initialize();
+            bool[,] isWall = new bool[LevelWidth * WorldWidth, LevelHeight * WorldHeight],
+                isLeftSlope = new bool[LevelWidth * WorldWidth, LevelHeight * WorldHeight],
+                isRightSlope = new bool[LevelWidth * WorldWidth, LevelHeight * WorldHeight];
 
             //Do the same for an array that defines background tile positions.
             bool[,] doNotCreateBackground = new bool[LevelWidth * WorldWidth, LevelHeight * WorldHeight];
@@ -175,6 +176,20 @@ namespace MetroidClone.Engine
             foreach (Wall wall in walls)
             {
                 isWall[wall.BoundingBox.X / World.TileWidth, wall.BoundingBox.Y / World.TileHeight] = true;
+            }
+
+            //Left slopes
+            IEnumerable<SlopeLeft> lSlopes = world.GameObjects.Where(s => s is SlopeLeft).Select(s => s as SlopeLeft);
+            foreach (SlopeLeft slope in lSlopes)
+            {
+                isLeftSlope[slope.BoundingBox.X / World.TileWidth, slope.BoundingBox.Y / World.TileHeight] = true;
+            }
+
+            //Right slopes
+            IEnumerable<SlopeRight> rSlopes = world.GameObjects.Where(s => s is SlopeRight).Select(s => s as SlopeRight);
+            foreach (SlopeRight slope in rSlopes)
+            {
+                isRightSlope[slope.BoundingBox.X / World.TileWidth, slope.BoundingBox.Y / World.TileHeight] = true;
             }
 
             foreach (Wall wall in walls)
@@ -207,19 +222,22 @@ namespace MetroidClone.Engine
                     tileName += "L";
                 }
 
-                if (!isTop && !isLeft && tileName.Contains("U") && tileName.Contains("L") && ! isWall[positionIndex.X - 1, positionIndex.Y - 1])
+                if (!isTop && !isLeft && tileName.Contains("U") && tileName.Contains("L") && !isWall[positionIndex.X - 1, positionIndex.Y - 1])
                 {
                     wall.ShouldShowTopLeftConnection = true;
                 }
-                if (!isTop && !isRight && tileName.Contains("U") && tileName.Contains("R") && !isWall[positionIndex.X + 1, positionIndex.Y - 1])
+
+                if (!isTop && !isRight && tileName.Contains("U") && tileName.Contains("R") && ! isWall[positionIndex.X + 1, positionIndex.Y - 1])
                 {
                     wall.ShouldShowTopRightConnection = true;
                 }
-                if (!isBottom && !isLeft && tileName.Contains("D") && tileName.Contains("L") && !isWall[positionIndex.X - 1, positionIndex.Y + 1])
+
+                if (!isBottom && !isLeft && tileName.Contains("D") && tileName.Contains("L") && ! isWall[positionIndex.X - 1, positionIndex.Y + 1])
                 {
                     wall.ShouldShowBottomLeftConnection = true;
                 }
-                if (!isBottom && !isRight && tileName.Contains("D") && tileName.Contains("R") && !isWall[positionIndex.X + 1, positionIndex.Y + 1])
+
+                if (!isBottom && !isRight && tileName.Contains("D") && tileName.Contains("R") && ! isWall[positionIndex.X + 1, positionIndex.Y + 1])
                 {
                     wall.ShouldShowBottomRightConnection = true;
                 }

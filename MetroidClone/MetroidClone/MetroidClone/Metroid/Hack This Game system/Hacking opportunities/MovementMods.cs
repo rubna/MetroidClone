@@ -28,7 +28,7 @@ namespace MetroidClone.Metroid
     //With this effect, the player will move faster.
     class FasterMovement : IHackingOpportunity
     {
-        public string Text => "The robot moves much faster for a while.";
+        public string Text => "The robot moves much fasters for a while.";
         public bool IsTimeBased => true;
         public int Time => 20;
 
@@ -95,5 +95,5 @@ namespace MetroidClone.Metroid
     }
 
     //With this effect, the player will teleport to a random position
-
+    //TODO
 }

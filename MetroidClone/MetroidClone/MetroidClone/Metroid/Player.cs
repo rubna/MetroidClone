@@ -56,12 +56,15 @@ namespace MetroidClone.Metroid
 
         public override void Update(GameTime gameTime)
         {
+            bool hasMovedLeft = false, hasMovedRight = false;
+
             //move around
             if (Input.KeyboardCheckDown(Keys.A) || Input.KeyboardCheckDown(Keys.Left) || Input.ThumbStickCheckDirection(true).X < 0)
             {
                 Speed.X -= movementSpeedModifier * 0.5f;
                 FlipX = true;
                 PlayAnimation("tempplayer", Direction.Left, speed: 0.2f);
+                hasMovedLeft = true;
             }
 
             if (Input.KeyboardCheckDown(Keys.D) || Input.KeyboardCheckDown(Keys.Right) || Input.ThumbStickCheckDirection(true).X > 0)
@@ -69,6 +72,7 @@ namespace MetroidClone.Metroid
                 Speed.X += movementSpeedModifier * 0.5f;
                 FlipX = false;
                 PlayAnimation("tempplayer", Direction.Right, speed: 0.2f);
+                hasMovedRight = true;
             }
 
             //You can still jump a small time after having walked from a platform
@@ -190,6 +194,33 @@ namespace MetroidClone.Metroid
                 TimeSinceVWallCollision = 0;
             else
                 TimeSinceVWallCollision++;
+
+            Rectangle offsetCollBox = TranslatedBoundingBox;
+            offsetCollBox.Offset(0, 6);
+
+            //If you've moved left...
+            if (hasMovedLeft)
+            {
+                //Make sure the player moves down slopes correctly.
+                if (GetCollisionWithSolid<SlopeRight>(offsetCollBox) != null)
+                {
+                    while (GetCollisionWithSolid<SlopeRight>(TranslatedBoundingBox) == null)
+                        Position.Y += 1;
+                    Position.Y -= 1;
+                }
+            }
+
+            //If you've moved right...
+            if (hasMovedRight)
+            {
+                //Make sure the player moves down slopes correctly.
+                if (GetCollisionWithSolid<SlopeLeft>(offsetCollBox) != null)
+                {
+                    while (GetCollisionWithSolid<SlopeRight>(TranslatedBoundingBox) == null)
+                        Position.Y += 1;
+                    Position.Y -= 1;
+                }
+            }
         }
 
         void CreateDrone()

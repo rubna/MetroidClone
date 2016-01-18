@@ -37,6 +37,13 @@ DEFINE γ AS WALL OR GROUP OF 1 .
 
 And here are the actual generation blocks.
 
+BLOCK UDLR 10000
+22222
+2...2
+2./.2
+2/..2
+22212
+
 BLOCK UDLR 0.4
 1...1
 2.a.α
@@ -55,8 +62,8 @@ BLOCK UDR 0.5
 11211
 1...a
 1oo..
-1a../
-1../1
+1a...
+1...1
 
 BLOCK UDLR 0.75
 1...1
@@ -196,7 +203,7 @@ THEMESTART Cramped
 BLOCK DLR
 11111
 1....
-2.a\.
+2.1\.
 1..1\
 11.a1
 

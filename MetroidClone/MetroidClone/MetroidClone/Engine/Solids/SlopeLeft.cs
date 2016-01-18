@@ -9,6 +9,13 @@ namespace MetroidClone.Engine
             BoundingBox = boundingBox;
         }
 
+        public override void Create()
+        {
+            base.Create();
+
+            SetSprite("Tileset/slopeL");
+        }
+
         bool ISolid.CollidesWith(Rectangle bbox)
         {
             if (bbox.Intersects(BoundingBox))
@@ -21,9 +28,7 @@ namespace MetroidClone.Engine
         }
         public override void Draw()
         {
-            base.Draw();
-            Drawing.DrawTriangle(new Vector2(DrawBoundingBox.Left, DrawBoundingBox.Bottom), new Vector2(DrawBoundingBox.Left, DrawBoundingBox.Top),
-                new Vector2(DrawBoundingBox.Right, DrawBoundingBox.Bottom), Color.Black);
+            Drawing.DrawSprite(CurrentSprite, DrawBoundingBox.Location.ToVector2(), (int)CurrentImage, ImageScaling * new Vector2(BoundingBox.Width, BoundingBox.Height));
         }
     }
 }
