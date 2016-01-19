@@ -1,5 +1,6 @@
 ﻿using MetroidClone.Engine;
 using MetroidClone.Engine.Asset;
+using MetroidClone.Metroid.Monsters;
 using MetroidClone.Metroid.Player_Attacks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -53,7 +54,7 @@ namespace MetroidClone.Metroid
             base.Create();
             BoundingBox = new Rectangle(-10, -16, 20, 32);
             Depth = -10;
-
+            SpriteScale = 0.08f;
             //make skeleton
             body = new AnimationBone(this, new Vector2(0, -1));
             head = new AnimationBone(body, new Vector2(0, -18));

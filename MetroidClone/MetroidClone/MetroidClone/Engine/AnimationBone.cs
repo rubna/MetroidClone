@@ -60,6 +60,19 @@ namespace MetroidClone.Engine
                     return Parent.Visible;
             }
         }
+        public float GlobalSpriteScale
+        {
+            get
+            {
+                if (Parent is AnimationBone)
+                {
+                    var par = Parent as AnimationBone;
+                    return par.GlobalSpriteScale;
+                }
+                else
+                    return Parent.SpriteScale;
+            }
+        }
 
         public float RotationOffset = 0;
 
@@ -102,7 +115,7 @@ namespace MetroidClone.Engine
             base.Draw();
             //ImageScaling = ;// * 0.9f;
             if (CurrentSprite != null && Visible && GlobalVisible)
-                Drawing.DrawSprite(CurrentSprite, DrawPosition, 0, CurrentSprite.Size * SpriteScale * new Vector2(GetFlip, 1), null, MathHelper.ToRadians(GlobalRotation) * GetFlip);// ImageScaling, Color.White, ImageRotation);
+                Drawing.DrawSprite(CurrentSprite, DrawPosition, 0, CurrentSprite.Size * GlobalSpriteScale * new Vector2(GetFlip, 1), null, MathHelper.ToRadians(GlobalRotation) * GetFlip);// ImageScaling, Color.White, ImageRotation);
             //Drawing.DrawLine(TargetDrawPosition, Parent.DrawPosition, 2, Color.Pink);
             //Drawing.DrawCircle(DrawPosition, 3, Color.Purple);
         }

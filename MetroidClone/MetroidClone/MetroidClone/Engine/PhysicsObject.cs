@@ -20,6 +20,7 @@ namespace MetroidClone.Engine
         protected bool OnGround = false;
         protected bool OnSlope = false;
         protected Vector2 WallBounce = Vector2.Zero;
+        public float SpriteScale = 1f;
 
         //HadCollision stores whether there was a collision with a wall in the last update.
         public bool HadHCollision = false, HadVCollision = false;
