@@ -114,7 +114,7 @@ namespace MetroidClone.Engine
             Profiler.LogEventStart("Update");
             inputHelper.Update();
             ;
-            if (inputHelper.KeyboardCheckPressed(Keys.Escape) && world.PlayingState == World.GameState.MainMenu)
+            if (inputHelper.KeyboardCheckPressed(Keys.Escape))// && world.PlayingState == World.GameState.MainMenu)
                 Exit();
             if (inputHelper.KeyboardCheckPressed(Keys.Escape) && world.PlayingState == World.GameState.Playing)
             {

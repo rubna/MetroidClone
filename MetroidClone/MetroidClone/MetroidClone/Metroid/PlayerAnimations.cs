@@ -36,6 +36,20 @@ namespace MetroidClone.Metroid
             }
         }
 
+        void PlayAnimationDuck()
+        {
+            PlayAnimationLegsDuck();
+            if (CurrentWeapon == Weapon.Nothing)
+                PlayAnimationArmsLooseDuck();
+            else
+            {
+                if (shotAnimationTimer > 0)
+                    PlayAnimationArmsGunShooting(shootDirection);
+                else
+                    PlayAnimationArmsGunDuck();
+            }
+        }
+
         void PlayAnimationInAir()
         {
             PlayAnimationLegsInAir();
@@ -190,8 +204,8 @@ namespace MetroidClone.Metroid
             shoulderLeft.TargetRotation = 60 - factor * 30;
             elbowLeft.TargetRotation = 20 - factor * 95;
 
-            shoulderRight.TargetRotation = -70 - factor * 50;
-            elbowRight.TargetRotation = -30 - factor * 60;
+            shoulderRight.TargetRotation = -90 - factor * 50;
+            elbowRight.TargetRotation = -50 - factor * 40;
             gun.TargetRotation = 140 + factor * 40;
         }
 

@@ -30,7 +30,7 @@ namespace MetroidClone.Metroid
         bool upPressed = false;
         bool down = false;
 
-        public Weapon CurrentWeapon = Weapon.Gun;
+        public Weapon CurrentWeapon = Weapon.Nothing;
         public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
         public int HitPoints = 100;
         public int RocketAmmo = 5;
@@ -177,11 +177,10 @@ namespace MetroidClone.Metroid
                 PlayAnimationInAir();
             }
             else
-            if (Input.KeyboardCheckDown(Keys.Down))
+            if (down)
             {
                 AnimationRotation += 4;
-                PlayAnimationLegsDuck();
-                PlayAnimationArmsGunDuck();
+                PlayAnimationDuck();
             }
             else
             {
@@ -201,6 +200,7 @@ namespace MetroidClone.Metroid
                 timeSinceLastJumpIntention = 0;
             else
                 timeSinceLastJumpIntention++;
+
 
             //jump
             if (timeSinceLastJumpIntention < maxTimeSinceLastJumpIntention && timeSinceOnGround < maxFromPlatformTimeForJump && Speed.Y >= 0)
