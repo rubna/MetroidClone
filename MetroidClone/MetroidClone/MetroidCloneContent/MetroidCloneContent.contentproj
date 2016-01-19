@@ -36,16 +36,124 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="tempplayer.png">
+    <Compile Include="Sprites\tempplayer.png">
       <Name>tempplayer</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Sprites\Robot\RobotSpriteBody.png">
+      <Name>RobotSpriteBody</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Sprites\Robot\RobotSpriteHead.png">
+      <Name>RobotSpriteHead</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Sprites\Robot\RobotSpriteLAntennae1.png">
+      <Name>RobotSpriteLAntennae1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Sprites\Robot\RobotSpriteLAntennae2.png">
+      <Name>RobotSpriteLAntennae2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Sprites\Robot\RobotSpriteLArm1.png">
+      <Name>RobotSpriteLArm1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Sprites\Robot\RobotSpriteLArm2.png">
+      <Name>RobotSpriteLArm2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Sprites\Robot\RobotSpriteLFoot.png">
+      <Name>RobotSpriteLFoot</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Sprites\Robot\RobotSpriteLHand.png">
+      <Name>RobotSpriteLHand</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Sprites\Robot\RobotSpriteLLeg1.png">
+      <Name>RobotSpriteLLeg1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Sprites\Robot\RobotSpriteLLeg2.png">
+      <Name>RobotSpriteLLeg2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Sprites\Robot\RobotSpriteNeck.png">
+      <Name>RobotSpriteNeck</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Sprites\Robot\RobotSpriteParts.png">
+      <Name>RobotSpriteParts</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Sprites\Robot\RobotSpritePartsAssembled.png">
+      <Name>RobotSpritePartsAssembled</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Sprites\Robot\RobotSpriteRAntennae1.png">
+      <Name>RobotSpriteRAntennae1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Sprites\Robot\RobotSpriteRAntennae2.png">
+      <Name>RobotSpriteRAntennae2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Sprites\Robot\RobotSpriteRArm1.png">
+      <Name>RobotSpriteRArm1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Sprites\Robot\RobotSpriteRArm2.png">
+      <Name>RobotSpriteRArm2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Sprites\Robot\RobotSpriteRFoot.png">
+      <Name>RobotSpriteRFoot</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Sprites\Robot\RobotSpriteRHand.png">
+      <Name>RobotSpriteRHand</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Sprites\Robot\RobotSpriteRLeg1.png">
+      <Name>RobotSpriteRLeg1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Sprites\Robot\RobotSpriteRLeg2.png">
+      <Name>RobotSpriteRLeg2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <None Include="LevelBlocks.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>LevelBlocks</Name>
+      <Importer>XmlImporter</Importer>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -54,8 +162,11 @@
       <Importer>TextureImporter</Importer>
       <Processor>FontTextureProcessor</Processor>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="font18.bmp">
+      <Name>font18</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>FontTextureProcessor</Processor>
+    </Compile>
     <Compile Include="font22.bmp">
       <Name>font22</Name>
       <Importer>TextureImporter</Importer>
@@ -63,131 +174,124 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="font18.bmp">
-      <Name>font18</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>FontTextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="BackgroundTileset\background1.png">
+    <Compile Include="Sprites\BackgroundTileset\background1.png">
       <Name>background1</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="BackgroundTileset\background2.png">
+    <Compile Include="Sprites\BackgroundTileset\background2.png">
       <Name>background2</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="BackgroundTileset\background3.png">
+    <Compile Include="Sprites\BackgroundTileset\background3.png">
       <Name>background3</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="BackgroundTileset\background4.png">
+    <Compile Include="Sprites\BackgroundTileset\background4.png">
       <Name>background4</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Tileset\connectionDL.png">
+    <Compile Include="Sprites\Tileset\connectionDL.png">
       <Name>connectionDL</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Tileset\connectionRD.png">
+    <Compile Include="Sprites\Tileset\connectionRD.png">
       <Name>connectionRD</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Tileset\connectionUL.png">
+    <Compile Include="Sprites\Tileset\connectionUL.png">
       <Name>connectionUL</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Tileset\connectionUR.png">
+    <Compile Include="Sprites\Tileset\connectionUR.png">
       <Name>connectionUR</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Tileset\foreground.png">
+    <Compile Include="Sprites\Tileset\foreground.png">
       <Name>foreground</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Tileset\foregroundD.png">
+    <Compile Include="Sprites\Tileset\foregroundD.png">
       <Name>foregroundD</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Tileset\foregroundDL.png">
+    <Compile Include="Sprites\Tileset\foregroundDL.png">
       <Name>foregroundDL</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Tileset\foregroundL.png">
+    <Compile Include="Sprites\Tileset\foregroundL.png">
       <Name>foregroundL</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Tileset\foregroundR.png">
+    <Compile Include="Sprites\Tileset\foregroundR.png">
       <Name>foregroundR</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Tileset\foregroundRD.png">
+    <Compile Include="Sprites\Tileset\foregroundRD.png">
       <Name>foregroundRD</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Tileset\foregroundRDL.png">
+    <Compile Include="Sprites\Tileset\foregroundRDL.png">
       <Name>foregroundRDL</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Tileset\foregroundRL.png">
+    <Compile Include="Sprites\Tileset\foregroundRL.png">
       <Name>foregroundRL</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Tileset\foregroundU.png">
+    <Compile Include="Sprites\Tileset\foregroundU.png">
       <Name>foregroundU</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Tileset\foregroundUD.png">
+    <Compile Include="Sprites\Tileset\foregroundUD.png">
       <Name>foregroundUD</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Tileset\foregroundUDL.png">
+    <Compile Include="Sprites\Tileset\foregroundUDL.png">
       <Name>foregroundUDL</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Tileset\foregroundUL.png">
+    <Compile Include="Sprites\Tileset\foregroundUL.png">
       <Name>foregroundUL</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Tileset\foregroundUR.png">
+    <Compile Include="Sprites\Tileset\foregroundUR.png">
       <Name>foregroundUR</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Tileset\foregroundURD.png">
+    <Compile Include="Sprites\Tileset\foregroundURD.png">
       <Name>foregroundURD</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Tileset\foregroundURDL.png">
+    <Compile Include="Sprites\Tileset\foregroundURDL.png">
       <Name>foregroundURDL</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Tileset\foregroundURL.png">
+    <Compile Include="Sprites\Tileset\foregroundURL.png">
       <Name>foregroundURL</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
@@ -317,20 +421,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="doorspriteclosedgreen.png">
-      <Name>doorspriteclosedgreen</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="doorspriteopen.png">
-      <Name>doorspriteopen</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Tileset\platform.png">
-      <Name>platform</Name>
+    <Compile Include="Sprites\Items\gun.png">
+      <Name>gun</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -343,13 +435,36 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Tileset\slopeL.png">
+    <Compile Include="Sprites\Tileset\platform.png">
+      <Name>platform</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sprites\Tileset\slopeL.png">
       <Name>slopeL</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Tileset\slopeR.png">
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sprites\Tileset\slopeR.png">
       <Name>slopeR</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sprites\doorspriteclosedgreen.png">
+      <Name>doorspriteclosedgreen</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sprites\doorspriteopen.png">
+      <Name>doorspriteopen</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

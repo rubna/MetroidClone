@@ -8,6 +8,9 @@ namespace MetroidClone.Metroid
 {
     abstract class Monster : PhysicsObject
     {
+        protected MonsterState State;
+        protected enum MonsterState { Moving, Attacking, Jumping, PatrollingLeft, PatrollingRight, ChangeState }
+
         public int HitPoints = 1;
         public int Damage = 10;
         protected int ScoreOnKill = 1;
@@ -51,6 +54,7 @@ namespace MetroidClone.Metroid
                 }
             }
         }
+
         public override void Destroy()
         {
             base.Destroy();
@@ -69,6 +73,26 @@ namespace MetroidClone.Metroid
                 if (randomLoot < 5)
                     World.AddObject(new HealthDrop(), Position.X, Position.Y);
             }
+        }
+
+        //Check if a bullet could reach the player
+        protected bool CanReachPlayer()
+        {
+            Vector2 emulatedBulletPos = Position;
+            Vector2 dir = World.Player.Position - Position;
+            dir.Normalize();
+
+            while ((emulatedBulletPos - World.Player.Position).Length() > 8)
+            {
+                emulatedBulletPos += MonsterBullet.baseSpeed * dir;
+
+                if (InsideWall(new Rectangle((int) emulatedBulletPos.X - 4, (int) emulatedBulletPos.Y - 4, 8, 8)))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

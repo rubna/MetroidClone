@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace MetroidClone.Engine
 {
-    public enum Direction { Left, Right, Up, Down }
+    public enum Direction { Left, Right, Up, Down, None }
 
     class LevelGenerator
     {

@@ -35,7 +35,11 @@ namespace MetroidClone.Metroid
             
             if (doorCollision != null)
             {
-                (doorCollision as Door).Activated = true;
+                if (!(doorCollision as Door).Activated)
+                {
+                    (doorCollision as Door).Activated = true;
+                    World.Player.Score += 10;
+                }
             }
 
             if (InsideWall(TranslatedBoundingBox))
