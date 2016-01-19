@@ -34,7 +34,7 @@ namespace MetroidClone.Metroid
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            if (InsideWall(TranslatedBoundingBox))
+            if (Speed.X < 0.01f || Position.Y != PositionPrevious.Y)
                 Destroy();
         }
 

@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 namespace MetroidClone.Engine
 {
+    /// <summary>
+    /// Main class for Updated and Drawn objects in the game. Have access to World, Drawing, Assets, InputHelper. 
+    /// </summary>
     class GameObject
     {
         public Vector2 Position = Vector2.Zero; //The position where this object is located in the game world.
@@ -33,12 +36,12 @@ namespace MetroidClone.Engine
         public bool Visible = true;
 
         //Information about the sprite. For objects without a sprite, CurrentSprite is null.
-        protected Sprite CurrentSprite = null;
-        protected float CurrentImage = 0;
+        public Sprite CurrentSprite = null;
+        public float CurrentImage = 0;
         protected bool AnimationIsRepeating = false;
         protected float AnimationSpeed = 0;
-        protected Vector2 ImageScaling;
-        protected float ImageRotation;
+        public Vector2 ImageScaling = Vector2.One;
+        public float ImageRotation = 0;
 
         //Event handlers
         public event EventHandler AnimationFinished;
@@ -88,7 +91,7 @@ namespace MetroidClone.Engine
                 CurrentImage = (float)startImage;
             AnimationIsRepeating = repeat;
             AnimationSpeed = speed;
-            ImageScaling = scaling ?? new Vector2(1f);
+            ImageScaling = scaling ?? new Vector2(1f); ;
         }
 
         //Plays an animation with the option to define the direction instead of the scaling.

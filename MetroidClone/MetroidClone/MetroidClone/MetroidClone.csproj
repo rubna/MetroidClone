@@ -72,8 +72,7 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Engine\A star\AStarPoint.cs" />
-    <Compile Include="Engine\A star\AStarMap.cs" />
+    <Compile Include="Engine\AnimationBone.cs" />
     <Compile Include="Engine\Asset Loading\Asset\IAsset.cs" />
     <Compile Include="Engine\Asset Loading\AssetManager.cs" />
     <Compile Include="Engine\Asset Loading\Asset\Sound.cs" />
@@ -125,6 +124,7 @@
     <Compile Include="Metroid\Monsters\MonsterAttack\MonsterAttack.cs" />
     <Compile Include="Metroid\PauseMenu.cs" />
     <Compile Include="Metroid\Player Attacks\Smoke.cs" />
+    <Compile Include="Metroid\PlayerAnimations.cs" />
     <Compile Include="Metroid\RocketAmmo.cs" />
     <Compile Include="Metroid\Collectible.cs" />
     <Compile Include="Metroid\Drone.cs" />

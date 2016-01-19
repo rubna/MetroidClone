@@ -46,8 +46,6 @@ namespace MetroidClone.Engine
         const float GridSize = 100f;
         public List<ISolid>[,] SolidGrid;
 
-        //A*
-        public AStarMap AStarMap;
 
         public List<ISolid> Solids
         {
@@ -84,7 +82,6 @@ namespace MetroidClone.Engine
 
             foreach (GameObject gameObject in GameObjects)
             {
-                gameObject.Create();
                 if (gameObject.ShouldUpdate)
                     GameObjectsToUpdate.Add(gameObject);
             }

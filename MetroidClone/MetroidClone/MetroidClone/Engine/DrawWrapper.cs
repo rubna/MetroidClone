@@ -68,7 +68,7 @@ namespace MetroidClone.Engine
         private void DrawPrimitive(PrimitiveType primitiveType, IEnumerable<VertexPositionColor> vertices)
         {
             EndSpriteBatch();
-            
+
             currentEffect.CurrentTechnique.Passes[0].Apply();
 
             var data = vertices.ToArray();
@@ -117,33 +117,48 @@ namespace MetroidClone.Engine
             DrawPrimitive(PrimitiveType.TriangleList, verts, color);
         }
 
-        // Methods to draw sprites.
+        public void DrawLine(Vector2 from, Vector2 to, float width, Color color)
+        {
+            Vector2 offset = new Vector2(width / 2, (to - from).Angle() + 90).ToCartesian();
+            List<Vector2> verts = new List<Vector2>()
+            {
+                from + offset,
+                from - offset,
+                to + offset,
+                to - offset
+            };
+
+            DrawPrimitive(PrimitiveType.TriangleStrip, verts, color);
+        }
 
         public void DrawSprite(Sprite sprite, Vector2 position, Vector2? subimage = null, Vector2? size = null, Color? color = null, float rotation = 0f)
         {
             BeginSpriteBatch();
 
             Vector2 usedSize = size ?? sprite.Size; //The used size is either the specified size or the default size of the sprite.
-
+            Vector2 origin = sprite.Origin * sprite.Size;
             //Make it possible to mirror or flip the sprite by using a negative size.
             SpriteEffects usedSpriteEffect = SpriteEffects.None;
             if (usedSize.X < 0)
             {
                 usedSize.X = Math.Abs(usedSize.X);
                 usedSpriteEffect = usedSpriteEffect | SpriteEffects.FlipHorizontally;
+                origin.X = sprite.Size.X - origin.X;
             }
             if (usedSize.Y < 0)
             {
                 usedSize.Y = Math.Abs(usedSize.Y);
                 usedSpriteEffect = usedSpriteEffect | SpriteEffects.FlipVertically;
+                origin.Y = sprite.Size.Y - origin.Y;
             }
 
             //Draw the given subimage of the sprite with the given parameters.
             //The position and scaling are affected by the global scaling.
             //Some parameters are optional, so they are set to the default if not specified.
+            
             spriteBatch.Draw(sprite.Texture, GlobalScale * position + new Vector2(displayLeft, displayTop),
                 sprite.GetImageRectangle(subimage ?? new Vector2(0f, 0f)), color ?? Color.White, rotation,
-                sprite.Origin * sprite.Size, usedSize / sprite.Size * GlobalScale, usedSpriteEffect, 0f);
+                origin, usedSize / sprite.Size * GlobalScale, usedSpriteEffect, 0f);
         }
 
         public void DrawSprite(string sprite, Vector2 position, Vector2? subimage = null, Vector2? size = null, Color? color = null, float rotation = 0f)
@@ -290,7 +305,7 @@ namespace MetroidClone.Engine
             displayHeight = maxHeight * GlobalScale / (maxHeight / standardHeight);
             displayLeft = (width - displayWidth) / 2;
             displayTop = (height - displayHeight) / 2;
-
+        
             SetProjectionMatrix(width, height);
         }
 
