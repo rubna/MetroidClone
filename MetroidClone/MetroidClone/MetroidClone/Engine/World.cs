@@ -25,6 +25,7 @@ namespace MetroidClone.Engine
         public DrawWrapper DrawWrapper { get; set; }
         public AudioWrapper AudioWrapper { get; set; }
         public AssetManager AssetManager { get; set; }
+        public Tutorial Tutorial;
         public MainMenu MainMenu;
         public PauseMenu PauseMenu;
         public Player Player;
@@ -73,6 +74,8 @@ namespace MetroidClone.Engine
             AddObject(MainMenu);
             AddObject(PauseMenu);
             (new WorldGenerator()).Generate(this);
+            Tutorial = new Tutorial();
+            AddObject(Tutorial);
             AudioWrapper.PlayLooping("Audio/Music/Area 1");
             UpdateCamera(true);
 
@@ -84,6 +87,7 @@ namespace MetroidClone.Engine
 
             UpdateSolidGrid();
             PathfindingGrid();
+            //AStarMap = new AStarMap(PathfindingGrid());
         }
 
         public void UpdateSolidGrid()
@@ -189,7 +193,7 @@ namespace MetroidClone.Engine
             if (PlayingState == GameState.Paused)
             {
                 PauseMenu.UpdateMenu(gameTime);
-            }
+        }
             if (MainMenu.StartGame && worldInitialized == false)
             {
                 Initialize();
@@ -265,16 +269,16 @@ namespace MetroidClone.Engine
             //Only draw objects that are visible (within the view)
             if (PlayingState == GameState.Playing)
             {
-                foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
+            foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
+            {
+                Vector2 drawPos = gameObject.CenterPosition - Camera;
+                if (drawPos.X > -100 && drawPos.Y > -100 &&
+                    drawPos.X < WorldGenerator.LevelWidth * TileWidth + 100 &&
+                    drawPos.Y < WorldGenerator.LevelHeight * TileHeight + 100)
                 {
-                    Vector2 drawPos = gameObject.CenterPosition - Camera;
-                    if (drawPos.X > -100 && drawPos.Y > -100 &&
-                        drawPos.X < WorldGenerator.LevelWidth * TileWidth + 100 &&
-                        drawPos.Y < WorldGenerator.LevelHeight * TileHeight + 100)
-                    {
-                        gameObject.Draw();
-                    }
+                    gameObject.Draw();
                 }
+            }
             }
             if (PlayingState == GameState.Paused)
                 PauseMenu.Draw2();

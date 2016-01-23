@@ -1,10 +1,18 @@
 ﻿using MetroidClone.Engine;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace MetroidClone.Metroid
 {
     class HealthDrop : PhysicsObject
     {
+        int hitPointsFromHealthDrop;
+
+        public HealthDrop(int monsterDifficulty)
+        {
+            hitPointsFromHealthDrop = monsterDifficulty;
+        }
+
         public override void Create()
         {
             base.Create();
@@ -14,9 +22,9 @@ namespace MetroidClone.Metroid
         {
             if (CollidesWith(Position, World.Player))
             {
-                if (World.Player.HitPoints < 100)
+                if (World.Player.HitPoints < World.Player.MaxHitPoints)
                 {
-                    World.Player.HitPoints = World.Player.HitPoints + 5;
+                    World.Player.HitPoints = Math.Min(World.Player.HitPoints + hitPointsFromHealthDrop, hitPointsFromHealthDrop);
                     Destroy();
                 }
             }

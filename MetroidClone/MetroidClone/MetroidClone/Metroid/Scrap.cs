@@ -14,6 +14,17 @@ namespace MetroidClone.Metroid
             ScrapAmount = World.Random.Next(5, 11);
         }
 
+        public override void Update(GameTime gameTime)
+        {
+            if (CollidesWith(Position, World.Player))
+            {
+                World.Tutorial.ScrapCollected = true;
+                World.Player.CollectedScrap += ScrapAmount;
+                Destroy();
+            }
+            base.Update(gameTime);
+        }
+
         public override void Draw()
         {
             base.Draw();

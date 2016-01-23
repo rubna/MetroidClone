@@ -28,7 +28,7 @@ namespace MetroidClone.Engine
             }
         }
 
-        public float SpriteScale = 0.08f;
+        public float SpriteScale = 0;// = 0.08f;
         public float TargetRotation = 0;
         public float RotationLerpFactor = 0.3f;
         public float PositionLerpFactor = 0.9f;
@@ -44,6 +44,38 @@ namespace MetroidClone.Engine
                 }
                 else
                     return ImageRotation + Parent.ImageRotation;
+            }
+        }
+
+        public bool GlobalVisible
+        {
+            get
+            {
+                if (Parent is AnimationBone)
+                {
+                    var par = Parent as AnimationBone;
+                    return par.GlobalVisible;
+                }
+                else
+                    return Parent.Visible;
+            }
+        }
+        public float GlobalSpriteScale
+        {
+            get
+            {
+                if (SpriteScale == 0)
+                {
+                    if (Parent is AnimationBone)
+                    {
+                        var par = Parent as AnimationBone;
+                        return par.GlobalSpriteScale;
+                    }
+                    else
+                        return Parent.SpriteScale;
+                }
+                else
+                    return SpriteScale;
             }
         }
 
@@ -64,6 +96,7 @@ namespace MetroidClone.Engine
             Offset = offset;
             RotationOffset = rotationOffset;
             OriginalOffset = offset;
+            Gravity = 0;
         }
 
         public override void Create()
@@ -77,7 +110,6 @@ namespace MetroidClone.Engine
         {
             base.Update(gameTime);
             FlipX = Parent.FlipX;
-            //Position += (TargetPosition - Position) * PositionLerpFactor;
             ImageRotation += VectorExtensions.AngleDifference(ImageRotation, TargetRotation) * RotationLerpFactor;
             Speed = (TargetPosition - Position) * PositionLerpFactor;
             Depth = Parent.Depth + DepthOffset;
@@ -87,8 +119,8 @@ namespace MetroidClone.Engine
         {
             base.Draw();
             //ImageScaling = ;// * 0.9f;
-            if (CurrentSprite != null && Visible)
-                Drawing.DrawSprite(CurrentSprite, DrawPosition, 0, CurrentSprite.Size * SpriteScale * new Vector2(GetFlip, 1), null, MathHelper.ToRadians(GlobalRotation) * GetFlip);// ImageScaling, Color.White, ImageRotation);
+            if (CurrentSprite != null && Visible && GlobalVisible)
+                Drawing.DrawSprite(CurrentSprite, DrawPosition, 0, CurrentSprite.Size * GlobalSpriteScale * new Vector2(GetFlip, 1), null, MathHelper.ToRadians(GlobalRotation) * GetFlip);// ImageScaling, Color.White, ImageRotation);
             //Drawing.DrawLine(TargetDrawPosition, Parent.DrawPosition, 2, Color.Pink);
             //Drawing.DrawCircle(DrawPosition, 3, Color.Purple);
         }

@@ -1,4 +1,5 @@
 ﻿using MetroidClone.Engine;
+using MetroidClone.Engine.Asset;
 using MetroidClone.Metroid.Player_Attacks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -11,7 +12,7 @@ namespace MetroidClone.Metroid
     partial class Player : PhysicsObject
     {
         float blinkTimer = 0;
-        public int CollectedScrap = 100;
+        public int CollectedScrap = 0;
         int timeSinceOnGround = 0;
         const int maxFromPlatformTimeForJump = 5; //The maximum time you can still jump after having moved from a platform.
         float attackTimer = 0;
@@ -28,16 +29,18 @@ namespace MetroidClone.Metroid
         bool upPressed = false;
         bool down = false;
 
-        public Weapon CurrentWeapon = Weapon.Gun;
+        public Weapon CurrentWeapon = Weapon.Nothing;
         public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
         public int HitPoints = 100, MaxHitPoints = 100;
         public int RocketAmmo = 5;
+        public int MaximumRocketAmmo = 5;
         public int Score = 0;
 
         public float Rotation = 0;
         public float AnimationRotation = 0;
         AnimationBone body, hipLeft, kneeLeft, footLeft, hipRight, kneeRight, footRight, head, 
-                    shoulderLeft, shoulderRight, elbowLeft, elbowRight, handLeft, handRight, gun;
+                    shoulderLeft, shoulderRight, elbowLeft, elbowRight, handLeft, handRight, gun, launcher,
+                    antennaLeft1, antennaLeft2, antennaRight1, antennaRight2;
 
         float shotAnimationTimer = 0;
         float shootDirection = 0;
@@ -52,27 +55,33 @@ namespace MetroidClone.Metroid
         public override void Create()
         {
             base.Create();
-            BoundingBox = new Rectangle(-10, -16, 20, 32);
+            BoundingBox = new Rectangle(-10, -16, 20, 30);
             Depth = -10;
-
+            SpriteScale = 0.07f;
             //make skeleton
             body = new AnimationBone(this, new Vector2(0, -1));
-            head = new AnimationBone(body, new Vector2(0, -18));
+            head = new AnimationBone(body, new Vector2(0, -16));
             hipLeft = new AnimationBone(body, new Vector2(-5, -1)) { DepthOffset = 1 };
             hipRight = new AnimationBone(body, new Vector2(5, -1)) { DepthOffset = 1 };
-            kneeLeft = new AnimationBone(hipLeft, new Vector2(0, 8)) { DepthOffset = 1 };
-            kneeRight = new AnimationBone(hipRight, new Vector2(0, 8)) { DepthOffset = 1 };
-            footLeft = new AnimationBone(kneeLeft, new Vector2(0, 8));
-            footRight = new AnimationBone(kneeRight, new Vector2(0, 8));
+            kneeLeft = new AnimationBone(hipLeft, new Vector2(0, 7)) { DepthOffset = 1 };
+            kneeRight = new AnimationBone(hipRight, new Vector2(0, 7)) { DepthOffset = 1 };
+            footLeft = new AnimationBone(kneeLeft, new Vector2(0, 7));
+            footRight = new AnimationBone(kneeRight, new Vector2(0, 7));
 
-            shoulderRight = new AnimationBone(body, new Vector2(-5.5f, -13.5f));
-            shoulderLeft = new AnimationBone(body, new Vector2(5.5f, -14)) { DepthOffset = 1 };
+            shoulderRight = new AnimationBone(body, new Vector2(-5.5f, -13f));
+            shoulderLeft = new AnimationBone(body, new Vector2(5.5f, -13)) { DepthOffset = 1 };
             elbowRight = new AnimationBone(shoulderRight, new Vector2(-8, 0));
             elbowLeft = new AnimationBone(shoulderLeft, new Vector2(8, 0)) { DepthOffset = 1 };
             handRight = new AnimationBone(elbowRight, new Vector2(-7, 0)) { DepthOffset = 1 };
             handLeft = new AnimationBone(elbowLeft, new Vector2(7, 0)) { DepthOffset = 1 };
 
             gun = new AnimationBone(handRight, new Vector2(-2, 0)) { DepthOffset = -4 };
+            launcher = new AnimationBone(handRight, new Vector2(-2, 0)) { DepthOffset = -4 };
+
+            antennaLeft1 = new AnimationBone(head, new Vector2(3, -18)) { DepthOffset = -1 };
+            antennaLeft2 = new AnimationBone(antennaLeft1, new Vector2(0, -6)) { DepthOffset = 1 };
+            antennaRight1 = new AnimationBone(head, new Vector2(-3, -17)) { DepthOffset = -1 };
+            antennaRight2 = new AnimationBone(antennaRight1, new Vector2(0, -6)) { DepthOffset = 1 };
 
             World.AddObject(body);
             body.SetSprite("Robot/RobotSpriteBody");
@@ -108,7 +117,23 @@ namespace MetroidClone.Metroid
             World.AddObject(gun);
             gun.SetSprite("Items/gun");
             gun.SpriteScale = 0.2f;
-            gun.TargetRotation = 90;
+
+            World.AddObject(launcher);
+            launcher.SetSprite("Items/playerrocket");
+            launcher.SpriteScale = 0.2f;
+
+            World.AddObject(antennaLeft1);
+            antennaLeft1.SetSprite("Robot/RobotSpriteLAntennae1");
+            antennaLeft1.TargetRotation = 5;
+            World.AddObject(antennaLeft2);
+            antennaLeft2.SetSprite("Robot/RobotSpriteLAntennae2");
+
+            World.AddObject(antennaRight1);
+            antennaRight1.SetSprite("Robot/RobotSpriteRAntennae1");
+            antennaRight1.TargetRotation = 10;
+            World.AddObject(antennaRight2);
+            antennaRight2.SetSprite("Robot/RobotSpriteRAntennae2");
+            antennaRight2.TargetRotation = 40;
 
             Friction = new Vector2(0.85f, 1);
             Gravity = gravity;
@@ -160,10 +185,14 @@ namespace MetroidClone.Metroid
             //move horizontally
             if (moveXAxis != 0)
             {
+                World.Tutorial.Moved = true;
                 Speed.X += movementSpeedModifier * 0.5f * moveXAxis;
                 FlipX = moveXAxis < 0;
                 walking = true;
             }
+
+            gun.Visible = CurrentWeapon == Weapon.Gun;
+            launcher.Visible = CurrentWeapon == Weapon.Rocket;
 
             //play animations according to movement
             if (shotAnimationTimer > 0)
@@ -189,11 +218,10 @@ namespace MetroidClone.Metroid
                 PlayAnimationInAir();
             }
             else
-            if (Input.KeyboardCheckDown(Keys.Down))
+            if (down)
             {
                 AnimationRotation += 4;
-                PlayAnimationLegsDuck();
-                PlayAnimationArmsGunDuck();
+                PlayAnimationDuck();
             }
             else
             {
@@ -210,9 +238,14 @@ namespace MetroidClone.Metroid
 
             //You can press jump a small time before landing on a platform and you'll still jump
             if (upPressed)
+            {
                 timeSinceLastJumpIntention = 0;
+                if (World.Tutorial.Moved)
+                    World.Tutorial.Jumped = true;
+            }
             else
                 timeSinceLastJumpIntention++;
+
 
             //jump
             if (timeSinceLastJumpIntention < maxTimeSinceLastJumpIntention && timeSinceOnGround < maxFromPlatformTimeForJump && Speed.Y >= 0)
@@ -237,7 +270,7 @@ namespace MetroidClone.Metroid
                 fellThroughTimer = 1;
             }
             if (fellThroughTimer > 0)
-                fellThroughTimer -= 0.05f;
+                fellThroughTimer -= 0.07f;
 
             //attack
             if (Input.MouseButtonCheckDown(true) || (Input.ThumbStickCheckDown(false)))
@@ -251,11 +284,13 @@ namespace MetroidClone.Metroid
                             break;
                         case (int)Weapon.Gun:
                             {
+                                World.Tutorial.GunShot = true;
                                 attackTimer = 0.1f;
                                 break;
                             }
                         case (int)Weapon.Rocket:
                             {
+                                World.Tutorial.RocketShot = true;
                                 attackTimer = 0.2f;
                                 break;
                             }
@@ -267,27 +302,23 @@ namespace MetroidClone.Metroid
             {
                 if (attackTimer == 0 && UnlockedWeapons.Contains(Weapon.Wrench))
                 {
+                    World.Tutorial.WrenchUsed = true;
                     World.AddObject(new PlayerMelee(), Position + GetFlip * Vector2.UnitX * 20);
                     attackTimer = 0.1f;
                 }
             }
 
-            //testing: adds monster
-            if (Input.MouseButtonCheckPressed(false))
-            {
-                World.AddObject(new ShootingMonster(), Input.MouseCheckPosition().ToVector2() + World.Camera);
-                Console.WriteLine("Monster Added");
-            }
             //switch weapons
-            if (Input.KeyboardCheckPressed(Keys.C) || Input.MouseWheelCheckScroll(true) || Input.MouseWheelCheckScroll(false) || Input.GamePadCheckPressed(Buttons.Y))
+            if (Input.KeyboardCheckPressed(Keys.Q) || Input.MouseWheelCheckScroll(true) || Input.MouseWheelCheckScroll(false) || Input.GamePadCheckPressed(Buttons.Y))
             {
                 NextWeapon();
                 Console.WriteLine(CurrentWeapon);
             }
 
-            if (Input.KeyboardCheckPressed(Keys.Space) || Input.GamePadCheckPressed(Buttons.X))
+            if (Input.KeyboardCheckPressed(Keys.E) || Input.GamePadCheckPressed(Buttons.X))
             {
                 CreateDrone();
+                World.Tutorial.DroneBuild = true;
             }
 
             base.Update(gameTime);
@@ -302,11 +333,6 @@ namespace MetroidClone.Metroid
                     if (TranslatedBoundingBox.Intersects(bullet.TranslatedBoundingBox))
                         Hurt(Math.Sign(Position.X - bullet.Position.X), bullet.Damage);
             }
-
-            //And check for scrap
-            foreach (Scrap scrap in World.GameObjects.OfType<Scrap>())
-                if (TranslatedBoundingBox.Intersects(scrap.TranslatedBoundingBox))
-                    Collect(scrap);
 
             //blink
             if (blinkTimer > 0)
@@ -410,7 +436,7 @@ namespace MetroidClone.Metroid
                 case Weapon.Gun:
                 {
                     Audio.Play("Audio/Combat/Gunshots/Laser/Laser_Shoot01");
-                    World.AddObject(new PlayerBullet(), Position);
+                    World.AddObject(new PlayerBullet(), gun.Position);
                     break;
                 }
                 case Weapon.Rocket:
@@ -454,9 +480,13 @@ namespace MetroidClone.Metroid
         void NextWeapon()
         {
             if (CurrentWeapon == Weapon.Gun && UnlockedWeapons.Contains(Weapon.Rocket))
+
                 CurrentWeapon = Weapon.Rocket;
             if (CurrentWeapon == Weapon.Rocket && UnlockedWeapons.Contains(Weapon.Gun))
+            {
                 CurrentWeapon = Weapon.Gun;
+                World.Tutorial.WeaponSwitched = true;
+            }
         }
     }
     public enum Weapon
