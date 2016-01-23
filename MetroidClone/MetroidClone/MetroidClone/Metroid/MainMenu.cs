@@ -18,7 +18,7 @@ namespace MetroidClone.Metroid
         Rectangle startButtonRect;
         Rectangle exitButtonRect;
         InputHelper inputHelper = InputHelper.Instance;
-       
+
         public void Update(GameTime gameTime)
         {
             //wait for mouseclick
@@ -60,4 +60,3 @@ namespace MetroidClone.Metroid
         }
     }
 }
-
