@@ -35,6 +35,7 @@ namespace MetroidClone.Metroid
         public int HitPoints = 100;
         public int RocketAmmo = 5;
         public int Score = 0;
+        public int Timer = 0;
 
         public float Rotation = 0;
         public float AnimationRotation = 0;
@@ -274,6 +275,7 @@ namespace MetroidClone.Metroid
             {
                 CreateDrone();
             }
+            Timer++;
 
             base.Update(gameTime);
 
@@ -334,6 +336,7 @@ namespace MetroidClone.Metroid
                 return;
             World.AddObject(new Drone(), Position);
             collectedScrap -= 25;
+            Score += 10;
         }
 
         public override void Draw()
@@ -396,6 +399,7 @@ namespace MetroidClone.Metroid
         {
             Audio.Play("Audio/GameSounds/Game_Over");
             Input.GamePadVibrate(1, 1, 1000);
+            World.PlayingState = World.GameState.GameOver;
             Console.Write("You are dead");
         }
 

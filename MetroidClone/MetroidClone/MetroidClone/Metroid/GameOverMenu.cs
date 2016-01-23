@@ -10,48 +10,36 @@ using Microsoft.Xna.Framework.Input;
 // creates the main menu. A large part of the code is based on code made by Nico Vermeir. link: http://www.spikie.be/blog/page/Building-a-main-menu-and-loading-screens-in-XNA.aspx
 namespace MetroidClone.Metroid
 {
-    class MainMenu : Menu
+    class GameOverMenu : Menu
     {
-       
-        private int startButtonCheck = 1;
-        private int optionsButtonCheck = 1;
+
+        private int restartButtonCheck = 1;
         private int exitButtonCheck = 1;
-        public bool StartButtonIntersects;
-        public bool OptionsButtonIntersects;
+        public bool RestartButtonIntersects;
         public bool ExitButtonIntersects;
 
         public override void Update2(GameTime gameTime)
-            {
+        {
             base.Update2(gameTime);
             MouseCheck((int)Input.MouseCheckPosition().X, (int)Input.MouseCheckPosition().Y);
             // change the color of the buttons if the mouse is on them and changes the gamestate if a button is clicked
-            if (StartButtonIntersects)
+            if (RestartButtonIntersects)
             {
-                startButtonCheck = 2;
+                restartButtonCheck = 2;
                 if (Input.MouseButtonCheckPressed(true))
                 {
                     StartGame = true;
                 }
             }
             else
-                startButtonCheck = 1;
-            if (OptionsButtonIntersects)
-            {
-                optionsButtonCheck = 2;
-                if (Input.MouseButtonCheckPressed(true))
-                {
-                    GoToOptions = true;
-                }
-            }
-            else
-                optionsButtonCheck = 1;
+                restartButtonCheck = 1;
 
             if (ExitButtonIntersects)
             {
                 exitButtonCheck = 2;
                 if (Input.MouseButtonCheckPressed(true))
                 {
-                    ExitGame = true;
+                    ExitMenu = true;
                 }
             }
             else
@@ -65,32 +53,39 @@ namespace MetroidClone.Metroid
                 StartGame = false;
             }
             // goes to the options menu if the options button is pressed
-            if (GoToOptions)
+            if (ExitMenu)
             {
-                World.PlayingState = World.GameState.OptionsMenu;
-                GoToOptions = false;
+                World.PlayingState = World.GameState.MainMenu;
+                ExitMenu = false;
             }
         }
         public override void Draw2()
         { //draw the Mainmenu
             base.Draw2();
-            DrawButton("start", startButtonCheck);
-            DrawButton("options", optionsButtonCheck);
+            Vector2 TextSize = Drawing.MeasureText("font48", "You Are Dead");
+            if (!FullScreen)
+                Drawing.DrawText("font48", "You Are Dead", new Vector2(Drawing.GUISize.X / 2, Drawing.ScreenSize.Y / 2 - TextSize.Y / 2 - 150), Color.Red, alignment: Engine.Asset.Font.Alignment.TopCenter);
+            else
+                Drawing.DrawText("font48", "You Are Dead", new Vector2(Drawing.GUISize.X / 2, Drawing.ScreenSize.Y / 2 - TextSize.Y / 2 - 150), Color.Red, 0, null, 2, alignment: Engine.Asset.Font.Alignment.TopCenter);
+            Vector2 TextSize2 = Drawing.MeasureText("font22", "score:" + World.Player.Score.ToString());
+            if (!FullScreen)
+                Drawing.DrawText("font22", "score:" + World.Player.Score.ToString(), new Vector2(Drawing.GUISize.X / 2, Drawing.ScreenSize.Y / 2 - TextSize2.Y / 2), Color.Black, alignment: Engine.Asset.Font.Alignment.TopCenter);
+            else
+                Drawing.DrawText("font22", "score:" + World.Player.Score.ToString(), new Vector2(Drawing.GUISize.X / 2, (Drawing.ScreenSize.Y / 1.7f)), Color.Black, 0, null, 2, alignment: Engine.Asset.Font.Alignment.TopCenter);
+            ButtonNumber = 2;
+            DrawButton("restart", restartButtonCheck);
             DrawButton("exit", exitButtonCheck);
             ButtonNumber = 1;
-           
-
-            }
+        }
         void MouseCheck(int x, int y)
-            {
+        {
             //creates a rectangle of 10x10 around the place where the mouse was clicked
             Rectangle mouseClickRect = new Rectangle(x, y, 10, 10);
             //creates rectangles for the buttons which make it possible to check if the button is pressed
-            StartButtonIntersects = ButtonStateCheck(mouseClickRect, StartButtonIntersects);
-            OptionsButtonIntersects = ButtonStateCheck(mouseClickRect, OptionsButtonIntersects);
+            ButtonNumber = 2;
+            RestartButtonIntersects = ButtonStateCheck(mouseClickRect, RestartButtonIntersects);
             ExitButtonIntersects = ButtonStateCheck(mouseClickRect, ExitButtonIntersects);
             ButtonNumber = 1;
         }
     }
 }
-

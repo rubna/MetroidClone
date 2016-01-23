@@ -23,6 +23,7 @@ namespace MetroidClone.Metroid
                 World.Player.UnlockedWeapons.Add(Weapon.Rocket);
                 World.Player.CurrentWeapon = Weapon.Rocket;
                 Destroy();
+                World.Player.Score += 500;
             }
             base.Update(gameTime);
         }

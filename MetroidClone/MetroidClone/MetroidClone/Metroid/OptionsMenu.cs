@@ -48,7 +48,7 @@ namespace MetroidClone.Metroid
                 ExitMenu = true;
             fullScreenButtonCheck = ButtonIntersects(FullScreenButtonIntersects, fullScreenButtonCheck);
             if (fullScreenButtonCheck == 2 && Input.MouseButtonCheckPressed(true))
-                SwitchFullScreen = !SwitchFullScreen;
+                SwitchFullScreen = true;
             // goes back to the previous menu if the exit button is pressed
             if (ExitMenu)
             {

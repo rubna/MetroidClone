@@ -22,7 +22,6 @@ namespace MetroidClone.Metroid
             SpeedOnHit = new Vector2(3, -2);
             HitPoints = 10;
             Damage = 5;
-            ScoreOnKill = 20;
         }
 
         public override void Update(GameTime gameTime)

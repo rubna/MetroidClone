@@ -12,7 +12,6 @@ namespace MetroidClone.Metroid
     {
         public int HitPoints = 1;
         public int Damage = 10;
-        protected int ScoreOnKill = 1;
         protected Vector2 SpeedOnHit = Vector2.Zero;
 
         int randomLoot;
@@ -39,6 +38,7 @@ namespace MetroidClone.Metroid
 
         void Hurt(int xDirection, bool hitByPlayer)
         {
+            // if am attack from the player hits
             HitPoints--;
             if (SpeedOnHit != Vector2.Zero)
                 Speed = new Vector2(xDirection * SpeedOnHit.X, SpeedOnHit.Y);
@@ -47,7 +47,7 @@ namespace MetroidClone.Metroid
                 Destroy();
                 if (hitByPlayer)
                 {
-                    World.Player.Score += ScoreOnKill;
+                    World.Player.Score += 20;
                     Console.Write("Score: ");
                     Console.WriteLine(World.Player.Score);
                 }
@@ -62,13 +62,13 @@ namespace MetroidClone.Metroid
                 randomLoot = World.Random.Next(100);
                 if (randomLoot < 5)
                     World.AddObject(new RocketAmmo(), Position.X, Position.Y);
-                if (randomLoot > 4 && randomLoot < 10)
+                if (randomLoot > 14 && randomLoot < 20)
                     World.AddObject(new HealthDrop(), Position.X, Position.Y);
             }
             else
             {
                 randomLoot = World.Random.Next(100);
-                if (randomLoot < 5)
+                if (randomLoot < 5 || randomLoot < 15 && World.Player.HitPoints < 25)
                     World.AddObject(new HealthDrop(), Position.X, Position.Y);
             }
         }

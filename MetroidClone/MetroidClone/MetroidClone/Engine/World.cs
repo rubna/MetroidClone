@@ -14,7 +14,8 @@ namespace MetroidClone.Engine
             MainMenu,
             Playing,
             Paused,
-            OptionsMenu
+            OptionsMenu,
+            GameOver
         }
 
         public List<GameObject> GameObjects; //Gameobjects that have been created before this update
@@ -30,10 +31,11 @@ namespace MetroidClone.Engine
         public MainMenu MainMenu;
         public PauseMenu PauseMenu;
         public OptionsMenu OptionsMenu;
+        public GameOverMenu GameOverMenu;
         public Player Player;
         public static Random Random;
         public Vector2 Camera;
-        public GameState PlayingState = GameState.MainMenu;
+        public GameState PlayingState = GameState.GameOver;
 
         //The width and height of the world.
         public float Width { get; protected set; } = WorldGenerator.LevelWidth * WorldGenerator.WorldWidth * TileWidth + 200;
@@ -68,6 +70,7 @@ namespace MetroidClone.Engine
             MainMenu = new MainMenu();
             PauseMenu = new PauseMenu();
             OptionsMenu = new OptionsMenu();
+            GameOverMenu = new GameOverMenu();
         }
 
         public void Initialize()
@@ -76,6 +79,7 @@ namespace MetroidClone.Engine
             AddObject(MainMenu);
             AddObject(PauseMenu);
             AddObject(OptionsMenu);
+            AddObject(GameOverMenu);
             (new WorldGenerator()).Generate(this);
             AudioWrapper.PlayLooping("Audio/Music/Area 1");
             UpdateCamera(true);
@@ -198,6 +202,11 @@ namespace MetroidClone.Engine
                 OptionsMenu.Paused = PauseMenu.Paused;
                 OptionsMenu.Update2(gameTime);
             }
+           // update the game over menu
+           if (PlayingState == GameState.GameOver)
+            {
+                GameOverMenu.Update2(gameTime);
+            }
         }
 
         void UpdateCamera(bool jumpToGoal = false)
@@ -250,36 +259,40 @@ namespace MetroidClone.Engine
             Vector2 tileSize = new Vector2(TileWidth, TileHeight);
 
             //Make the tile placement look random (it isn't)
-            for (int i = 0; i < WorldGenerator.LevelWidth + 1; i++)
-                for (int j = 0; j < WorldGenerator.LevelHeight + 1; j++)
-                {
-                    int xpos = startX + i, ypos = startY + j;
-                    DrawWrapper.DrawSprite("BackgroundTileset/background" + ((xpos % 3 + xpos % 9 + ypos + ypos % 5 + ypos % 9) % 4 + 1), new Vector2(i * 48 - removeFromX, j * 48 - removeFromY), 0f, tileSize);
-                }
+
 
             //Only draw objects that are visible (within the view)
             if (PlayingState == GameState.Playing)
             {
-            foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
-            {
-                Vector2 drawPos = gameObject.CenterPosition - Camera;
-                if (drawPos.X > -100 && drawPos.Y > -100 &&
-                    drawPos.X < WorldGenerator.LevelWidth * TileWidth + 100 &&
-                    drawPos.Y < WorldGenerator.LevelHeight * TileHeight + 100)
+                for (int i = 0; i < WorldGenerator.LevelWidth + 1; i++)
+                    for (int j = 0; j < WorldGenerator.LevelHeight + 1; j++)
+                    {
+                        int xpos = startX + i, ypos = startY + j;
+                        DrawWrapper.DrawSprite("BackgroundTileset/background" + ((xpos % 3 + xpos % 9 + ypos + ypos % 5 + ypos % 9) % 4 + 1), new Vector2(i * 48 - removeFromX, j * 48 - removeFromY), 0f, tileSize);
+                    }
+                foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
                 {
-                    gameObject.Draw();
+                    Vector2 drawPos = gameObject.CenterPosition - Camera;
+                    if (drawPos.X > -100 && drawPos.Y > -100 &&
+                        drawPos.X < WorldGenerator.LevelWidth * TileWidth + 100 &&
+                        drawPos.Y < WorldGenerator.LevelHeight * TileHeight + 100)
+                    {
+                        gameObject.Draw();
+                    }
                 }
             }
-            }
-            // draw the pause menu
+                // draw the pause menu
             if (PlayingState == GameState.Paused)
                 PauseMenu.Draw2();
             // draw the main menu
             if (PlayingState == GameState.MainMenu)
-                    MainMenu.Draw2();
+                MainMenu.Draw2();
             // draw the options menu
             if (PlayingState == GameState.OptionsMenu)
                 OptionsMenu.Draw2();
+            // draw the options menu
+            if (PlayingState == GameState.GameOver)
+                GameOverMenu.Draw2();
         }
 
         public void DrawGUI()

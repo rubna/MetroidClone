@@ -120,7 +120,7 @@ namespace MetroidClone.Engine
             if (! assets.ContainsKey(name))
             {
                 //Get the sprite info dictionary.
-                Dictionary<string, Vector2> thisSpriteInfo = spriteInfo.Where(si => Regex.IsMatch(name, si.Key)).First().Value;
+                 Dictionary<string, Vector2> thisSpriteInfo = spriteInfo.Where(si => Regex.IsMatch(name, si.Key)).First().Value;
                 assets[name] = new Sprite(content.Load<Texture2D>("Content/Sprites/" + name), thisSpriteInfo["origin"], thisSpriteInfo["sheetsize"]);
             }
             return assets[name] as Sprite;
