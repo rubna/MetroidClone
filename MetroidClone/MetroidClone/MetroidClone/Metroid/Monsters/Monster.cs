@@ -15,8 +15,6 @@ namespace MetroidClone.Metroid
         protected int ScoreOnKill = 1;
         protected Vector2 SpeedOnHit = Vector2.Zero;
 
-        int randomLoot;
-
         public Monster()
         {
         }
@@ -55,23 +53,19 @@ namespace MetroidClone.Metroid
         }
         public override void Destroy()
         {
-            base.Destroy();
             World.Tutorial.MonsterKilled = true;
-            // When a monster is destroyed, you have a chance that a rocket or a health pack will drop
-            if (World.Player.UnlockedWeapons.Contains(Weapon.Rocket))
-            {
-                randomLoot = World.Random.Next(100);
-                if (randomLoot < 5)
-                    World.AddObject(new RocketAmmo(), Position.X, Position.Y);
-                if (randomLoot > 4 && randomLoot < 10)
-                    World.AddObject(new HealthDrop(), Position.X, Position.Y);
-            }
-            else
-            {
-                randomLoot = World.Random.Next(100);
-                if (randomLoot < 5)
-                    World.AddObject(new HealthDrop(), Position.X, Position.Y);
-            }
+            // When a monster is destroyed, you have a chance that a healthpack, rocket ammo, scrap metal or nothing will drop
+            float ammoChance = (1 - (World.Player.RocketAmmo / World.Player.MaximumRocketAmmo)) * 40;
+            float scrapChance = 20;
+            float healthChance = (1 - (World.Player.HitPoints / World.Player.MaximumHitPoints)) * 40;
+            float randomLoot = World.Random.Next(101);
+            if (randomLoot <= healthChance)
+                World.AddObject(new HealthDrop(Damage), Position);
+            else if (randomLoot <= ammoChance + healthChance)
+                World.AddObject(new RocketAmmo(), Position);
+            else if (randomLoot <= scrapChance + ammoChance + healthChance)
+                World.AddObject(new Scrap(), Position);
+            base.Destroy();
         }
     }
 }

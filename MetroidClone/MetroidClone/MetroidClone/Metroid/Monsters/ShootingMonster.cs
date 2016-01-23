@@ -114,37 +114,25 @@ namespace MetroidClone.Metroid.Monsters
             //has shot
             if (shotAnimationTimer > 0)
                 shotAnimationTimer -= 0.05f;
-
+            
             //calculates the distance between monster and player. if player is close enough, the monster will attack player
             distance = (Position - World.Player.Position).Length();
 
-            //if the player is in range, the monster will start shooting in a burst of 3 shots.
+            //if the player is in range, the monster will shoot every second. if the player gets to far away, the attack cooldown
+            //will decrease, so that the monster will still attack if the player gets in range and out range over and over
             if (distance <= 10 * World.TileWidth)
             {
                 shootTime++;
-                if (shootTime >= 40 && !shot1)
-                {
-                    Attack();
-                    shot1 = true;
-                }
-                if (shootTime >= 50 && !shot2)
-                {
-                    Attack();
-                    shot2 = true;
-                }
                 if (shootTime >= 60)
                 {
                     Attack();
                     shootTime = 0;
-                    shot1 = false;
-                    shot2 = false;
                 }
             }
             else
             {
-                shootTime = 0;
-                shot1 = false;
-                shot2 = false;
+                if (shootTime > 0)
+                    shootTime--;
             }
         }
 

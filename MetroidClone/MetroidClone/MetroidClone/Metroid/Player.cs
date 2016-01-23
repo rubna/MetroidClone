@@ -34,7 +34,9 @@ namespace MetroidClone.Metroid
         public Weapon CurrentWeapon = Weapon.Nothing;
         public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
         public int HitPoints = 100;
+        public int MaximumHitPoints = 100;
         public int RocketAmmo = 5;
+        public int MaximumRocketAmmo = 5;
         public int Score = 0;
 
         public float Rotation = 0;
