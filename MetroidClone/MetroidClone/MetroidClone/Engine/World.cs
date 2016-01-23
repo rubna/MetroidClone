@@ -72,6 +72,8 @@ namespace MetroidClone.Engine
             PauseMenu = new PauseMenu();
             OptionsMenu = new OptionsMenu();
             GameOverMenu = new GameOverMenu();
+            Tutorial = new Tutorial();
+
         }
 
         public void Initialize()
@@ -82,8 +84,6 @@ namespace MetroidClone.Engine
             AddObject(OptionsMenu);
             AddObject(GameOverMenu);
             (new WorldGenerator()).Generate(this);
-            Tutorial = new Tutorial();
-            AddObject(Tutorial);
             AudioWrapper.PlayLooping("Audio/Music/Area 1");
             UpdateCamera(true);
 
@@ -173,41 +173,40 @@ namespace MetroidClone.Engine
         {
             AddedGameObjects.Clear();
             RemovedGameObjects.Clear();
-
             if (PlayingState == GameState.Playing)
             {
-            foreach (GameObject gameObject in GameObjectsToUpdate)
-                gameObject.Update(gameTime);
+                foreach (GameObject gameObject in GameObjectsToUpdate)
+                    gameObject.Update(gameTime);
 
-            foreach (GameObject gameObject in AddedGameObjects)
-            {
-                if (gameObject.ShouldUpdate)
-                    GameObjectsToUpdate.Add(gameObject);
-            }
+                foreach (GameObject gameObject in AddedGameObjects)
+                {
+                    if (gameObject.ShouldUpdate)
+                        GameObjectsToUpdate.Add(gameObject);
+                }
 
-            foreach (GameObject gameObject in RemovedGameObjects)
-                GameObjectsToUpdate.Remove(gameObject);
-
-            UpdateCamera(); //Update the position of the camera.
+                foreach (GameObject gameObject in RemovedGameObjects)
+                    GameObjectsToUpdate.Remove(gameObject);
+       
+                UpdateCamera(); //Update the position of the camera.
             }
             // update the main menu
             if (PlayingState == GameState.MainMenu)
             {
                 MainMenu.Update2(gameTime);
-        }
+            }
             //update the pause menu
             if (PlayingState == GameState.Paused)
             {
                 PauseMenu.Update2(gameTime);
-        }
+            }
            // update the options menu
            if (PlayingState == GameState.OptionsMenu)
             {
                 OptionsMenu.Paused = PauseMenu.Paused;
                 OptionsMenu.Update2(gameTime);
             }
-           // update the game over menu
-           if (PlayingState == GameState.GameOver)
+            // update the game over menu
+            if (PlayingState == GameState.GameOver)
             {
                 GameOverMenu.Update2(gameTime);
             }

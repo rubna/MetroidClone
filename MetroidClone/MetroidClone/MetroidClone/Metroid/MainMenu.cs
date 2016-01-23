@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-// creates the main menu. A large part of the code is based on code made by Nico Vermeir. link: http://www.spikie.be/blog/page/Building-a-main-menu-and-loading-screens-in-XNA.aspx
+// creates the main menu. 
 namespace MetroidClone.Metroid
 {
     class MainMenu : Menu
@@ -58,18 +58,18 @@ namespace MetroidClone.Metroid
             else
                 exitButtonCheck = 1;
 
-            // starts the game if the start button is pressed
-            if (StartGame)
-            {
-                World.Initialize();
-                World.PlayingState = World.GameState.Playing;
-                StartGame = false;
-            }
             // goes to the options menu if the options button is pressed
             if (GoToOptions)
             {
                 World.PlayingState = World.GameState.OptionsMenu;
                 GoToOptions = false;
+            }
+            // starts the game if the start button is pressed
+            if (StartGame)
+            {
+                World.AddObject(World.Tutorial);
+                World.PlayingState = World.GameState.Playing;
+                StartGame = false;
             }
         }
         public override void Draw2()

@@ -11,33 +11,38 @@ namespace MetroidClone.Engine
     //The audio wrapper can be used to play sounds and music.
     class AudioWrapper
     {
-        public bool AudioIsEnabled;
+        public bool AudioIsEnabled = true;
 
         public AssetManager Assets;
         private SoundEffectInstance musicInstance;
 
         public AudioWrapper(AssetManager assetsManager)
         {
-            AudioIsEnabled = true;
+           
             MediaPlayer.IsRepeating = true;
             Assets = assetsManager;
         }
 
         public void Play(Sound sound)
         {
-            sound.SoundEffect.Play();
+            if (AudioIsEnabled)
+                sound.SoundEffect.Play();
         }
 
         public void Play(string sound)
         {
-            Play(Assets.GetSound(sound));
+            if (AudioIsEnabled)
+                Play(Assets.GetSound(sound));
         }
 
         public void PlayLooping(SoundEffect song)
         {
-            musicInstance = song.CreateInstance();
-            musicInstance.IsLooped = true;
-            musicInstance.Play();
+            if (AudioIsEnabled)
+            {
+                musicInstance = song.CreateInstance();
+                musicInstance.IsLooped = true;
+                musicInstance.Play();
+            }
         }
 
         public void PlayLooping(string song)

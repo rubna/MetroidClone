@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-// creates the main menu. A large part of the code is based on code made by Nico Vermeir. link: http://www.spikie.be/blog/page/Building-a-main-menu-and-loading-screens-in-XNA.aspx
+// creates the options menu. 
 namespace MetroidClone.Metroid
 {
     class OptionsMenu : Menu
@@ -60,6 +60,10 @@ namespace MetroidClone.Metroid
                 ExitMenu = false;
                 Paused = false;
             }
+            if (SoundOn == false)
+                World.AudioWrapper.AudioIsEnabled = false;
+            else
+                World.AudioWrapper.AudioIsEnabled = true;
             time ++;
         }
         public override void Draw2()

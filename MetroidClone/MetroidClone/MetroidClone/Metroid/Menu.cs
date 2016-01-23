@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-// creates a menu. A large part of the code is based on code made by Nico Vermeir. link: http://www.spikie.be/blog/page/Building-a-main-menu-and-loading-screens-in-XNA.aspx
+// creates a menu. this code and the code from it's subclasses is partially based on code made by Nico Vermeir. link: http://www.spikie.be/blog/page/Building-a-main-menu-and-loading-screens-in-XNA.aspx
 namespace MetroidClone.Metroid
 {
     class Menu : GameObject

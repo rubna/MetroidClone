@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-// creates the pause menu. A large part of the code is based on code made by Nico Vermeir. link: http://www.spikie.be/blog/page/Building-a-main-menu-and-loading-screens-in-XNA.aspx
+// creates the pause menu.
 namespace MetroidClone.Metroid
 {
     class PauseMenu : Menu
@@ -73,6 +73,7 @@ namespace MetroidClone.Metroid
             // exits to main menu if the exit button is pressed
             if (ExitMenu)
             {
+                World.Initialize();
                 World.PlayingState = World.GameState.MainMenu;
                 ExitMenu = false;
             }
