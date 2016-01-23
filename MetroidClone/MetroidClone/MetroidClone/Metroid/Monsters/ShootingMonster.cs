@@ -10,9 +10,16 @@ namespace MetroidClone.Metroid.Monsters
 {
     partial class ShootingMonster : Monster
     {
+        //distance between player and monster
         float distance = 0;
+
+        //time of shooting burst
         float shootTime = 0;
+        
+        //has a shot in the burst been fired yet
         bool shot1 = false, shot2 = false;
+        
+        //bullet damage
         public int AttackDamage = 5;
         float AnimationRotation = 0;
         float shotAnimationTimer = 0;
@@ -110,6 +117,8 @@ namespace MetroidClone.Metroid.Monsters
 
             //calculates the distance between monster and player. if player is close enough, the monster will attack player
             distance = (Position - World.Player.Position).Length();
+
+            //if the player is in range, the monster will start shooting in a burst of 3 shots.
             if (distance <= 10 * World.TileWidth)
             {
                 shootTime++;

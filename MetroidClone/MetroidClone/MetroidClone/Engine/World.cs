@@ -26,6 +26,7 @@ namespace MetroidClone.Engine
         public AudioWrapper AudioWrapper { get; set; }
         public AssetManager AssetManager { get; set; }
         public Level Level;
+        public Tutorial Tutorial;
         public MainMenu MainMenu;
         public PauseMenu PauseMenu;
         public Player Player;
@@ -74,7 +75,9 @@ namespace MetroidClone.Engine
             AddObject(MainMenu);
             AddObject(PauseMenu);
             (new WorldGenerator()).Generate(this);
-            //AudioWrapper.PlayLooping("Audio/Music/Area 1");
+            Tutorial = new Tutorial();
+            AddObject(Tutorial);
+            AudioWrapper.PlayLooping("Audio/Music/Area 1");
             UpdateCamera(true);
 
             foreach (GameObject gameObject in GameObjects)
@@ -85,6 +88,7 @@ namespace MetroidClone.Engine
 
             UpdateSolidGrid();
             PathfindingGrid();
+            //AStarMap = new AStarMap(PathfindingGrid());
         }
 
         public void UpdateSolidGrid()

@@ -174,6 +174,7 @@ namespace MetroidClone.Metroid
             //move horizontally
             if (moveXAxis != 0)
             {
+                World.Tutorial.Moved = true;
                 Speed.X += movementSpeedModifier * 0.5f * moveXAxis;
                 FlipX = moveXAxis < 0;
                 walking = true;
@@ -225,7 +226,11 @@ namespace MetroidClone.Metroid
 
             //You can press jump a small time before landing on a platform and you'll still jump
             if (upPressed)
+            {
                 timeSinceLastJumpIntention = 0;
+                if (World.Tutorial.Moved)
+                    World.Tutorial.Jumped = true;
+            }
             else
                 timeSinceLastJumpIntention++;
 
@@ -264,11 +269,13 @@ namespace MetroidClone.Metroid
                             break;
                         case (int)Weapon.Gun:
                             {
+                                World.Tutorial.GunShot = true;
                                 attackTimer = 0.1f;
                                 break;
                             }
                         case (int)Weapon.Rocket:
                             {
+                                World.Tutorial.RocketShot = true;
                                 attackTimer = 0.2f;
                                 break;
                             }
@@ -280,6 +287,7 @@ namespace MetroidClone.Metroid
             {
                 if (attackTimer == 0 && UnlockedWeapons.Contains(Weapon.Wrench))
                 {
+                    World.Tutorial.WrenchUsed = true;
                     World.AddObject(new PlayerMelee(), Position + GetFlip * Vector2.UnitX * 20);
                     attackTimer = 0.1f;
                 }
@@ -292,15 +300,16 @@ namespace MetroidClone.Metroid
                 Console.WriteLine("Monster Added");
             }
             //switch weapons
-            if (Input.KeyboardCheckPressed(Keys.C) || Input.MouseWheelCheckScroll(true) || Input.MouseWheelCheckScroll(false) || Input.GamePadCheckPressed(Buttons.Y))
+            if (Input.KeyboardCheckPressed(Keys.Q) || Input.MouseWheelCheckScroll(true) || Input.MouseWheelCheckScroll(false) || Input.GamePadCheckPressed(Buttons.Y))
             {
                 NextWeapon();
                 Console.WriteLine(CurrentWeapon);
             }
 
-            if (Input.KeyboardCheckPressed(Keys.Space) || Input.GamePadCheckPressed(Buttons.X))
+            if (Input.KeyboardCheckPressed(Keys.E) || Input.GamePadCheckPressed(Buttons.X))
             {
                 CreateDrone();
+                World.Tutorial.DroneBuild = true;
             }
 
             base.Update(gameTime);
@@ -319,7 +328,10 @@ namespace MetroidClone.Metroid
             //And check for scrap
             foreach (Scrap scrap in World.GameObjects.OfType<Scrap>())
                 if (TranslatedBoundingBox.Intersects(scrap.TranslatedBoundingBox))
+                {
                     Collect(scrap);
+                    World.Tutorial.ScrapCollected = true;
+                }
 
             //blink
             if (blinkTimer > 0)
@@ -436,9 +448,13 @@ namespace MetroidClone.Metroid
         void NextWeapon()
         {
             if (CurrentWeapon == Weapon.Gun && UnlockedWeapons.Contains(Weapon.Rocket))
+
                 CurrentWeapon = Weapon.Rocket;
             if (CurrentWeapon == Weapon.Rocket && UnlockedWeapons.Contains(Weapon.Gun))
+            {
                 CurrentWeapon = Weapon.Gun;
+                World.Tutorial.WeaponSwitched = true;
+            }
         }
     }
     public enum Weapon
