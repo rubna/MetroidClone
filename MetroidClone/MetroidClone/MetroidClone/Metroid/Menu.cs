@@ -24,7 +24,7 @@ namespace MetroidClone.Metroid
 
         protected void DrawButton(string buttonName, int i, int m = 0)
         {
-            //Draws a button
+            // Draws a button
             Vector2 TextSize = Drawing.MeasureText("font22", buttonName);
             Vector2 ButtonTextPosition = new Vector2(100, 50) - new Vector2(TextSize.X / 2, TextSize.Y / 2);
             if (!FullScreen)

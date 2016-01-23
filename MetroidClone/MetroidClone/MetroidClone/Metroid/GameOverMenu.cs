@@ -22,7 +22,7 @@ namespace MetroidClone.Metroid
         {
             
             MouseCheck((int)Input.MouseCheckPosition().X, (int)Input.MouseCheckPosition().Y);
-            // change the color of the buttons if the mouse is on them and changes the gamestate if a button is clicked
+            // changes the color of the buttons if the mouse is on them and changes the gamestate if a button is clicked
             if (RestartButtonIntersects)
             {
                 restartButtonCheck = 2;
