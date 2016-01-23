@@ -32,7 +32,7 @@ namespace MetroidClone.Engine
         public Player Player;
         public static Random Random;
         public Vector2 Camera;
-        public GameState PlayingState = GameState.MainMenu;
+        public GameState PlayingState = GameState.Playing;
         private bool worldInitialized = false;
 
         //The width and height of the world.
@@ -194,7 +194,7 @@ namespace MetroidClone.Engine
             if (PlayingState == GameState.Paused)
             {
                 PauseMenu.Update(gameTime);
-            }
+        }
             if (MainMenu.StartGame && worldInitialized == false)
             {
                 Initialize();
@@ -270,16 +270,16 @@ namespace MetroidClone.Engine
             //Only draw objects that are visible (within the view)
             if (PlayingState == GameState.Playing)
             {
-                foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
+            foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
+            {
+                Vector2 drawPos = gameObject.CenterPosition - Camera;
+                if (drawPos.X > -100 && drawPos.Y > -100 &&
+                    drawPos.X < WorldGenerator.LevelWidth * TileWidth + 100 &&
+                    drawPos.Y < WorldGenerator.LevelHeight * TileHeight + 100)
                 {
-                    Vector2 drawPos = gameObject.CenterPosition - Camera;
-                    if (drawPos.X > -100 && drawPos.Y > -100 &&
-                        drawPos.X < WorldGenerator.LevelWidth * TileWidth + 100 &&
-                        drawPos.Y < WorldGenerator.LevelHeight * TileHeight + 100)
-                    {
-                        gameObject.Draw();
-                    }
+                    gameObject.Draw();
                 }
+            }
             }
             if (PlayingState == GameState.Paused)
                 PauseMenu.Draw2();

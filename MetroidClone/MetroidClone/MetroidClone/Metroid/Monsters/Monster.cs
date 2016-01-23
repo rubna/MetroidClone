@@ -31,8 +31,8 @@ namespace MetroidClone.Metroid
                 PhysicsObject attack = attackInterface as PhysicsObject;
                 if (TranslatedBoundingBox.Intersects(attack.TranslatedBoundingBox))
                 {
-                    attack.Destroy();
                     Hurt(Math.Sign(Position.X - attack.Position.X), true);
+                    attack.Destroy();
                 }
             }
         }

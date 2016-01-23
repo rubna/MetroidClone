@@ -1,5 +1,6 @@
 ﻿using MetroidClone.Engine;
 using MetroidClone.Engine.Asset;
+using MetroidClone.Metroid.Monsters;
 using MetroidClone.Metroid.Player_Attacks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -30,7 +31,7 @@ namespace MetroidClone.Metroid
         bool upPressed = false;
         bool down = false;
 
-        public Weapon CurrentWeapon = Weapon.Gun;
+        public Weapon CurrentWeapon = Weapon.Nothing;
         public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
         public int HitPoints = 100;
         public int RocketAmmo = 5;
@@ -38,8 +39,9 @@ namespace MetroidClone.Metroid
 
         public float Rotation = 0;
         public float AnimationRotation = 0;
-        AnimationBone body, hipLeft, kneeLeft, footLeft, hipRight, kneeRight, footRight, head, 
-                    shoulderLeft, shoulderRight, elbowLeft, elbowRight, handLeft, handRight, gun;
+        AnimationBone body, hipLeft, kneeLeft, footLeft, hipRight, kneeRight, footRight, head,
+                    shoulderLeft, shoulderRight, elbowLeft, elbowRight, handLeft, handRight, gun, launcher,
+                    antennaLeft1, antennaLeft2, antennaRight1, antennaRight2;
 
         float shotAnimationTimer = 0;
         float shootDirection = 0;
@@ -51,27 +53,33 @@ namespace MetroidClone.Metroid
         public override void Create()
         {
             base.Create();
-            BoundingBox = new Rectangle(-10, -16, 20, 32);
+            BoundingBox = new Rectangle(-10, -16, 20, 30);
             Depth = -10;
-
+            SpriteScale = 0.07f;
             //make skeleton
             body = new AnimationBone(this, new Vector2(0, -1));
-            head = new AnimationBone(body, new Vector2(0, -18));
+            head = new AnimationBone(body, new Vector2(0, -16));
             hipLeft = new AnimationBone(body, new Vector2(-5, -1)) { DepthOffset = 1 };
             hipRight = new AnimationBone(body, new Vector2(5, -1)) { DepthOffset = 1 };
-            kneeLeft = new AnimationBone(hipLeft, new Vector2(0, 8)) { DepthOffset = 1 };
-            kneeRight = new AnimationBone(hipRight, new Vector2(0, 8)) { DepthOffset = 1 };
-            footLeft = new AnimationBone(kneeLeft, new Vector2(0, 8));
-            footRight = new AnimationBone(kneeRight, new Vector2(0, 8));
+            kneeLeft = new AnimationBone(hipLeft, new Vector2(0, 7)) { DepthOffset = 1 };
+            kneeRight = new AnimationBone(hipRight, new Vector2(0, 7)) { DepthOffset = 1 };
+            footLeft = new AnimationBone(kneeLeft, new Vector2(0, 7));
+            footRight = new AnimationBone(kneeRight, new Vector2(0, 7));
 
-            shoulderRight = new AnimationBone(body, new Vector2(-5.5f, -13.5f));
-            shoulderLeft = new AnimationBone(body, new Vector2(5.5f, -14)) { DepthOffset = 1 };
+            shoulderRight = new AnimationBone(body, new Vector2(-5.5f, -13f));
+            shoulderLeft = new AnimationBone(body, new Vector2(5.5f, -13)) { DepthOffset = 1 };
             elbowRight = new AnimationBone(shoulderRight, new Vector2(-8, 0));
             elbowLeft = new AnimationBone(shoulderLeft, new Vector2(8, 0)) { DepthOffset = 1 };
             handRight = new AnimationBone(elbowRight, new Vector2(-7, 0)) { DepthOffset = 1 };
             handLeft = new AnimationBone(elbowLeft, new Vector2(7, 0)) { DepthOffset = 1 };
 
             gun = new AnimationBone(handRight, new Vector2(-2, 0)) { DepthOffset = -4 };
+            launcher = new AnimationBone(handRight, new Vector2(-2, 0)) { DepthOffset = -4 };
+
+            antennaLeft1 = new AnimationBone(head, new Vector2(3, -18)) { DepthOffset = -1 };
+            antennaLeft2 = new AnimationBone(antennaLeft1, new Vector2(0, -6)) { DepthOffset = 1 };
+            antennaRight1 = new AnimationBone(head, new Vector2(-3, -17)) { DepthOffset = -1 };
+            antennaRight2 = new AnimationBone(antennaRight1, new Vector2(0, -6)) { DepthOffset = 1 };
 
             World.AddObject(body);
             body.SetSprite("Robot/RobotSpriteBody");
@@ -107,7 +115,25 @@ namespace MetroidClone.Metroid
             World.AddObject(gun);
             gun.SetSprite("Items/gun");
             gun.SpriteScale = 0.2f;
-            gun.TargetRotation = 90;
+
+            World.AddObject(launcher);
+            launcher.SetSprite("Items/playerrocket");
+            launcher.SpriteScale = 0.2f;
+            launcher.TargetRotation = 180;
+            launcher.Visible = false;
+
+            World.AddObject(antennaLeft1);
+            antennaLeft1.SetSprite("Robot/RobotSpriteLAntennae1");
+            antennaLeft1.TargetRotation = 5;
+            World.AddObject(antennaLeft2);
+            antennaLeft2.SetSprite("Robot/RobotSpriteLAntennae2");
+
+            World.AddObject(antennaRight1);
+            antennaRight1.SetSprite("Robot/RobotSpriteRAntennae1");
+            antennaRight1.TargetRotation = 10;
+            World.AddObject(antennaRight2);
+            antennaRight2.SetSprite("Robot/RobotSpriteRAntennae2");
+            antennaRight2.TargetRotation = 40;
 
             Friction = new Vector2(0.85f, 1);
             Gravity = 0.3f;
@@ -154,6 +180,8 @@ namespace MetroidClone.Metroid
                 walking = true;
             }
 
+            gun.Visible = CurrentWeapon == Weapon.Gun;
+
             //play animations according to movement
             if (shotAnimationTimer > 0)
             {
@@ -178,11 +206,10 @@ namespace MetroidClone.Metroid
                 PlayAnimationInAir();
             }
             else
-            if (Input.KeyboardCheckDown(Keys.Down))
+            if (down)
             {
                 AnimationRotation += 4;
-                PlayAnimationLegsDuck();
-                PlayAnimationArmsGunDuck();
+                PlayAnimationDuck();
             }
             else
             {
@@ -206,6 +233,7 @@ namespace MetroidClone.Metroid
             }
             else
                 timeSinceLastJumpIntention++;
+
 
             //jump
             if (timeSinceLastJumpIntention < maxTimeSinceLastJumpIntention && timeSinceOnGround < maxFromPlatformTimeForJump && Speed.Y >= 0)
@@ -375,7 +403,7 @@ namespace MetroidClone.Metroid
                 case Weapon.Gun:
                 {
                     Audio.Play("Audio/Combat/Gunshots/Laser/Laser_Shoot01");
-                    World.AddObject(new PlayerBullet(), Position);
+                    World.AddObject(new PlayerBullet(), gun.Position);
                     break;
                 }
                 case Weapon.Rocket:

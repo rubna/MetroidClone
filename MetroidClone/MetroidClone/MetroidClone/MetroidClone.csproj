@@ -123,6 +123,7 @@
     <Compile Include="Engine\A star\AStarLink.cs" />
     <Compile Include="Metroid\Monsters\MonsterAttack\MonsterBullet.cs" />
     <Compile Include="Metroid\Monsters\MonsterAttack\MonsterAttack.cs" />
+    <Compile Include="Metroid\Monsters\ShootingMonsterAnimations.cs" />
     <Compile Include="Metroid\Player Attacks\Smoke.cs" />
     <Compile Include="Metroid\PlayerAnimations.cs" />
     <Compile Include="Metroid\RocketAmmo.cs" />

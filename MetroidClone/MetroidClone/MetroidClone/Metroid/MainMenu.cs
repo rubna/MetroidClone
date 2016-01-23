@@ -26,6 +26,7 @@ namespace MetroidClone.Metroid
             {
                 MouseClicked(inputHelper.MouseCheckPosition().X, inputHelper.MouseCheckPosition().Y);
             }
+
         }
         public void Draw2()
         {
