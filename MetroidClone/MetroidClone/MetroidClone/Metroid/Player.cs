@@ -483,12 +483,6 @@ namespace MetroidClone.Metroid
             Console.Write("You are dead");
         }
 
-        void Collect(Scrap scrap)
-        {
-            CollectedScrap += scrap.ScrapAmount;
-            scrap.Destroy();
-        }
-
         void NextWeapon()
         {
             if (CurrentWeapon == Weapon.Gun && UnlockedWeapons.Contains(Weapon.Rocket))

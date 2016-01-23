@@ -18,6 +18,7 @@ namespace MetroidClone.Metroid
 
         public Monster()
         {
+            Depth = -1;
         }
 
         public override void Update(GameTime gameTime)
@@ -62,7 +63,7 @@ namespace MetroidClone.Metroid
             float healthChance = (1 - ((float)World.Player.HitPoints / (float)World.Player.MaxHitPoints)) * 40;
             float randomLoot = World.Random.Next(101);
             if (randomLoot <= healthChance)
-                World.AddObject(new HealthDrop(Damage), Position);
+                World.AddObject(new HealthDrop(Damage * 2), Position);
             else if (randomLoot <= ammoChance + healthChance)
                 World.AddObject(new RocketAmmo(), Position);
             else if (randomLoot <= scrapChance + ammoChance + healthChance)

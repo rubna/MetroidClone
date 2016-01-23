@@ -27,6 +27,7 @@ namespace MetroidClone.Metroid.Player_Attacks
             if (doorCollision != null)
             {
                 (doorCollision as Door).Activated = true;
+                World.Tutorial.WrenchDoorOpened = true;
             }
 
             if (removeCounter >= 1)

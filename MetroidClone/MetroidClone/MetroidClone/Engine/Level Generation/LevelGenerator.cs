@@ -50,7 +50,7 @@ namespace MetroidClone.Engine
             int[,] enemyNumber = new int[hBlocks, vBlocks];
 
             //List for positions with enemies
-            List<Point> pointsThatCanHaveEnemies = new List<Point>();
+            FairRandomCollection<Point> pointsThatCanHaveEnemies = new FairRandomCollection<Point>();
 
             //By default, all sides are walls, unless this is an Open room, in which case all sides (except the walls) are open.
             for (int i = 0; i < hBlocks; i++)
@@ -150,10 +150,8 @@ namespace MetroidClone.Engine
             //Add enemies
             for (int i = 0; i < enemyNum; i++)
             {
-                Point placeEnemyAt = pointsThatCanHaveEnemies.GetRandomItem();
+                Point placeEnemyAt = pointsThatCanHaveEnemies.Get();
                 enemyNumber[placeEnemyAt.X, placeEnemyAt.Y]++;
-                if (enemyNumber[placeEnemyAt.X, placeEnemyAt.Y] >= 3)
-                    pointsThatCanHaveEnemies.Remove(placeEnemyAt);
             }
 
             //And place them

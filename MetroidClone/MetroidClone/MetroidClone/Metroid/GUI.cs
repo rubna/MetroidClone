@@ -33,7 +33,7 @@ namespace MetroidClone.Metroid
             lineFillAmounts.Add(null);
 
             //Scrap
-            if (World.Player.UnlockedWeapons.Contains(Weapon.Wrench))
+            if (World.Tutorial.ScrapCollected)
             {
                 lines.Add("Scrap: " + World.Player.CollectedScrap);
                 lineFillAmounts.Add(null);

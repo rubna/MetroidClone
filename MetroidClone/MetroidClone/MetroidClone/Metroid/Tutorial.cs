@@ -11,7 +11,7 @@ namespace MetroidClone.Metroid
     {
         public override bool ShouldDrawGUI => true;
         //the range between the player and the object for its instruction to appear
-        int tutorialRange = 400;
+        int tutorialRange = 500;
 
         Vector2 textSize;
         string currentText, previousText;
@@ -26,6 +26,7 @@ namespace MetroidClone.Metroid
         public bool Jumped = false;
 
         string gun = "Good. Now walk over to the next room\nto pick up a gun.";
+        string gunInRoom = "Pick up the gun!";
         public bool PickedUpGun = false;
 
         string kbgun = "Use Left Mouse Button to shoot.";
@@ -37,6 +38,9 @@ namespace MetroidClone.Metroid
 
         string scrap = "Monsters can drop scrap metal on death.\nCollect scrap to build drones.";
         public bool ScrapCollected = false;
+
+        string hpbonus = "Monsters can drop useful bonuses. This one heals you a bit.";
+        public bool HealthBonusCollected = false;
 
         string kbdrone = "Press E to build a drone using 25 scrap.\nDrones will help you fight monsters.";
         string gpdrone = "Press X to build a drone using 25 scrap.\nDrones will help you fight monsters.";
@@ -52,21 +56,21 @@ namespace MetroidClone.Metroid
         string rocket = "Walk over the rocket launcher to pick it up.";
         public bool PickedUpRocket = false;
 
-        string kbrocket = "Use Left Mouse Button to shoot,\nbut watch out:you have ammunition.";
-        string gprocket = "Use the Right Thumbstick to shoot,\nbut watch out: you have ammunition.";
+        string kbrocket = "Use the Left Mouse Button to shoot,\nbut watch out: your amount of ammunition is limited.";
+        string gprocket = "Use the Right Thumbstick to shoot,\nbut watch out: your amount of ammunition is limited.";
         public bool RocketShot = false;
 
         string kbswitch = "Press Q or scroll to switch between weapons.";
         string gpswitch = "Press Y to switch between weapons.";
         public bool WeaponSwitched = false;
 
-        string ammo = "Monsters can also drop rocket ammunition.";
+        string ammo = "Monsters can drop rocket ammunition.";
         public bool AmmoCollected = false;
 
-        string gundoor = "Shoot the door with a gun to open it.";
+        string gundoor = "Shoot the door with your brand new gun to open it.";
         public bool GunDoorOpened = false;
 
-        string wrenchdoor = "Hit the door with a wrench to open it.";
+        string wrenchdoor = "Hit doors like these with a wrench to open it.";
         public bool WrenchDoorOpened = false;
 
         string rocketdoor = "Blast the door with a rocket launcher to open it.";
@@ -93,9 +97,9 @@ namespace MetroidClone.Metroid
                     }
                     else
                         if (previousText != null)
-                            currentText = previousText;
+                        currentText = previousText;
                 }
-            else
+            else if (currentText == gundoor)
                 currentText = null;
 
             if (!WrenchDoorOpened)
@@ -109,9 +113,9 @@ namespace MetroidClone.Metroid
                     }
                     else
                         if (previousText != null)
-                            currentText = previousText;
+                        currentText = previousText;
                 }
-            else
+            else if (currentText == wrenchdoor)
                 currentText = null;
 
             /*if (!RocketDoorOpened)
@@ -133,11 +137,18 @@ namespace MetroidClone.Metroid
             if (Moved && (currentText == kbmove || currentText == gpmove))
                 currentText = Input.ControllerInUse ? gpjump : kbjump;
 
-            if (Jumped && (currentText == kbjump || currentText == gpjump))
-                currentText = gun;
+            if (Jumped && (currentText == kbjump || currentText == gpjump || currentText == gun))
+            {
+                if (World.Player.Position.X < World.TileWidth * WorldGenerator.LevelWidth)
+                    currentText = gun;
+                else
+                    currentText = gunInRoom;
+            }
 
-            if (PickedUpGun && currentText == gun)
+            if (PickedUpGun && (currentText == gun || currentText == gunInRoom))
+            {
                 currentText = Input.ControllerInUse ? gpgun : kbgun;
+            }
 
             if (GunShot && (currentText == gpgun || currentText == kbgun))
                 currentText = null;
@@ -148,6 +159,15 @@ namespace MetroidClone.Metroid
                         currentText = monster;
 
             if (MonsterKilled && currentText == monster)
+                currentText = null;
+
+            if (!HealthBonusCollected)
+            {
+                foreach (HealthDrop HealthBonus in World.GameObjects.OfType<HealthDrop>().ToList())
+                    if ((World.Player.Position - HealthBonus.Position).Length() <= tutorialRange && !World.PointOutOfView(HealthBonus.Position))
+                        currentText = hpbonus;
+            }
+            else if (currentText == hpbonus)
                 currentText = null;
 
             if (!ScrapCollected)

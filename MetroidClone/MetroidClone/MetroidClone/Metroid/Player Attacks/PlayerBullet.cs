@@ -39,6 +39,7 @@ namespace MetroidClone.Metroid
                 {
                     (doorCollision as Door).Activated = true;
                     World.Player.Score += 10;
+                    World.Tutorial.GunDoorOpened = true;
                 }
             }
 
