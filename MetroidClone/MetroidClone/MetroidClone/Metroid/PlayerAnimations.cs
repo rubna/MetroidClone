@@ -15,11 +15,20 @@ namespace MetroidClone.Metroid
             if (CurrentWeapon == Weapon.Nothing)
                 PlayAnimationArmsLooseWalking();
             else
+            if (CurrentWeapon == Weapon.Gun)
             {
                 if (shotAnimationTimer>0)
                     PlayAnimationArmsGunShooting(shootDirection);
                 else
                     PlayAnimationArmsGunWalking();
+            }
+            else
+            if (CurrentWeapon == Weapon.Rocket)
+            {
+                if (shotAnimationTimer > 0)
+                    PlayAnimationArmsLauncherShooting(shootDirection);
+                else
+                    PlayAnimationArmsLauncherWalking();
             }
         }
         void PlayAnimationIdle()
@@ -28,11 +37,20 @@ namespace MetroidClone.Metroid
             if (CurrentWeapon == Weapon.Nothing)
                 PlayAnimationArmsLooseIdle();
             else
+            if (CurrentWeapon == Weapon.Gun)
             {
                 if (shotAnimationTimer > 0)
                     PlayAnimationArmsGunShooting(shootDirection);
                 else
                     PlayAnimationArmsGunIdle();
+            }
+            else
+            if (CurrentWeapon == Weapon.Rocket)
+            {
+                if (shotAnimationTimer > 0)
+                    PlayAnimationArmsLauncherShooting(shootDirection);
+                else
+                    PlayAnimationArmsLauncherIdle();
             }
         }
 
@@ -84,6 +102,26 @@ namespace MetroidClone.Metroid
             body.TargetRotation = VectorExtensions.AngleDifference(0, direction) * 0.2f;
         }
 
+        void PlayAnimationArmsLauncherShooting(float direction)
+        {
+            Vector2 cart = new Vector2(1, direction).ToCartesian();
+            if (FlipX)
+                cart.X *= -1;
+            direction = cart.Angle();
+
+            float factor = MathHelper.Clamp(shotAnimationTimer, 0, 1);
+            //factor *= 2;
+
+            shoulderLeft.TargetRotation = 30 + VectorExtensions.AngleDifference(0, direction) * 1.5f + factor * 30;
+            elbowLeft.TargetRotation = -50 - factor * 50;
+
+            shoulderRight.TargetRotation = -110 + direction + factor * 80;//120
+            elbowRight.TargetRotation = -80 - factor * 80;
+            launcher.TargetRotation = 110 + 80;
+            head.TargetRotation = VectorExtensions.AngleDifference(0, direction) * 0.5f;
+            body.TargetRotation = VectorExtensions.AngleDifference(0, direction) * 0.2f;
+        }
+
         void PlayAnimationArmsLooseWalking()
         {
             shoulderLeft.TargetRotation = 90 + VectorExtensions.LengthDirectionX(50, AnimationRotation + 180);
@@ -101,6 +139,16 @@ namespace MetroidClone.Metroid
             shoulderRight.TargetRotation = -50 + VectorExtensions.LengthDirectionX(30, AnimationRotation + 180);
             elbowRight.TargetRotation = -90 - VectorExtensions.LengthDirectionX(5, AnimationRotation + 180);
             gun.TargetRotation = 140 + VectorExtensions.LengthDirectionX(20, AnimationRotation);
+        }
+
+        void PlayAnimationArmsLauncherWalking()
+        {
+            shoulderLeft.TargetRotation = 85 + VectorExtensions.LengthDirectionX(30, AnimationRotation + 180);
+            elbowLeft.TargetRotation = -80 - VectorExtensions.LengthDirectionX(10, AnimationRotation + 180);
+
+            shoulderRight.TargetRotation = -50 + VectorExtensions.LengthDirectionX(30, AnimationRotation + 180);
+            elbowRight.TargetRotation = -120 - VectorExtensions.LengthDirectionX(5, AnimationRotation + 180);
+            launcher.TargetRotation = 180 + VectorExtensions.LengthDirectionX(20, AnimationRotation);
         }
 
         void PlayAnimationLegsWalking()
@@ -173,6 +221,17 @@ namespace MetroidClone.Metroid
             shoulderRight.TargetRotation = -80 + VectorExtensions.LengthDirectionX(3, AnimationRotation + 180);
             elbowRight.TargetRotation = -100 - VectorExtensions.LengthDirectionX(1, AnimationRotation);
             gun.TargetRotation = 180 + VectorExtensions.LengthDirectionX(3, AnimationRotation);
+        }
+
+
+        void PlayAnimationArmsLauncherIdle()
+        {
+            shoulderLeft.TargetRotation = 90 + VectorExtensions.LengthDirectionX(3, AnimationRotation + 180);
+            elbowLeft.TargetRotation = -90 - VectorExtensions.LengthDirectionX(1, AnimationRotation);
+
+            shoulderRight.TargetRotation = -80 + VectorExtensions.LengthDirectionX(3, AnimationRotation + 180);
+            elbowRight.TargetRotation = -100 - VectorExtensions.LengthDirectionX(1, AnimationRotation);
+            launcher.TargetRotation = 180 + VectorExtensions.LengthDirectionX(3, AnimationRotation);
         }
 
         void PlayAnimationLegsInAir()
