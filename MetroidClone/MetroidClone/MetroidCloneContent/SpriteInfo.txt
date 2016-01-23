@@ -29,7 +29,7 @@ RobotSpriteLAntennae2 0.5x0.9 1x1
 RobotSpriteRAntennae1 0.5x0.9 1x1
 RobotSpriteRAntennae2 0.5x0.9 1x1
 gun 0.175x0.5 1x1
-playerrocket 0.33x0.8 1x1
+playerrocket 0.3x0.8 1x1
 smoke center 1x1
 //enemy 1 (alien)
 Body 0.5x0.85 1x1

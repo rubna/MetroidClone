@@ -121,8 +121,6 @@ namespace MetroidClone.Metroid
             World.AddObject(launcher);
             launcher.SetSprite("Items/playerrocket");
             launcher.SpriteScale = 0.2f;
-            launcher.TargetRotation = 180;
-            launcher.Visible = false;
 
             World.AddObject(antennaLeft1);
             antennaLeft1.SetSprite("Robot/RobotSpriteLAntennae1");
@@ -183,6 +181,7 @@ namespace MetroidClone.Metroid
             }
 
             gun.Visible = CurrentWeapon == Weapon.Gun;
+            launcher.Visible = CurrentWeapon == Weapon.Rocket;
 
             //play animations according to movement
             if (shotAnimationTimer > 0)
@@ -257,7 +256,7 @@ namespace MetroidClone.Metroid
                 fellThroughTimer = 1;
             }
             if (fellThroughTimer > 0)
-                fellThroughTimer -= 0.05f;
+                fellThroughTimer -= 0.07f;
 
             //attack
             if (Input.MouseButtonCheckDown(true) || (Input.ThumbStickCheckDown(false)))
