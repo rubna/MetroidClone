@@ -25,7 +25,7 @@ namespace MetroidClone.Metroid
             {
                 if (World.Player.HitPoints < World.Player.MaxHitPoints)
                 {
-                    World.Player.HitPoints = Math.Min(World.Player.HitPoints + hitPointsFromHealthDrop, hitPointsFromHealthDrop);
+                    World.Player.HitPoints = Math.Min(World.Player.HitPoints + hitPointsFromHealthDrop, World.Player.Hitpoints);
                     World.Tutorial.HealthBonusCollected = true;
                     Destroy();
                 }

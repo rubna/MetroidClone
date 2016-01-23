@@ -48,7 +48,6 @@ namespace MetroidClone.Engine
         const float GridSize = 100f;
         public List<ISolid>[,] SolidGrid;
 
-
         public List<ISolid> Solids
         {
             get
@@ -71,17 +70,22 @@ namespace MetroidClone.Engine
             PauseMenu = new PauseMenu();
             OptionsMenu = new OptionsMenu();
             GameOverMenu = new GameOverMenu();
-            Tutorial = new Tutorial();
-
         }
 
+        //Reset the game
         public void Initialize()
         {
+            GameObjectsToUpdate.Clear();
+            GameObjectsWithGUI.Clear();
+            AddedGameObjects.Clear();
+            RemovedGameObjects.Clear();
+
             GameObjects.Clear();
             AddObject(MainMenu);
             AddObject(PauseMenu);
             AddObject(OptionsMenu);
             AddObject(GameOverMenu);
+            Tutorial = new Tutorial();
             AddObject(Tutorial);
             (new WorldGenerator()).Generate(this);
             //AudioWrapper.PlayLooping("Audio/Music/Area 1");
@@ -115,7 +119,7 @@ namespace MetroidClone.Engine
                         if (!(solids[k] is Wall) || solids[k].CollidesWith(boundingbox))
                         {
                             SolidGrid[i, j].Add(solids[k]);
-        }
+                        }
                     }
                 }
             }

@@ -31,7 +31,6 @@ namespace MetroidClone.Metroid
 
         public void UpdateMenu(GameTime gameTime)
         {
-            
             MouseCheck((int)Input.MouseCheckPosition().X, (int)Input.MouseCheckPosition().Y);
             // changes the color of the buttons if the mouse is on them and changes the gamestate if a button is clicked
             soundButtonCheck = ButtonIntersects(SoundButtonIntersects, soundButtonCheck);

@@ -88,6 +88,9 @@ namespace MetroidClone.Engine
                         enemies[i, j] = World.Random.Next(3, 6) + area[i, j];
                 }
 
+            //There should only be one enemy in the third room.
+            enemies[2, startingY] = 1;
+
             //Add a wrench pickup and a rocket pickup. The rocket pickup should have some distance from the starting area.
             int wrenchPos, rocketPos;
             do

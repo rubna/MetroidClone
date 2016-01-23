@@ -70,8 +70,10 @@ namespace MetroidClone.Metroid
         string gundoor = "Shoot the door with your brand new gun to open it.";
         public bool GunDoorOpened = false;
 
-        string wrenchdoor = "Hit doors like these with a wrench to open it.";
+        string wrenchdoor = "Hit red doors like this one with your wrench to open them.";
         public bool WrenchDoorOpened = false;
+
+        string wrenchdoorNoWrench = "Hit red doors like this one with a wrench to open them.\n(You'll have to find a wrench first!)";
 
         string rocketdoor = "Blast the door with a rocket launcher to open it.";
         public bool RocketDoorOpened = false;
@@ -103,19 +105,29 @@ namespace MetroidClone.Metroid
                 currentText = null;
 
             if (!WrenchDoorOpened)
+            {
+                bool doorInRange = false;
+
                 foreach (MeleeDoor Door in World.GameObjects.OfType<MeleeDoor>().ToList())
                 {
                     if ((World.Player.Position - Door.Position).Length() <= tutorialRange && !World.PointOutOfView(Door.Position) && !Door.Activated)
                     {
                         if (currentText != wrenchdoor)
                             previousText = currentText;
-                        currentText = wrenchdoor;
+                        currentText = World.Player.UnlockedWeapons.Contains(Weapon.Wrench) ? wrenchdoor : wrenchdoorNoWrench;
+                        doorInRange = true;
                     }
-                    else
-                        if (previousText != null)
-                        currentText = previousText;
                 }
-            else if (currentText == wrenchdoor)
+
+                if (!doorInRange)
+                {
+                    if (previousText != null)
+                        currentText = previousText;
+                    else if (currentText == wrenchdoor || currentText == wrenchdoorNoWrench)
+                        currentText = null;
+                }
+            }
+            else if (currentText == wrenchdoor || currentText == wrenchdoorNoWrench)
                 currentText = null;
 
             /*if (!RocketDoorOpened)
