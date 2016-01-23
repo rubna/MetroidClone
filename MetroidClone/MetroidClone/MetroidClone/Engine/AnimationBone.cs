@@ -46,7 +46,6 @@ namespace MetroidClone.Engine
                     return ImageRotation + Parent.ImageRotation;
             }
         }
-
         public bool GlobalVisible
         {
             get
@@ -109,20 +108,24 @@ namespace MetroidClone.Engine
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            FlipX = Parent.FlipX;
-            ImageRotation += VectorExtensions.AngleDifference(ImageRotation, TargetRotation) * RotationLerpFactor;
             Speed = (TargetPosition - Position) * PositionLerpFactor;
-            Depth = Parent.Depth + DepthOffset;
+
+            if (!World.PointOutOfView(Position))
+            {
+                FlipX = Parent.FlipX;
+                ImageRotation += VectorExtensions.AngleDifference(ImageRotation, TargetRotation) * RotationLerpFactor;
+                Depth = Parent.Depth + DepthOffset;
+            }
         }
 
         public override void Draw()
         {
-            base.Draw();
-            //ImageScaling = ;// * 0.9f;
-            if (CurrentSprite != null && Visible && GlobalVisible)
-                Drawing.DrawSprite(CurrentSprite, DrawPosition, 0, CurrentSprite.Size * GlobalSpriteScale * new Vector2(GetFlip, 1), null, MathHelper.ToRadians(GlobalRotation) * GetFlip);// ImageScaling, Color.White, ImageRotation);
-            //Drawing.DrawLine(TargetDrawPosition, Parent.DrawPosition, 2, Color.Pink);
-            //Drawing.DrawCircle(DrawPosition, 3, Color.Purple);
+            if (!World.PointOutOfView(Position))
+            {
+                base.Draw();
+                if (CurrentSprite != null && Visible && GlobalVisible)
+                    Drawing.DrawSprite(CurrentSprite, DrawPosition, 0, CurrentSprite.Size * GlobalSpriteScale * new Vector2(GetFlip, 1), null, MathHelper.ToRadians(GlobalRotation) * GetFlip);// ImageScaling, Color.White, ImageRotation);
+            }
         }
     }
 }

@@ -23,7 +23,7 @@ namespace MetroidClone.Engine
         List<GameObject> GameObjectsWithGUI; //Gameobjects with a GUI event.
         List<GameObject> AddedGameObjects = new List<GameObject>();
         List<GameObject> RemovedGameObjects = new List<GameObject>();
-
+        
         public DrawWrapper DrawWrapper { get; set; }
         public AudioWrapper AudioWrapper { get; set; }
         public AssetManager AssetManager { get; set; }
@@ -114,7 +114,7 @@ namespace MetroidClone.Engine
                         if (!(solids[k] is Wall) || solids[k].CollidesWith(boundingbox))
                         {
                             SolidGrid[i, j].Add(solids[k]);
-                        }
+        }
                     }
                 }
             }

@@ -10,7 +10,7 @@ namespace MetroidClone.Metroid.Player_Attacks
         public override void Create()
         {
             base.Create();
-            BoundingBox = new Rectangle(-10, -20, 20, 40);
+            BoundingBox = new Rectangle(-30, -40, 60, 60);
             CollideWithWalls = false;
             Gravity = 0;
         }

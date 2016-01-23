@@ -11,9 +11,12 @@ namespace MetroidClone.Metroid
     {
         void PlayAnimationWalking()
         {
+            AnimationRotation += 8;
+
             PlayAnimationLegsWalking();
-            if (CurrentWeapon == Weapon.Nothing)
-                PlayAnimationArmsLooseWalking();
+
+            if (meleeAnimationTimer > 0)
+                PlayAnimationArmsMelee();
             else
             if (CurrentWeapon == Weapon.Gun)
             {
@@ -30,12 +33,17 @@ namespace MetroidClone.Metroid
                 else
                     PlayAnimationArmsLauncherWalking();
             }
+            else
+                PlayAnimationArmsLooseWalking();
         }
+
         void PlayAnimationIdle()
         {
+            AnimationRotation += 4;
+
             PlayAnimationLegsIdle();
-            if (CurrentWeapon == Weapon.Nothing)
-                PlayAnimationArmsLooseIdle();
+            if (meleeAnimationTimer > 0)
+                PlayAnimationArmsMelee();
             else
             if (CurrentWeapon == Weapon.Gun)
             {
@@ -52,25 +60,47 @@ namespace MetroidClone.Metroid
                 else
                     PlayAnimationArmsLauncherIdle();
             }
+            else
+                PlayAnimationArmsLooseIdle();
+        }
+
+        void PlayAnimationArmsMelee()
+        {
+            float factor = MathHelper.Clamp(meleeAnimationTimer, 0.8f, 1) - 0.8f;
+            factor *= 5f;
+            body.TargetRotation = 10 + factor * -20;
+            head.TargetRotation = 10 + factor * -20;
+            shoulderLeft.TargetRotation = 120 - 180 * factor;
+            elbowLeft.TargetRotation = -15 + 15 * factor;
+            shoulderRight.TargetRotation = -80 +  95 * (1 - factor);
+            elbowRight.TargetRotation = -90 + 70 * (1 - factor);
         }
 
         void PlayAnimationDuck()
         {
+            AnimationRotation += 4;
+
             PlayAnimationLegsDuck();
-            if (CurrentWeapon == Weapon.Nothing)
-                PlayAnimationArmsLooseDuck();
+            if (meleeAnimationTimer > 0)
+                PlayAnimationArmsMelee();
             else
+            if (CurrentWeapon == Weapon.Gun)
             {
                 if (shotAnimationTimer > 0)
                     PlayAnimationArmsGunShooting(shootDirection);
                 else
                     PlayAnimationArmsGunDuck();
             }
+            else
+                PlayAnimationArmsLooseDuck();
         }
 
         void PlayAnimationInAir()
         {
             PlayAnimationLegsInAir();
+            if (meleeAnimationTimer > 0)
+                PlayAnimationArmsMelee();
+            else
             if (CurrentWeapon == Weapon.Nothing)
                 PlayAnimationArmsLooseInAir();
             else
