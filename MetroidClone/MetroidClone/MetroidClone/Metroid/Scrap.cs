@@ -9,13 +9,24 @@ namespace MetroidClone.Metroid
 {
     class Scrap : Collectible
     {
-        public int ScrapAmount;
+        int scrapAmount;
 
         public override void Create()
         {
             base.Create();
             BoundingBox = new Rectangle(-10, -10, 20, 20);
-            ScrapAmount = World.Random.Next(5, 11);
+            scrapAmount = World.Random.Next(5, 11);
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            if (CollidesWith(Position, World.Player))
+            {
+                World.Tutorial.ScrapCollected = true;
+                World.Player.CollectedScrap += scrapAmount;
+                Destroy();
+            }
+            base.Update(gameTime);
         }
 
         public override void Draw()
