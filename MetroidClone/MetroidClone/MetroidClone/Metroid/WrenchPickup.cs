@@ -20,6 +20,7 @@ namespace MetroidClone.Metroid
                 World.Player.UnlockedWeapons.Remove(Weapon.Nothing);
                 World.Player.UnlockedWeapons.Add(Weapon.Wrench);
                 Destroy();
+                World.Player.Score += 250;
             }
             base.Update(gameTime);
         }

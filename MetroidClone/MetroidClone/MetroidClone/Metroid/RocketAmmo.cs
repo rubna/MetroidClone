@@ -1,6 +1,7 @@
 ﻿using MetroidClone.Engine;
 using Microsoft.Xna.Framework;
 
+// creates a gameobject which can drop if you kill a monster and gives you 1 extra rocket
 namespace MetroidClone.Metroid
 {
     class RocketAmmo : PhysicsObject

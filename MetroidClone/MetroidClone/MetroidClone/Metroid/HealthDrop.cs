@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using System;
 
+//creates a healthdrop which the player can pick up to get hitpoints back
 namespace MetroidClone.Metroid
 {
     class HealthDrop : PhysicsObject

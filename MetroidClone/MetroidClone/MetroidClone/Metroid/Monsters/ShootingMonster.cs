@@ -31,7 +31,7 @@ namespace MetroidClone.Metroid.Monsters
         int previousXPos = 0;
 
         AnimationBone body, hipLeft, kneeLeft, hipRight, kneeRight, head,
-                    shoulderLeft, shoulderRight, elbowLeft, elbowRight, gun;
+            shoulderLeft, shoulderRight, elbowLeft, elbowRight, gun;
 
         Vector2 startingPos;
 
@@ -42,7 +42,6 @@ namespace MetroidClone.Metroid.Monsters
             SpeedOnHit = new Vector2(3, -2);
             HitPoints = 5;
             Damage = 5;
-            ScoreOnKill = 20;
 
             SpriteScale = 0.2f;
 
@@ -99,40 +98,11 @@ namespace MetroidClone.Metroid.Monsters
             if (!World.PointOutOfView(Position))
             {
                 base.Update(gameTime);
-                AnimationRotation += 4;
-
-                if (Input.KeyboardCheckPressed(Keys.LeftAlt))
-                {
-                    Speed.Y = -5;
-                }
-
-                if (!OnGround)
-                {
-                    PlayAnimationLegsInAir();
-                }
-                else
-                if (Input.KeyboardCheckDown(Keys.Space))
-                {
-                    PlayAnimationLegsWalking();
-                    if (shotAnimationTimer > 0)
-                        PlayAnimationArmsShooting((World.Player.Position - Position).Angle());
-                    else
-                        PlayAnimationArmsWalking();
-                    AnimationRotation += 4;
-                }
-                else
-                {
-                    PlayAnimationLegsIdle();
-                    if (shotAnimationTimer > 0)
-                        PlayAnimationArmsShooting((World.Player.Position - Position).Angle());
-                    else
-                        PlayAnimationArmsIdle();
-                }
 
                 //has shot
                 if (shotAnimationTimer > 0)
                     shotAnimationTimer -= 0.05f;
-            
+
                 //calculates the distance between monster and player. if player is close enough, the monster will attack player
                 distance = (Position - World.Player.Position).Length();
 
@@ -146,9 +116,9 @@ namespace MetroidClone.Metroid.Monsters
                         if (jumpType == JumpType.AlwaysMove || (jumpType == JumpType.MoveInTheEnd && Speed.Y > -2))
                         {
                             if (jumpDirection == Direction.Left && Position.X > World.Camera.X + 10) //Move left as long as we're not on near the edge
-                            Speed.X -= baseSpeed;
+                                Speed.X -= baseSpeed;
                             else if (jumpDirection == Direction.Right && Position.X < World.Camera.X + (World.TileWidth * WorldGenerator.LevelWidth) - 10) //Move right as long as we're not on near the edge
-                            Speed.X += baseSpeed;
+                                Speed.X += baseSpeed;
                         }
 
                         //When we landed again.
@@ -199,12 +169,15 @@ namespace MetroidClone.Metroid.Monsters
                                 else if (World.Player.Position.X > Position.X + 20)
                                     preferDir = Direction.Right;
                             }
+                            //set flipX according to preferdir
+                            if (preferDir != Direction.None)
+                                FlipX = preferDir == Direction.Left;
 
                             //Move if needed
 
                             //Left
                             if (preferDir == Direction.Left && Position.X > World.Camera.X + 10) //Move left as long as we're not near the edge
-                                Speed.X -= baseSpeed;    
+                                Speed.X -= baseSpeed;
                             //Right
                             else if (preferDir == Direction.Right && Position.X < World.Camera.X + (World.TileWidth * WorldGenerator.LevelWidth) - 10) //Move right as long as we're not near the edge
                                 Speed.X += baseSpeed;
@@ -255,9 +228,15 @@ namespace MetroidClone.Metroid.Monsters
                 {
                     stateTimer = 0;
                 }
+
+                //play proper animations
+                PlayAnimations();
+                Visible = true;
             }
             else
+            //not in room
             {
+                Visible = false;
                 stateTimer = 0;
                 if (World.PointOutOfView(Position, -50)) //If the position is very near the view edge, reset it.
                     Position = startingPos;
@@ -269,6 +248,49 @@ namespace MetroidClone.Metroid.Monsters
             shotAnimationTimer = 1;
             FlipX = (Position.X - World.Player.Position.X) > 0;
             World.AddObject(new MonsterBullet(AttackDamage), Position);
+        }
+
+        void PlayAnimations()
+        {
+            AnimationRotation += 4;
+
+            if (!OnGround)
+            {
+                PlayAnimationLegsInAir();
+            }
+            else if (Math.Abs(Speed.X) > 0.1f)
+            {
+                PlayAnimationLegsWalking();
+                if (shotAnimationTimer > 0)
+                    PlayAnimationArmsShooting((World.Player.Position - Position).Angle());
+                else
+                    PlayAnimationArmsWalking();
+                AnimationRotation += 4;
+            }
+            else
+            {
+                PlayAnimationLegsIdle();
+                if (shotAnimationTimer > 0)
+                    PlayAnimationArmsShooting((World.Player.Position - Position).Angle());
+                else
+                    PlayAnimationArmsIdle();
+            }
+        }
+
+        public override void Destroy()
+        {
+            base.Destroy();
+            body.Destroy();
+            hipLeft.Destroy();
+            kneeLeft.Destroy();
+            hipRight.Destroy();
+            kneeRight.Destroy();
+            head.Destroy();
+            shoulderLeft.Destroy();
+            shoulderRight.Destroy();
+            elbowLeft.Destroy();
+            elbowRight.Destroy();
+            gun.Destroy();
         }
     }
 }

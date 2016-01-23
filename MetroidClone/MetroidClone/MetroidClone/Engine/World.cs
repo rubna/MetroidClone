@@ -13,7 +13,9 @@ namespace MetroidClone.Engine
         {
             MainMenu,
             Playing,
-            Paused
+            Paused,
+            OptionsMenu,
+            GameOver
         }
 
         public List<GameObject> GameObjects; //Gameobjects that have been created before this update
@@ -28,11 +30,12 @@ namespace MetroidClone.Engine
         public Tutorial Tutorial;
         public MainMenu MainMenu;
         public PauseMenu PauseMenu;
+        public OptionsMenu OptionsMenu;
+        public GameOverMenu GameOverMenu;
         public Player Player;
         public static Random Random;
         public Vector2 Camera;
-        public GameState PlayingState = GameState.Playing;
-        private bool worldInitialized = false;
+        public GameState PlayingState = GameState.MainMenu;
 
         //The width and height of the world.
         public float Width { get; protected set; } = WorldGenerator.LevelWidth * WorldGenerator.WorldWidth * TileWidth + 200;
@@ -66,6 +69,10 @@ namespace MetroidClone.Engine
 
             MainMenu = new MainMenu();
             PauseMenu = new PauseMenu();
+            OptionsMenu = new OptionsMenu();
+            GameOverMenu = new GameOverMenu();
+            Tutorial = new Tutorial();
+
         }
 
         public void Initialize()
@@ -73,10 +80,11 @@ namespace MetroidClone.Engine
             GameObjects.Clear();
             AddObject(MainMenu);
             AddObject(PauseMenu);
-            (new WorldGenerator()).Generate(this);
-            Tutorial = new Tutorial();
+            AddObject(OptionsMenu);
+            AddObject(GameOverMenu);
             AddObject(Tutorial);
-            AudioWrapper.PlayLooping("Audio/Music/Area 1");
+            (new WorldGenerator()).Generate(this);
+            //AudioWrapper.PlayLooping("Audio/Music/Area 1");
             UpdateCamera(true);
 
             foreach (GameObject gameObject in GameObjects)
@@ -84,7 +92,6 @@ namespace MetroidClone.Engine
                 if (gameObject.ShouldUpdate)
                     GameObjectsToUpdate.Add(gameObject);
             }
-
             UpdateSolidGrid();
             PathfindingGrid();
             //AStarMap = new AStarMap(PathfindingGrid());
@@ -166,7 +173,6 @@ namespace MetroidClone.Engine
         {
             AddedGameObjects.Clear();
             RemovedGameObjects.Clear();
-
             if (PlayingState == GameState.Playing)
             {
                 foreach (GameObject gameObject in GameObjectsToUpdate)
@@ -182,30 +188,27 @@ namespace MetroidClone.Engine
                     GameObjectsToUpdate.Remove(gameObject);
 
                 UpdateCamera(); //Update the position of the camera.
-                PauseMenu.ResumeGame = false;
-                MainMenu.StartGame = false;
             }
+            // update the main menu
             if (PlayingState == GameState.MainMenu)
             {
                 MainMenu.UpdateMenu(gameTime);
-                PauseMenu.ExitGame = false;
             }
+            //update the pause menu
             if (PlayingState == GameState.Paused)
             {
                 PauseMenu.UpdateMenu(gameTime);
-        }
-            if (MainMenu.StartGame && worldInitialized == false)
-            {
-                Initialize();
-                PlayingState = GameState.Playing;
-                worldInitialized = true;
             }
-            if (PauseMenu.ResumeGame)
-                PlayingState = GameState.Playing;
-            if (PauseMenu.ExitGame)
+            // update the options menu
+            if (PlayingState == GameState.OptionsMenu)
             {
-                worldInitialized = false;
-                PlayingState = GameState.MainMenu;
+                OptionsMenu.Paused = PauseMenu.Paused;
+                OptionsMenu.UpdateMenu(gameTime);
+            }
+            // update the game over menu
+            if (PlayingState == GameState.GameOver)
+            {
+                GameOverMenu.UpdateMenu(gameTime);
             }
         }
 
@@ -259,38 +262,48 @@ namespace MetroidClone.Engine
             Vector2 tileSize = new Vector2(TileWidth, TileHeight);
 
             //Make the tile placement look random (it isn't)
-            for (int i = 0; i < WorldGenerator.LevelWidth + 1; i++)
-                for (int j = 0; j < WorldGenerator.LevelHeight + 1; j++)
-                {
-                    int xpos = startX + i, ypos = startY + j;
-                    DrawWrapper.DrawSprite("BackgroundTileset/background" + ((xpos % 3 + xpos % 9 + ypos + ypos % 5 + ypos % 9) % 4 + 1), new Vector2(i * 48 - removeFromX, j * 48 - removeFromY), 0f, tileSize);
-                }
 
             //Only draw objects that are visible (within the view)
             if (PlayingState == GameState.Playing)
             {
-            foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
-            {
-                Vector2 drawPos = gameObject.CenterPosition - Camera;
-                if (drawPos.X > -100 && drawPos.Y > -100 &&
-                    drawPos.X < WorldGenerator.LevelWidth * TileWidth + 100 &&
-                    drawPos.Y < WorldGenerator.LevelHeight * TileHeight + 100)
+                for (int i = 0; i < WorldGenerator.LevelWidth + 1; i++)
+                    for (int j = 0; j < WorldGenerator.LevelHeight + 1; j++)
+                    {
+                        int xpos = startX + i, ypos = startY + j;
+                        DrawWrapper.DrawSprite("BackgroundTileset/background" + ((xpos % 3 + xpos % 9 + ypos + ypos % 5 + ypos % 9) % 4 + 1), new Vector2(i * 48 - removeFromX, j * 48 - removeFromY), 0f, tileSize);
+                    }
+                foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
                 {
-                    gameObject.Draw();
+                    Vector2 drawPos = gameObject.CenterPosition - Camera;
+                    if (drawPos.X > -100 && drawPos.Y > -100 &&
+                        drawPos.X < WorldGenerator.LevelWidth * TileWidth + 100 &&
+                        drawPos.Y < WorldGenerator.LevelHeight * TileHeight + 100)
+                    {
+                        gameObject.Draw();
+                    }
                 }
             }
-            }
+            
+            // draw the pause menu
             if (PlayingState == GameState.Paused)
-                PauseMenu.Draw2();
+                PauseMenu.DrawMenu();
+            // draw the main menu
             if (PlayingState == GameState.MainMenu)
-                MainMenu.Draw2();
+                MainMenu.DrawMenu();
+            // draw the options menu
+            if (PlayingState == GameState.OptionsMenu)
+                OptionsMenu.DrawMenu();
+            // draw the options menu
+            if (PlayingState == GameState.GameOver)
+                GameOverMenu.DrawMenu();
         }
 
         public void DrawGUI()
         {
             //Call the Draw GUI event of all objects that have one.
-            foreach (GameObject gameObject in GameObjectsWithGUI.OrderByDescending(x => x.Depth))
-                gameObject.DrawGUI();
+            if (PlayingState == GameState.Playing)
+                foreach (GameObject gameObject in GameObjectsWithGUI.OrderByDescending(x => x.Depth))
+                    gameObject.DrawGUI();
         }
 
         public List<ISolid> GetNearSolids(Vector2 position)

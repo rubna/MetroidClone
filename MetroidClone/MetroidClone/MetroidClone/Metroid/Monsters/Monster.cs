@@ -13,7 +13,6 @@ namespace MetroidClone.Metroid
 
         public int HitPoints = 1;
         public int Damage = 10;
-        protected int ScoreOnKill = 1;
         protected Vector2 SpeedOnHit = Vector2.Zero;
 
         public Monster()
@@ -39,6 +38,7 @@ namespace MetroidClone.Metroid
 
         void Hurt(int xDirection, bool hitByPlayer)
         {
+            // if am attack from the player hits
             HitPoints--;
             if (SpeedOnHit != Vector2.Zero)
                 Speed = new Vector2(xDirection * SpeedOnHit.X, SpeedOnHit.Y);
@@ -47,7 +47,7 @@ namespace MetroidClone.Metroid
                 Destroy();
                 if (hitByPlayer)
                 {
-                    World.Player.Score += ScoreOnKill;
+                    World.Player.Score += 20;
                     Console.Write("Score: ");
                     Console.WriteLine(World.Player.Score);
                 }
@@ -83,9 +83,9 @@ namespace MetroidClone.Metroid
                 emulatedBulletPos += MonsterBullet.baseSpeed * dir;
 
                 if (InsideWall(new Rectangle((int) emulatedBulletPos.X - 4, (int) emulatedBulletPos.Y - 4, 8, 8)))
-                {
+            {
                     return false;
-                }
+            }
             }
 
             return true;
