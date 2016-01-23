@@ -28,7 +28,7 @@ namespace MetroidClone.Metroid
         bool upPressed = false;
         bool down = false;
 
-        public Weapon CurrentWeapon = Weapon.Gun;
+        public Weapon CurrentWeapon = Weapon.Nothing;
         public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
         public int HitPoints = 100, MaxHitPoints = 100;
         public int RocketAmmo = 5;
@@ -120,7 +120,6 @@ namespace MetroidClone.Metroid
 
             movementSpeedModifier = 1;
             jumpHeightModifier = 1;
-            //PlayAnimation("tempplayer", speed: 0f);
         }
 
         public override void Update(GameTime gameTime)
@@ -263,6 +262,7 @@ namespace MetroidClone.Metroid
                 }
             }
 
+            //Melee attacks
             if (Input.KeyboardCheckPressed(Keys.F) || Input.MouseWheelPressed() || Input.GamePadCheckPressed(Buttons.B))
             {
                 if (attackTimer == 0 && UnlockedWeapons.Contains(Weapon.Wrench))
@@ -272,12 +272,6 @@ namespace MetroidClone.Metroid
                 }
             }
 
-            //testing: adds monster
-            if (Input.MouseButtonCheckPressed(false))
-            {
-                World.AddObject(new ShootingMonster(), Input.MouseCheckPosition().ToVector2() + World.Camera);
-                Console.WriteLine("Monster Added");
-            }
             //switch weapons
             if (Input.KeyboardCheckPressed(Keys.C) || Input.MouseWheelCheckScroll(true) || Input.MouseWheelCheckScroll(false) || Input.GamePadCheckPressed(Buttons.Y))
             {
@@ -298,9 +292,21 @@ namespace MetroidClone.Metroid
                 foreach (Monster monster in World.GameObjects.OfType<Monster>())
                     if (TranslatedBoundingBox.Intersects(monster.TranslatedBoundingBox))
                         Hurt(Math.Sign(Position.X - monster.Position.X), monster.Damage);
+
+                List<MonsterBullet> destroyedBullets = new List<MonsterBullet>();
                 foreach (MonsterBullet bullet in World.GameObjects.OfType<MonsterBullet>())
+                {
                     if (TranslatedBoundingBox.Intersects(bullet.TranslatedBoundingBox))
+                    {
                         Hurt(Math.Sign(Position.X - bullet.Position.X), bullet.Damage);
+                        destroyedBullets.Add(bullet);
+                    }
+                }
+
+                for (int i = 0; i < destroyedBullets.Count; i++)
+                {
+                    destroyedBullets[i].Destroy();
+                }
             }
 
             //And check for scrap

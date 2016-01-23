@@ -81,10 +81,17 @@ namespace MetroidClone.Engine
         // if the level has the wall type (for example, preferLeftWall can be ignored if HasLeftWall is false).
         //If a wall isn't preferred at a position, an exit is used instead if Has*Exit is true.
         public void Place(World world, Dictionary<char, ISpecialTileDefinition> specialTiles, int x, int y, bool preferLeftWall = true,
-            bool preferRightWall = true, bool preferTopWall = true, bool preferBottomWall = true, bool isBottomOfRoom = false)
+            bool preferRightWall = true, bool preferTopWall = true, bool preferBottomWall = true, bool isBottomOfRoom = false, int numberOfEnemies = 0,
+            List<Type> possibleEnemyTypes = null)
         {
+            possibleEnemyTypes = possibleEnemyTypes ?? new List<Type>();
+
             int BlockID = random.Next(int.MaxValue);
 
+            bool[,] isActuallyEmpty = new bool[Width, Height];
+            FairRandomCollection<Vector2> possibleEnemyPositions = new FairRandomCollection<Vector2>();
+
+            //Place the tiles in the level
             for (int i = 0; i < Width; i++)
             {
                 for (int j = 0; j < Height; j++)
@@ -147,7 +154,15 @@ namespace MetroidClone.Engine
                         world.AddObject(new JumpThrough(new Rectangle(baseX, baseY, World.TileWidth, 1)));
 
                     if (data == '1') //A wall
+                    {
                         world.AddObject(new Wall(stdCollisionRect));
+
+                        if (j != 0 && isActuallyEmpty[i, j - 1])
+                        {
+                            //We can place an enemy here!
+                            possibleEnemyPositions.Add(new Vector2(centerX, centerY - World.TileHeight));
+                        }
+                    }
                     else if (data == 'D') //A gun door
                         world.AddObject(new GunDoor(), baseX + World.TileWidth / 2, baseY);
                     else if (data == 'M') //A melee door
@@ -172,9 +187,18 @@ namespace MetroidClone.Engine
                     else if (data == '.')
                     {
                         //Nothing
+                        isActuallyEmpty[i, j] = true;
                     }
                 }
             }
+
+            //Place an enemy.
+
+            for (int i = 0; i < numberOfEnemies; i++)
+                if (possibleEnemyPositions.Count != 0)
+                {
+                    world.AddObject(Activator.CreateInstance(possibleEnemyTypes.GetRandomItem()) as GameObject, possibleEnemyPositions.Get());
+                }
         }
 
         //Check if the level block meets the given requirements.

@@ -33,6 +33,8 @@ namespace MetroidClone.Metroid
             base.Update(gameTime);
             if (InsideWall(TranslatedBoundingBox))
                 Destroy();
+            if (World.PointOutOfView(Position))
+                Destroy();
         }
 
         public override void Draw()

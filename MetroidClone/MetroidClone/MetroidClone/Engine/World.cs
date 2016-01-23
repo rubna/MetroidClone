@@ -165,19 +165,19 @@ namespace MetroidClone.Engine
 
             if (PlayingState == GameState.Playing)
             {
-            foreach (GameObject gameObject in GameObjectsToUpdate)
-                gameObject.Update(gameTime);
+                foreach (GameObject gameObject in GameObjectsToUpdate)
+                    gameObject.Update(gameTime);
 
-            foreach (GameObject gameObject in AddedGameObjects)
-            {
-                if (gameObject.ShouldUpdate)
-                    GameObjectsToUpdate.Add(gameObject);
-            }
+                foreach (GameObject gameObject in AddedGameObjects)
+                {
+                    if (gameObject.ShouldUpdate)
+                        GameObjectsToUpdate.Add(gameObject);
+                }
 
-            foreach (GameObject gameObject in RemovedGameObjects)
-                GameObjectsToUpdate.Remove(gameObject);
+                foreach (GameObject gameObject in RemovedGameObjects)
+                    GameObjectsToUpdate.Remove(gameObject);
 
-            UpdateCamera(); //Update the position of the camera.
+                UpdateCamera(); //Update the position of the camera.
                 PauseMenu.ResumeGame = false;
                 MainMenu.StartGame = false;
             }
@@ -185,7 +185,7 @@ namespace MetroidClone.Engine
             {
                 MainMenu.UpdateMenu(gameTime);
                 PauseMenu.ExitGame = false;
-        }
+            }
             if (PlayingState == GameState.Paused)
             {
                 PauseMenu.UpdateMenu(gameTime);
