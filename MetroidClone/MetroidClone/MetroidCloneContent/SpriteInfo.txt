@@ -28,8 +28,8 @@ RobotSpriteLAntennae1 0.5x0.9 1x1
 RobotSpriteLAntennae2 0.5x0.9 1x1
 RobotSpriteRAntennae1 0.5x0.9 1x1
 RobotSpriteRAntennae2 0.5x0.9 1x1
-/gun$ 0.175x0.5 1x1
 doorsprite* topleft 1x1
+/gun$ 0.175x0.5 1x1
 platform topleft 1x1
 slope* topleft 1x1
 playerrocket 0.3x0.8 1x1
@@ -49,5 +49,4 @@ RLeg 0.5x0.2 1x1
 RFoot 0.4x0.15 1x1
 playergun middle 1x1
 playerrocket middle 1x1
-wrench middle 1x1
 dronesmall center 1x1

@@ -1,5 +1,6 @@
 ﻿using MetroidClone.Engine;
 using MetroidClone.Engine.Asset;
+using MetroidClone.Metroid.Monsters;
 using MetroidClone.Metroid.Player_Attacks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -32,8 +33,6 @@ namespace MetroidClone.Metroid
         public Weapon CurrentWeapon = Weapon.Nothing;
         public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
         public int HitPoints = 100, MaxHitPoints = 100;
-        public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing, Weapon.Wrench };
-        public int HitPoints = 100;
         public int RocketAmmo = 5;
         public int MaximumRocketAmmo = 5;
         public int Score = 0;
@@ -200,8 +199,9 @@ namespace MetroidClone.Metroid
                 walking = true;
             }
 
-            gun.Visible = CurrentWeapon == Weapon.Gun;
-            launcher.Visible = CurrentWeapon == Weapon.Rocket;
+            gun.Visible = CurrentWeapon == Weapon.Gun && meleeAnimationTimer <= 0;
+            launcher.Visible = CurrentWeapon == Weapon.Rocket && meleeAnimationTimer <= 0;
+            wrench.Visible = meleeAnimationTimer > 0;
 
             //play animations according to movement
             if (shotAnimationTimer > 0)
@@ -264,7 +264,7 @@ namespace MetroidClone.Metroid
                 fellThroughTimer = 1;
             }
             if (fellThroughTimer > 0)
-                fellThroughTimer -= 0.07f;
+                fellThroughTimer -= 0.075f;
 
             //attack
             if (Input.MouseButtonCheckDown(true) || (Input.ThumbStickCheckDown(false)))
@@ -314,6 +314,7 @@ namespace MetroidClone.Metroid
                 World.AddObject(new ShootingMonster(), Input.MouseCheckUnscaledPosition(Drawing).ToVector2() + World.Camera);
                 Console.WriteLine("Monster Added");
             }
+
             //switch weapons
             if (Input.KeyboardCheckPressed(Keys.Q) || Input.MouseWheelCheckScroll(true) || Input.MouseWheelCheckScroll(false) || Input.GamePadCheckPressed(Buttons.Y))
             {
