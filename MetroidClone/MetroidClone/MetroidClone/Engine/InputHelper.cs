@@ -90,8 +90,8 @@ namespace MetroidClone.Engine
         public bool MouseButtonCheckReleased(bool left)
         {
             if (left)
-                return mouseState.LeftButton == ButtonState.Released;
-            return mouseState.RightButton == ButtonState.Released;
+                return mouseState.LeftButton == ButtonState.Released && lastMouseState.LeftButton == ButtonState.Pressed;
+            return mouseState.RightButton == ButtonState.Released && lastMouseState.RightButton == ButtonState.Pressed;
         }
         public bool MouseButtonCheckPressed(bool left)
         {

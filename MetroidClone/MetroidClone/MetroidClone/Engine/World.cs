@@ -77,7 +77,7 @@ namespace MetroidClone.Engine
             (new WorldGenerator()).Generate(this);
             Tutorial = new Tutorial();
             AddObject(Tutorial);
-            AudioWrapper.PlayLooping("Audio/Music/Area 1");
+            //AudioWrapper.PlayLooping("Audio/Music/Area 1");
             UpdateCamera(true);
 
             foreach (GameObject gameObject in GameObjects)
