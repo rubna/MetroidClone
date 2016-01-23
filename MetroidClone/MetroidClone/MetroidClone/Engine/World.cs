@@ -21,7 +21,7 @@ namespace MetroidClone.Engine
         List<GameObject> GameObjectsWithGUI; //Gameobjects with a GUI event.
         List<GameObject> AddedGameObjects = new List<GameObject>();
         List<GameObject> RemovedGameObjects = new List<GameObject>();
-        
+
         public DrawWrapper DrawWrapper { get; set; }
         public AudioWrapper AudioWrapper { get; set; }
         public AssetManager AssetManager { get; set; }
@@ -32,7 +32,7 @@ namespace MetroidClone.Engine
         public Player Player;
         public static Random Random;
         public Vector2 Camera;
-        public GameState PlayingState = GameState.Playing;
+        public GameState PlayingState = GameState.MainMenu;
         private bool worldInitialized = false;
 
         //The width and height of the world.
@@ -46,8 +46,6 @@ namespace MetroidClone.Engine
         const float GridSize = 100f;
         public List<ISolid>[,] SolidGrid;
 
-        //A*
-        public AStarMap AStarMap;
 
         public List<ISolid> Solids
         {
@@ -84,7 +82,6 @@ namespace MetroidClone.Engine
 
             foreach (GameObject gameObject in GameObjects)
             {
-                gameObject.Create();
                 if (gameObject.ShouldUpdate)
                     GameObjectsToUpdate.Add(gameObject);
             }
@@ -112,7 +109,7 @@ namespace MetroidClone.Engine
                         if (!(solids[k] is Wall) || solids[k].CollidesWith(boundingbox))
                         {
                             SolidGrid[i, j].Add(solids[k]);
-        }
+                        }
                     }
                 }
             }
@@ -173,19 +170,19 @@ namespace MetroidClone.Engine
 
             if (PlayingState == GameState.Playing)
             {
-            foreach (GameObject gameObject in GameObjectsToUpdate)
-                gameObject.Update(gameTime);
+                foreach (GameObject gameObject in GameObjectsToUpdate)
+                    gameObject.Update(gameTime);
 
-            foreach (GameObject gameObject in AddedGameObjects)
-            {
-                if (gameObject.ShouldUpdate)
-                    GameObjectsToUpdate.Add(gameObject);
-            }
+                foreach (GameObject gameObject in AddedGameObjects)
+                {
+                    if (gameObject.ShouldUpdate)
+                        GameObjectsToUpdate.Add(gameObject);
+                }
 
-            foreach (GameObject gameObject in RemovedGameObjects)
-                GameObjectsToUpdate.Remove(gameObject);
+                foreach (GameObject gameObject in RemovedGameObjects)
+                    GameObjectsToUpdate.Remove(gameObject);
 
-            UpdateCamera(); //Update the position of the camera.
+                UpdateCamera(); //Update the position of the camera.
                 PauseMenu.ResumeGame = false;
                 MainMenu.StartGame = false;
             }
@@ -193,7 +190,7 @@ namespace MetroidClone.Engine
             {
                 MainMenu.Update(gameTime);
                 PauseMenu.ExitGame = false;
-        }
+            }
             if (PlayingState == GameState.Paused)
             {
                 PauseMenu.Update(gameTime);

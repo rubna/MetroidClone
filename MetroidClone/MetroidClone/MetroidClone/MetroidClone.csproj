@@ -89,7 +89,6 @@
     <Compile Include="Engine\Level Generation\RoomExit.cs" />
     <Compile Include="Engine\Level Generation\SpecialTileGroupDefinition.cs" />
     <Compile Include="Engine\Collections\WeightedRandomCollection.cs" />
-    <Compile Include="Metroid\MainMenu.cs" />
     <Compile Include="Engine\TileLoading.cs" />
     <Compile Include="Engine\DrawWrapper.cs" />
     <Compile Include="Engine\GameObject.cs" />
@@ -117,13 +116,14 @@
     <Compile Include="Metroid\DestroyableDoor.cs" />
     <Compile Include="Metroid\Door.cs" />
     <Compile Include="Metroid\HealthDrop.cs" />
+    <Compile Include="Metroid\MainMenu.cs" />
+    <Compile Include="Metroid\PauseMenu.cs" />
     <Compile Include="Metroid\Map.cs" />
     <Compile Include="Metroid\MeleeDoor.cs" />
     <Compile Include="Metroid\MeleeSwitch.cs" />
     <Compile Include="Engine\A star\AStarLink.cs" />
     <Compile Include="Metroid\Monsters\MonsterAttack\MonsterBullet.cs" />
     <Compile Include="Metroid\Monsters\MonsterAttack\MonsterAttack.cs" />
-    <Compile Include="Metroid\PauseMenu.cs" />
     <Compile Include="Metroid\Player Attacks\Smoke.cs" />
     <Compile Include="Metroid\RocketAmmo.cs" />
     <Compile Include="Metroid\Collectible.cs" />
