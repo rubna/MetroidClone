@@ -18,7 +18,7 @@ namespace MetroidClone.Metroid
         {
             if (CollidesWith(Position, World.Player))
             {
-                if (World.Player.RocketAmmo < 5)
+                if (World.Player.RocketAmmo < World.Player.MaximumRocketAmmo)
                 {
                     World.Tutorial.AmmoCollected = true;
                     World.Player.RocketAmmo++;

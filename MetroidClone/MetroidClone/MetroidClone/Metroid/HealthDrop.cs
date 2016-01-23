@@ -9,6 +9,13 @@ namespace MetroidClone.Metroid
 {
     class HealthDrop : PhysicsObject
     {
+        int hitPointsFromHealthDrop;
+
+        public HealthDrop(int monsterDifficulty)
+        {
+            hitPointsFromHealthDrop = monsterDifficulty;
+        }
+
         public override void Create()
         {
             base.Create();
@@ -18,9 +25,9 @@ namespace MetroidClone.Metroid
         {
             if (CollidesWith(Position, World.Player))
             {
-                if (World.Player.HitPoints < 100)
+                if (World.Player.HitPoints < World.Player.MaximumHitPoints)
                 {
-                    World.Player.HitPoints = World.Player.HitPoints + 5;
+                    World.Player.HitPoints += hitPointsFromHealthDrop;
                     Destroy();
                 }
             }
