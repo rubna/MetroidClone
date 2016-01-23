@@ -35,7 +35,7 @@ namespace MetroidClone.Engine
         public Player Player;
         public static Random Random;
         public Vector2 Camera;
-        public GameState PlayingState = GameState.GameOver;
+        public GameState PlayingState = GameState.MainMenu;
 
         //The width and height of the world.
         public float Width { get; protected set; } = WorldGenerator.LevelWidth * WorldGenerator.WorldWidth * TileWidth + 200;
