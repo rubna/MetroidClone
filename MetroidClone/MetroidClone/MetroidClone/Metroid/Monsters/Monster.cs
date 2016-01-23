@@ -8,12 +8,22 @@ namespace MetroidClone.Metroid
 {
     abstract class Monster : PhysicsObject
     {
-        protected MonsterState State;
-        protected enum MonsterState { Moving, Attacking, Jumping, PatrollingLeft, PatrollingRight, ChangeState }
-
+        //Basic properties
         public int HitPoints = 1;
         public int Damage = 10;
         protected Vector2 SpeedOnHit = Vector2.Zero;
+        const float jumpSpeed = 8f;
+        const float baseSpeed = 0.4f;
+
+        //Basic AI variables
+        protected MonsterState State;
+        protected enum MonsterState { Moving, Attacking, Jumping, PatrollingLeft, PatrollingRight, ChangeState }
+        protected int StateTimer;
+        enum JumpType { AlwaysMove, MoveInTheEnd }
+        Direction jumpDirection = Direction.None;
+        JumpType jumpType;
+        int previousXPos = 0;
+
 
         public Monster()
         {
@@ -89,6 +99,139 @@ namespace MetroidClone.Metroid
             }
 
             return true;
+        }
+
+        protected void DoBasicAI(bool canShoot = true)
+        {
+            //calculates the distance between monster and player. if player is close enough, the monster will move / attack the player
+            float distance = (Position - World.Player.Position).Length();
+
+            //if the player is quite near, move and/or attack the player.
+            if (distance <= 10 * World.TileWidth)
+            {
+                if (State == MonsterState.Jumping)
+                {
+                    //Move left/right if required.
+                    if (jumpType == JumpType.AlwaysMove || (jumpType == JumpType.MoveInTheEnd && Speed.Y > -2))
+                    {
+                        if (jumpDirection == Direction.Left && Position.X > World.Camera.X + 10) //Move left as long as we're not on near the edge
+                            Speed.X -= baseSpeed;
+                        else if (jumpDirection == Direction.Right && Position.X < World.Camera.X + (World.TileWidth * WorldGenerator.LevelWidth) - 10) //Move right as long as we're not on near the edge
+                            Speed.X += baseSpeed;
+                    }
+
+                    //When we landed again.
+                    if (OnGround)
+                    {
+                        StateTimer = 60;
+                        State = MonsterState.ChangeState;
+                    }
+                    else
+                    {
+                        //Shoot if this is taking too long.
+                        if (CanReachPlayer() && (StateTimer >= 40 && StateTimer % 10 == 0))
+                            Attack();
+
+                        StateTimer++;
+                    }
+                }
+                else
+                {
+                    //If we're attacking...
+                    if (State == MonsterState.Attacking)
+                    {
+                        if (StateTimer == 40 || StateTimer == 50 || StateTimer == 60)
+                        {
+                            //Evaluate if we should still attack.
+                            if (CanReachPlayer())
+                                Attack();
+                            else
+                            {
+                                State = MonsterState.Moving;
+                            }
+                        }
+                    }
+                    //If we need to do something else (which is moving (in some way))
+                    else if (State != MonsterState.ChangeState)
+                    {
+                        Direction preferDir = Direction.None;
+
+                        //Check in which direction we want to move
+                        if (State == MonsterState.PatrollingLeft)
+                            preferDir = Direction.Left;
+                        else if (State == MonsterState.PatrollingRight)
+                            preferDir = Direction.Right;
+                        else
+                        {
+                            if (World.Player.Position.X < Position.X - 20)
+                                preferDir = Direction.Left;
+                            else if (World.Player.Position.X > Position.X + 20)
+                                preferDir = Direction.Right;
+                        }
+                        //set flipX according to preferdir
+                        if (preferDir != Direction.None)
+                            FlipX = preferDir == Direction.Left;
+
+                        //Move if needed
+
+                        //Left
+                        if (preferDir == Direction.Left && Position.X > World.Camera.X + 10) //Move left as long as we're not near the edge
+                            Speed.X -= baseSpeed;
+                        //Right
+                        else if (preferDir == Direction.Right && Position.X < World.Camera.X + (World.TileWidth * WorldGenerator.LevelWidth) - 10) //Move right as long as we're not near the edge
+                            Speed.X += baseSpeed;
+
+                        //Jump
+                        if ((World.Player.Position.Y < Position.Y - 20 || HadHCollision) && OnGround && World.Random.Next(10) == 1)
+                        {
+                            Speed.Y = -jumpSpeed;
+                            State = MonsterState.Jumping;
+                            jumpDirection = preferDir;
+
+                            if (World.Random.Next(2) == 1)
+                                jumpType = JumpType.AlwaysMove;
+                            else
+                                jumpType = JumpType.MoveInTheEnd;
+                        }
+                    }
+
+                    if (StateTimer >= 60)
+                    {
+                        StateTimer = 0;
+                        //If we can reach the player, shoot.
+                        if (CanReachPlayer())
+                            State = MonsterState.Attacking;
+                        //else, try moving in the general direction of the player.
+                        else
+                        {
+                            //Move towards the player in most situations
+                            if (Math.Abs(Position.X - World.Player.Position.X) > 20 && previousXPos != Math.Round(Position.X))
+                                State = MonsterState.Moving;
+                            else //Move randomly if moving towards towards the player would be useless.
+                            {
+                                if (World.Random.Next(2) == 1 && !InsideWall(-3, 0, TranslatedBoundingBox))
+                                    State = MonsterState.PatrollingLeft;
+                                else
+                                    State = MonsterState.PatrollingRight;
+
+                                StateTimer = -80 - World.Random.Next(50); //Give it some more time to do its thing.
+                            }
+                            previousXPos = (int)Math.Round(Position.X);
+                        }
+                    }
+                    else
+                        StateTimer++;
+                }
+            }
+            else
+            {
+                StateTimer = 0;
+            }
+        }
+
+        protected virtual void Attack()
+        {
+            //Do nothing by default
         }
     }
 }
