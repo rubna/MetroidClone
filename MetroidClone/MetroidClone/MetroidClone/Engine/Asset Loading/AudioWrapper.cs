@@ -25,7 +25,7 @@ namespace MetroidClone.Engine
 
         public void Play(Sound sound)
         {
-            sound.SoundEffect.Play();
+            //sound.SoundEffect.Play();
         }
 
         public void Play(string sound)
@@ -37,7 +37,7 @@ namespace MetroidClone.Engine
         {
             musicInstance = song.CreateInstance();
             musicInstance.IsLooped = true;
-            musicInstance.Play();
+            //musicInstance.Play();
         }
 
         public void PlayLooping(string song)

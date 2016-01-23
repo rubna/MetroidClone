@@ -13,26 +13,34 @@ namespace MetroidClone.Metroid.Monsters
         //distance between player and monster
         float distance = 0;
 
-        //time of shooting burst
-        float shootTime = 0;
-        
-        //has a shot in the burst been fired yet
-        bool shot1 = false, shot2 = false;
-        
-        //bullet damage
+        //Damage of the monster itself (not used for bullets)
         public int AttackDamage = 5;
         float AnimationRotation = 0;
         float shotAnimationTimer = 0;
 
+        const float jumpSpeed = 8f;
+        const float baseSpeed = 0.4f;
+
+        int stateTimer;
+
+        enum JumpType { AlwaysMove, MoveInTheEnd }
+
+        Direction jumpDirection = Direction.None;
+        JumpType jumpType;
+
+        int previousXPos = 0;
+
         AnimationBone body, hipLeft, kneeLeft, hipRight, kneeRight, head,
                     shoulderLeft, shoulderRight, elbowLeft, elbowRight, gun;
+
+        Vector2 startingPos;
 
         public override void Create()
         {
             base.Create();
             BoundingBox = new Rectangle(-13, -27, 26, 40);
             SpeedOnHit = new Vector2(3, -2);
-            HitPoints = 10;
+            HitPoints = 5;
             Damage = 5;
             ScoreOnKill = 20;
 
@@ -76,10 +84,20 @@ namespace MetroidClone.Metroid.Monsters
             World.AddObject(gun);
             gun.SetSprite("Enemy1/Enemygun");
 
+
+            State = MonsterState.ChangeState;
+            stateTimer = 60;
+
+            Gravity = 0.2f;
+
+            startingPos = Position;
         }
 
         public override void Update(GameTime gameTime)
         {
+            //Only update if we're inside the view
+            if (!World.PointOutOfView(Position))
+            {
             base.Update(gameTime);
             AnimationRotation += 4;
 
@@ -114,37 +132,126 @@ namespace MetroidClone.Metroid.Monsters
             //has shot
             if (shotAnimationTimer > 0)
                 shotAnimationTimer -= 0.05f;
-
+            
             //calculates the distance between monster and player. if player is close enough, the monster will attack player
             distance = (Position - World.Player.Position).Length();
 
-            //if the player is in range, the monster will start shooting in a burst of 3 shots.
+            //if the player is in range, the monster will shoot every second. if the player gets to far away, the attack cooldown
+            //will decrease, so that the monster will still attack if the player gets in range and out range over and over
             if (distance <= 10 * World.TileWidth)
             {
-                shootTime++;
-                if (shootTime >= 40 && !shot1)
+                if (State == MonsterState.Jumping)
                 {
-                    Attack();
-                    shot1 = true;
+                    //Move left/right if required.
+                    if (jumpType == JumpType.AlwaysMove || (jumpType == JumpType.MoveInTheEnd && Speed.Y > -2))
+                    {
+                            if (jumpDirection == Direction.Left && Position.X > World.Camera.X + 10) //Move left as long as we're not on near the edge
+                            Speed.X -= baseSpeed;
+                            else if (jumpDirection == Direction.Right && Position.X < World.Camera.X + (World.TileWidth * WorldGenerator.LevelWidth) - 10) //Move right as long as we're not on near the edge
+                            Speed.X += baseSpeed;
+                    }
+
+                    //When we landed again.
+                    if (OnGround)
+                    {
+                        stateTimer = 60;
+                        State = MonsterState.ChangeState;
+                    }
                 }
-                if (shootTime >= 50 && !shot2)
+                else
                 {
-                    Attack();
-                    shot2 = true;
-                }
-                if (shootTime >= 60)
-                {
-                    Attack();
-                    shootTime = 0;
-                    shot1 = false;
-                    shot2 = false;
+                    //If we're attacking...
+                    if (State == MonsterState.Attacking)
+                    {
+                        if (stateTimer == 40 || stateTimer == 50 || stateTimer == 60)
+                        {
+                            //Evaluate if we should still attack.
+                            if (CanReachPlayer())
+                                Attack();
+                            else
+                            {
+                                State = MonsterState.Moving;
+                            }
+                        }
+                    }
+                        //If we need to do something else (which is moving (in some way))
+                    else if (State != MonsterState.ChangeState)
+                    {
+                        Direction preferDir = Direction.None;
+
+                        //Check in which direction we want to move
+                        if (State == MonsterState.PatrollingLeft)
+                            preferDir = Direction.Left;
+                        else if (State == MonsterState.PatrollingRight)
+                            preferDir = Direction.Right;
+                        else
+                        {
+                            if (World.Player.Position.X < Position.X - 20)
+                                preferDir = Direction.Left;
+                            else if (World.Player.Position.X > Position.X + 20)
+                                preferDir = Direction.Right;
+                        }
+                        //Move if needed
+
+                        //Left
+                            if (preferDir == Direction.Left && Position.X > World.Camera.X + 10) //Move left as long as we're not near the edge
+                            Speed.X -= baseSpeed;    
+                        //Right
+                            else if (preferDir == Direction.Right && Position.X < World.Camera.X + (World.TileWidth * WorldGenerator.LevelWidth) - 10) //Move right as long as we're not near the edge
+                            Speed.X += baseSpeed;
+
+                        //Jump
+                        if ((World.Player.Position.Y < Position.Y - 20 || HadHCollision) && OnGround && World.Random.Next(10) == 1)
+                        {
+                            Speed.Y = -jumpSpeed;
+                            State = MonsterState.Jumping;
+                            jumpDirection = preferDir;
+
+                            if (World.Random.Next(2) == 1)
+                                jumpType = JumpType.AlwaysMove;
+                            else
+                                jumpType = JumpType.MoveInTheEnd;
+                        }
+                    }
+
+                    if (stateTimer >= 60)
+                    {
+                        stateTimer = 0;
+                        //If we can reach the player, shoot.
+                        if (CanReachPlayer())
+                            State = MonsterState.Attacking;
+                        //else, try moving in the general direction of the player.
+                        else
+                        {
+                            //Move towards the player in most situations
+                            if (Math.Abs(Position.X - World.Player.Position.X) > 20 && previousXPos != Math.Round(Position.X))
+                                State = MonsterState.Moving;
+                            else //Move randomly if moving towards towards the player would be useless.
+                            {
+                                if (World.Random.Next(2) == 1 && !InsideWall(-3, 0, TranslatedBoundingBox))
+                                    State = MonsterState.PatrollingLeft;
+                                else
+                                    State = MonsterState.PatrollingRight;
+
+                                    stateTimer = -80 - World.Random.Next(50); //Give it some more time to do its thing.
+                            }
+                                previousXPos = (int)Math.Round(Position.X);
+                        }
+                    }
+                    else
+                        stateTimer++;
                 }
             }
             else
             {
-                shootTime = 0;
-                shot1 = false;
-                shot2 = false;
+                stateTimer = 0;
+                }
+            }
+            else
+            {
+                stateTimer = 0;
+                if (World.PointOutOfView(Position, -50)) //If the position is very near the view edge, reset it.
+                    Position = startingPos;
             }
         }
 

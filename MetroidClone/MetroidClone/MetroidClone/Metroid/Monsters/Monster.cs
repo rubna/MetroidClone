@@ -1,8 +1,6 @@
 ﻿using MetroidClone.Engine;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using MetroidClone.Metroid.Abstract;
 
@@ -10,12 +8,13 @@ namespace MetroidClone.Metroid
 {
     abstract class Monster : PhysicsObject
     {
+        protected MonsterState State;
+        protected enum MonsterState { Moving, Attacking, Jumping, PatrollingLeft, PatrollingRight, ChangeState }
+
         public int HitPoints = 1;
         public int Damage = 10;
         protected int ScoreOnKill = 1;
         protected Vector2 SpeedOnHit = Vector2.Zero;
-
-        int randomLoot;
 
         public Monster()
         {
@@ -53,25 +52,42 @@ namespace MetroidClone.Metroid
                 }
             }
         }
+
         public override void Destroy()
         {
-            base.Destroy();
             World.Tutorial.MonsterKilled = true;
-            // When a monster is destroyed, you have a chance that a rocket or a health pack will drop
-            if (World.Player.UnlockedWeapons.Contains(Weapon.Rocket))
+            // When a monster is destroyed, you have a chance that a healthpack, rocket ammo, scrap metal or nothing will drop
+            float ammoChance = (1 - ((float)World.Player.RocketAmmo / (float)World.Player.MaximumRocketAmmo)) * 40;
+            float scrapChance = 40;
+            float healthChance = (1 - ((float)World.Player.HitPoints / (float)World.Player.MaxHitPoints)) * 40;
+            float randomLoot = World.Random.Next(101);
+            if (randomLoot <= healthChance)
+                World.AddObject(new HealthDrop(Damage), Position);
+            else if (randomLoot <= ammoChance + healthChance)
+                World.AddObject(new RocketAmmo(), Position);
+            else if (randomLoot <= scrapChance + ammoChance + healthChance)
+                World.AddObject(new Scrap(), Position);
+            base.Destroy();
+        }
+
+        //Check if a bullet could reach the player
+        protected bool CanReachPlayer()
+        {
+            Vector2 emulatedBulletPos = Position;
+            Vector2 dir = World.Player.Position - Position;
+            dir.Normalize();
+
+            while ((emulatedBulletPos - World.Player.Position).Length() > 8)
             {
-                randomLoot = World.Random.Next(100);
-                if (randomLoot < 5)
-                    World.AddObject(new RocketAmmo(), Position.X, Position.Y);
-                if (randomLoot > 4 && randomLoot < 10)
-                    World.AddObject(new HealthDrop(), Position.X, Position.Y);
+                emulatedBulletPos += MonsterBullet.baseSpeed * dir;
+
+                if (InsideWall(new Rectangle((int) emulatedBulletPos.X - 4, (int) emulatedBulletPos.Y - 4, 8, 8)))
+                {
+                    return false;
+                }
             }
-            else
-            {
-                randomLoot = World.Random.Next(100);
-                if (randomLoot < 5)
-                    World.AddObject(new HealthDrop(), Position.X, Position.Y);
-            }
+
+            return true;
         }
     }
 }

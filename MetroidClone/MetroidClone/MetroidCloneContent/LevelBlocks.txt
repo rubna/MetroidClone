@@ -30,12 +30,34 @@ DEFINE l AS LEFTWALL>1 OR 2
 DEFINE m AS LEFTWALL>1 OR .
 DEFINE n AS LEFTWALL>\ OR .
 DEFINE o AS TOPWALL>e OR c
+DEFINE p AS WALL OR \
 
 DEFINE α AS WALL OR a
 DEFINE β AS WALL OR GROUP OF 1 .
 DEFINE γ AS WALL OR GROUP OF 1 .
 
 And here are the actual generation blocks.
+
+BLOCK ULRD 0.1
+1../1
+../11
+.1112
+....2
+1α21α
+
+BLOCK ULR 0.2
+222.2
+2...2
+2a1\2
+2a11p
+11111
+
+BLOCK UDLR 0.4
+1...1
+2.a.α
+211.2
+α1..α
+11211
 
 BLOCK ULR 0.6
 12222
@@ -48,8 +70,8 @@ BLOCK UDR 0.5
 11211
 1...a
 1oo..
-1a../
-1../1
+1a...
+1...1
 
 BLOCK UDLR 0.75
 1...1
@@ -189,7 +211,7 @@ THEMESTART Cramped
 BLOCK DLR
 11111
 1....
-2.a\.
+2.1\.
 1..1\
 11.a1
 
@@ -277,6 +299,13 @@ BLOCK DU
 11.11
 11J11
 
+BLOCK DUR
+1α2α1
+1..a1
+1cc.2
+1...1
+1γ211
+
 THEMEEND
 
 THEMESTART Open
@@ -309,6 +338,13 @@ BLOCK LRD! 2
 2...2
 1ɔ.ɔ1
 
+BLOCK LR 2
+22222
+.....
+..a..
+ɔɔacc
+22222
+
 THEMEEND
 
 SPECIAL PlayerStart
@@ -327,34 +363,50 @@ BLOCK LRDU
 21.12
 11j11
 
+SPECIAL WrenchPickup
+BLOCK LRDU
+22222
+2.W.2
+21j12
+21.12
+11j11
+
+SPECIAL RocketPickup
+BLOCK LRDU
+α222α
+2.R.2
+21j12
+αa.aα
+11j11
+
 SPECIAL SecondRightBorder
 BLOCK LRDU
-12221
-2...1
-2.1.2
-2...1
-11221
+12211
+2..1.
+21.D.
+2....
+11211
 
 SPECIAL ThirdRightBorder
 BLOCK LRDU
-12221
-2...1
-2.1j2
-2..j1
-11221
+12211
+2..M.
+2cc..
+2..1a
+11211
 
 SPECIAL SecondLeftBorder
 BLOCK LRDU
 12221
-1...1
-2j1.2
-1...1
+11..1
+.D1.2
+....1
 11221
 
 SPECIAL ThirdLeftBorder
 BLOCK LRDU
-12221
-1...2
-2j1.2
-1j..2
 11221
+.M..2
+...12
+11..2
+11211

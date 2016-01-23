@@ -1,10 +1,6 @@
 ﻿using MetroidClone.Engine;
 using MetroidClone.Metroid.Abstract;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace MetroidClone.Metroid.Player_Attacks
 {
@@ -24,6 +20,15 @@ namespace MetroidClone.Metroid.Player_Attacks
             base.Update(gameTime);
             Position = World.Player.Position + World.Player.GetFlip * Vector2.UnitX * 20;
             removeCounter += 0.1f;
+
+            //Collide with doors
+            ISolid doorCollision = GetCollisionWithSolid<MeleeDoor>(TranslatedBoundingBox);
+
+            if (doorCollision != null)
+            {
+                (doorCollision as Door).Activated = true;
+            }
+
             if (removeCounter >= 1)
                 Destroy();
         }

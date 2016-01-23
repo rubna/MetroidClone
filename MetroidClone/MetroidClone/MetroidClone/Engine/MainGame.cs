@@ -96,13 +96,11 @@ namespace MetroidClone.Engine
         {
             Content.Unload();
         }
-
         protected override void Update(GameTime gameTime)
         {
             var inputHelper = InputHelper.Instance;
 
             Profiler.LogEventEnd("FinalizeStep");
-
             if (inputHelper.KeyboardCheckReleased(Keys.F12))
                 Profiler.ShowOutput();
             if (inputHelper.KeyboardCheckReleased(Keys.F4))
@@ -113,8 +111,8 @@ namespace MetroidClone.Engine
 
             Profiler.LogEventStart("Update");
             inputHelper.Update();
-            ;
-            if (inputHelper.KeyboardCheckPressed(Keys.Escape))// && world.PlayingState == World.GameState.MainMenu)
+            
+            if (inputHelper.KeyboardCheckPressed(Keys.Escape) && world.PlayingState == World.GameState.MainMenu)
                 Exit();
             if (inputHelper.KeyboardCheckPressed(Keys.Escape) && world.PlayingState == World.GameState.Playing)
             {

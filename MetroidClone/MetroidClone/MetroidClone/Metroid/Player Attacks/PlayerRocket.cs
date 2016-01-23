@@ -1,8 +1,4 @@
 ﻿using MetroidClone.Metroid.Abstract;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using MetroidClone.Engine;
 using System.Timers;
@@ -49,6 +45,9 @@ namespace MetroidClone.Metroid.Player_Attacks
             Speed += direction * 0.2f;
             base.Update(gameTime);
             if (HadHCollision || HadVCollision)
+                Destroy();
+
+            if (World.PointOutOfView(Position, -10))
                 Destroy();
         }
 

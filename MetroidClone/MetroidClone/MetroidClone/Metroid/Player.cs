@@ -1,20 +1,18 @@
 ﻿using MetroidClone.Engine;
 using MetroidClone.Engine.Asset;
-using MetroidClone.Metroid.Monsters;
 using MetroidClone.Metroid.Player_Attacks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace MetroidClone.Metroid
 {
     partial class Player : PhysicsObject
     {
         float blinkTimer = 0;
-        int collectedScrap = 100;
+        public int CollectedScrap = 0;
         int timeSinceOnGround = 0;
         const int maxFromPlatformTimeForJump = 5; //The maximum time you can still jump after having moved from a platform.
         float attackTimer = 0;
@@ -32,9 +30,12 @@ namespace MetroidClone.Metroid
         bool down = false;
 
         public Weapon CurrentWeapon = Weapon.Nothing;
+        public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
+        public int HitPoints = 100, MaxHitPoints = 100;
         public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing, Weapon.Wrench };
         public int HitPoints = 100;
         public int RocketAmmo = 5;
+        public int MaximumRocketAmmo = 5;
         public int Score = 0;
 
         public float Rotation = 0;
@@ -51,6 +52,9 @@ namespace MetroidClone.Metroid
 
         public float movementSpeedModifier; //This can be used to change the movement speed.
         public float jumpHeightModifier; //This can be used to change the jump height.
+
+        const float jumpSpeed = 8f; //The base jumping speed. Was: 10f
+        const float gravity = 0.2f; //The base gravity. Was: 0.3f
 
         public override void Create()
         {
@@ -142,7 +146,7 @@ namespace MetroidClone.Metroid
             antennaRight2.TargetRotation = 40;
 
             Friction = new Vector2(0.85f, 1);
-            Gravity = 0.3f;
+            Gravity = gravity;
 
             startedSlowingDownJump = false;
 
@@ -151,7 +155,6 @@ namespace MetroidClone.Metroid
 
             movementSpeedModifier = 1;
             jumpHeightModifier = 1;
-            //PlayAnimation("tempplayer", speed: 0f);
         }
 
         public override void Update(GameTime gameTime)
@@ -161,10 +164,21 @@ namespace MetroidClone.Metroid
             //set movement axes
             moveXAxis = 0;
             upPressed = false;
+
+            //We haven't moved left or right yet.
+            bool hasMovedLeft = false, hasMovedRight = false;
+
+            //move around
             if (Input.KeyboardCheckDown(Keys.A) || Input.KeyboardCheckDown(Keys.Left) || Input.ThumbStickCheckDirection(true).X < 0)
+            {
                 moveXAxis--;
+                hasMovedLeft = true;
+            }
             if (Input.KeyboardCheckDown(Keys.D) || Input.KeyboardCheckDown(Keys.Right) || Input.ThumbStickCheckDirection(true).X > 0)
+            {
                 moveXAxis++;
+                hasMovedRight = true;
+            }
             if (Input.KeyboardCheckPressed(Keys.W) || Input.KeyboardCheckPressed(Keys.Up) || Input.ThumbStickCheckDirection(true).Y > 0.75f || Input.GamePadCheckPressed(Buttons.A))
             {
                 upPressed = !up;
@@ -230,8 +244,11 @@ namespace MetroidClone.Metroid
             //jump
             if (timeSinceLastJumpIntention < maxTimeSinceLastJumpIntention && timeSinceOnGround < maxFromPlatformTimeForJump && Speed.Y >= 0)
             {
-                Speed.Y = -10f * jumpHeightModifier;
+                Speed.Y = - jumpSpeed * jumpHeightModifier;
                 startedSlowingDownJump = false;
+
+                hasMovedLeft = false;
+                hasMovedRight = false;
             }
 
             if ((Speed.Y < 0 && (!Input.KeyboardCheckDown(Keys.W) && !Input.KeyboardCheckDown(Keys.Up) && Input.ThumbStickCheckDirection(true).Y <= 0.75f && !Input.GamePadCheckDown(Buttons.A))) && (Speed.Y < -3 || startedSlowingDownJump))
@@ -318,17 +335,21 @@ namespace MetroidClone.Metroid
                 foreach (Monster monster in World.GameObjects.OfType<Monster>())
                     if (TranslatedBoundingBox.Intersects(monster.TranslatedBoundingBox))
                         Hurt(Math.Sign(Position.X - monster.Position.X), monster.Damage);
-                foreach (MonsterBullet bullet in World.GameObjects.OfType<MonsterBullet>())
-                    if (TranslatedBoundingBox.Intersects(bullet.TranslatedBoundingBox))
-                        Hurt(Math.Sign(Position.X - bullet.Position.X), bullet.Damage);
-            }
 
-            //And check for scrap
-            foreach (Scrap scrap in World.GameObjects.OfType<Scrap>())
-                if (TranslatedBoundingBox.Intersects(scrap.TranslatedBoundingBox))
+                List<MonsterBullet> destroyedBullets = new List<MonsterBullet>();
+                foreach (MonsterBullet bullet in World.GameObjects.OfType<MonsterBullet>())
                 {
-                    Collect(scrap);
-                    World.Tutorial.ScrapCollected = true;
+                    if (TranslatedBoundingBox.Intersects(bullet.TranslatedBoundingBox))
+                    {
+                        Hurt(Math.Sign(Position.X - bullet.Position.X), bullet.Damage);
+                        destroyedBullets.Add(bullet);
+            }
+                }
+
+                for (int i = 0; i < destroyedBullets.Count; i++)
+                {
+                    destroyedBullets[i].Destroy();
+                }
                 }
 
             //blink
@@ -364,14 +385,46 @@ namespace MetroidClone.Metroid
                 TimeSinceVWallCollision = 0;
             else
                 TimeSinceVWallCollision++;
+
+            Rectangle offsetCollBox = TranslatedBoundingBox;
+            offsetCollBox.Offset(0, 6);
+
+            //If you've moved left...
+            if (hasMovedLeft && Speed.Y >= 0)
+            {
+                //Make sure the player moves down slopes correctly.
+                if (GetCollisionWithSolid<SlopeRight>(offsetCollBox) != null)
+                {
+                    while (GetCollisionWithSolid<SlopeRight>(TranslatedBoundingBox) == null)
+                        Position.Y += 1;
+                    Position.Y -= 1;
+                    OnGround = true;
+                }
+            }
+
+            offsetCollBox = TranslatedBoundingBox;
+            offsetCollBox.Offset(0, 6);
+
+            //If you've moved right...
+            if (hasMovedRight && Speed.Y >= 0)
+            {
+                //Make sure the player moves down slopes correctly.
+                if (GetCollisionWithSolid<SlopeLeft>(offsetCollBox) != null)
+                {
+                    while (GetCollisionWithSolid<SlopeLeft>(TranslatedBoundingBox) == null)
+                        Position.Y += 1;
+                    Position.Y -= 1;
+                    OnGround = true;
+                }
+            }
         }
 
         void CreateDrone()
         {
-            if (collectedScrap < 25)
+            if (CollectedScrap < 25)
                 return;
             World.AddObject(new Drone(), Position);
-            collectedScrap -= 25;
+            CollectedScrap -= 25;
         }
 
         public override void Draw()
@@ -383,7 +436,7 @@ namespace MetroidClone.Metroid
             //mouse pointer, disabled when controller in use
             Point mousePos = Input.MouseCheckUnscaledPosition(Drawing);
             if (!Input.ControllerInUse)
-                Drawing.DrawRectangle(new Rectangle(mousePos.X - 5, mousePos.Y - 5, 10, 10), Color.DarkKhaki);
+                Drawing.DrawRectangle(new Rectangle(Input.MouseCheckUnscaledPosition(Drawing).X - 5, Input.MouseCheckUnscaledPosition(Drawing).Y - 5, 10, 10), Color.DarkKhaki);
 
             //Drawing.DrawSprite(gun, handRight.DrawPosition, 0);
             //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
@@ -414,7 +467,6 @@ namespace MetroidClone.Metroid
                         }
                     break;
                 }
-                default: break;
             }
         }
 
@@ -422,7 +474,7 @@ namespace MetroidClone.Metroid
         {
             Audio.Play("Audio/Combat/Hit_Hurt");
             HitPoints -= damage;
-            Input.GamePadVibrate(0.1f * (float)damage, 0.1f * (float)damage, 0.1f);
+            Input.GamePadVibrate(0.1f * damage, 0.1f * damage, 0.1f);
             blinkTimer = 1;
             Visible = false;
             Speed = new Vector2(xDirection * 3, -2);
@@ -439,7 +491,7 @@ namespace MetroidClone.Metroid
 
         void Collect(Scrap scrap)
         {
-            collectedScrap += scrap.ScrapAmount;
+            CollectedScrap += scrap.ScrapAmount;
             scrap.Destroy();
         }
 

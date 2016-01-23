@@ -114,8 +114,8 @@ namespace MetroidClone.Metroid
             else
                 currentText = null;
 
-            if (!RocketDoorOpened)
-                foreach (DestroyableDoor Door in World.GameObjects.OfType<DestroyableDoor>().ToList())
+            /*if (!RocketDoorOpened)
+                foreach (RocketDoor Door in World.GameObjects.OfType<RocketDoor>().ToList())
                 {
                     if ((World.Player.Position - Door.Position).Length() <= tutorialRange)
                     {
@@ -128,7 +128,7 @@ namespace MetroidClone.Metroid
                         currentText = previousText;
                 }
             else
-                currentText = null;
+                currentText = null;*/
 
             if (Moved && (currentText == kbmove || currentText == gpmove))
                 currentText = Input.ControllerInUse ? gpjump : kbjump;

@@ -1,8 +1,4 @@
 ﻿using MetroidClone.Engine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 
 namespace MetroidClone.Metroid
@@ -18,7 +14,7 @@ namespace MetroidClone.Metroid
         {
             if (CollidesWith(Position, World.Player))
             {
-                if (World.Player.RocketAmmo < 5)
+                if (World.Player.RocketAmmo < World.Player.MaximumRocketAmmo)
                 {
                     World.Tutorial.AmmoCollected = true;
                     World.Player.RocketAmmo++;

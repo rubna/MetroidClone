@@ -21,11 +21,10 @@ namespace MetroidClone.Engine
         List<GameObject> GameObjectsWithGUI; //Gameobjects with a GUI event.
         List<GameObject> AddedGameObjects = new List<GameObject>();
         List<GameObject> RemovedGameObjects = new List<GameObject>();
-
+        
         public DrawWrapper DrawWrapper { get; set; }
         public AudioWrapper AudioWrapper { get; set; }
         public AssetManager AssetManager { get; set; }
-        public Level Level;
         public Tutorial Tutorial;
         public MainMenu MainMenu;
         public PauseMenu PauseMenu;
@@ -40,8 +39,8 @@ namespace MetroidClone.Engine
         public float Height { get; protected set; } = WorldGenerator.LevelHeight * WorldGenerator.WorldHeight * TileWidth + 200;
 
         //The width and height of a tile.
-        public const float TileWidth = 48;
-        public const float TileHeight = 48;
+        public const int TileWidth = 48;
+        public const int TileHeight = 48;
 
         const float GridSize = 100f;
         public List<ISolid>[,] SolidGrid;
@@ -109,7 +108,7 @@ namespace MetroidClone.Engine
                         if (!(solids[k] is Wall) || solids[k].CollidesWith(boundingbox))
                         {
                             SolidGrid[i, j].Add(solids[k]);
-                        }
+        }
                     }
                 }
             }
@@ -188,12 +187,12 @@ namespace MetroidClone.Engine
             }
             if (PlayingState == GameState.MainMenu)
             {
-                MainMenu.Update(gameTime);
+                MainMenu.UpdateMenu(gameTime);
                 PauseMenu.ExitGame = false;
             }
             if (PlayingState == GameState.Paused)
             {
-                PauseMenu.Update(gameTime);
+                PauseMenu.UpdateMenu(gameTime);
         }
             if (MainMenu.StartGame && worldInitialized == false)
             {
@@ -256,7 +255,7 @@ namespace MetroidClone.Engine
         {
             //Draw the background.
             float removeFromX = Camera.X % TileWidth, removeFromY = Camera.Y % TileHeight;
-            int startX = (int)Camera.X / (int)TileWidth, startY = (int)Camera.Y / (int)TileHeight;
+            int startX = (int)Camera.X / TileWidth, startY = (int)Camera.Y / TileHeight;
             Vector2 tileSize = new Vector2(TileWidth, TileHeight);
 
             //Make the tile placement look random (it isn't)
@@ -300,6 +299,15 @@ namespace MetroidClone.Engine
                 return SolidGrid[(int)(position.X / GridSize), (int)(position.Y / GridSize)];
             else
                 return new List<ISolid>(); //Nothing here.
+        }
+
+        //Returns whether a point is at least offset pixels away from the view border.
+        public bool PointOutOfView(Vector2 point, int offset = 0)
+        {
+            Vector2 drawPos = point - Camera;
+            return !(drawPos.X > -offset && drawPos.Y > -offset &&
+                drawPos.X < WorldGenerator.LevelWidth * TileWidth + offset &&
+                drawPos.Y < WorldGenerator.LevelHeight * TileHeight + offset);
         }
     }
 }
