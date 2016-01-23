@@ -160,7 +160,7 @@ namespace MetroidClone.Engine
                         if (j != 0 && isActuallyEmpty[i, j - 1])
                         {
                             //We can place an enemy here!
-                            possibleEnemyPositions.Add(new Vector2(centerX, centerY - World.TileHeight));
+                            possibleEnemyPositions.Add(new Vector2(centerX, centerY - World.TileHeight + 10));
                         }
                     }
                     else if (data == 'D') //A gun door
@@ -192,8 +192,7 @@ namespace MetroidClone.Engine
                 }
             }
 
-            //Place an enemy.
-
+            //Place some enemies.
             for (int i = 0; i < numberOfEnemies; i++)
                 if (possibleEnemyPositions.Count != 0)
                 {

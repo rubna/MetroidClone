@@ -11,7 +11,7 @@ namespace MetroidClone.Metroid
     {
         public override bool ShouldDrawGUI => true;
         //the range between the player and the object for its instruction to appear
-        int tutorialRange = 500;
+        int tutorialRange = 400;
 
         Vector2 textSize;
         string currentText, previousText;
@@ -32,7 +32,7 @@ namespace MetroidClone.Metroid
         string gpgun = "Use the Right Thumbstick to shoot.";
         public bool GunShot = false;
         
-        string monster = "Kill the monster before it kills you!.";
+        string monster = "Kill the monster before it kills you!";
         public bool MonsterKilled = false;
 
         string scrap = "Monsters can drop scrap metal on death.\nCollect scrap to build drones.";
@@ -85,7 +85,7 @@ namespace MetroidClone.Metroid
             if (!GunDoorOpened)
                 foreach (Door Door in World.GameObjects.OfType<Door>().ToList())
                 {
-                    if ((World.Player.Position - Door.Position).Length() <= tutorialRange)
+                    if ((World.Player.Position - Door.Position).Length() <= tutorialRange && !World.PointOutOfView(Door.Position) && !Door.Activated)
                     {
                         if (currentText != gundoor)
                             previousText = currentText;
@@ -93,7 +93,7 @@ namespace MetroidClone.Metroid
                     }
                     else
                         if (previousText != null)
-                        currentText = previousText;
+                            currentText = previousText;
                 }
             else
                 currentText = null;
@@ -101,7 +101,7 @@ namespace MetroidClone.Metroid
             if (!WrenchDoorOpened)
                 foreach (MeleeDoor Door in World.GameObjects.OfType<MeleeDoor>().ToList())
                 {
-                    if ((World.Player.Position - Door.Position).Length() <= tutorialRange)
+                    if ((World.Player.Position - Door.Position).Length() <= tutorialRange && !World.PointOutOfView(Door.Position) && !Door.Activated)
                     {
                         if (currentText != wrenchdoor)
                             previousText = currentText;
@@ -109,7 +109,7 @@ namespace MetroidClone.Metroid
                     }
                     else
                         if (previousText != null)
-                        currentText = previousText;
+                            currentText = previousText;
                 }
             else
                 currentText = null;
@@ -144,7 +144,7 @@ namespace MetroidClone.Metroid
 
             if (!MonsterKilled && PickedUpGun)
                 foreach (Monster Monster in World.GameObjects.OfType<Monster>().ToList())
-                    if ((World.Player.Position - Monster.Position).Length() <= tutorialRange)
+                    if ((World.Player.Position - Monster.Position).Length() <= tutorialRange && !World.PointOutOfView(Monster.Position))
                         currentText = monster;
 
             if (MonsterKilled && currentText == monster)
@@ -152,7 +152,7 @@ namespace MetroidClone.Metroid
 
             if (!ScrapCollected)
                 foreach (Scrap Scrap in World.GameObjects.OfType<Scrap>().ToList())
-                    if ((World.Player.Position - Scrap.Position).Length() <= tutorialRange)
+                    if ((World.Player.Position - Scrap.Position).Length() <= tutorialRange && !World.PointOutOfView(Scrap.Position))
                         currentText = scrap;
 
             if (ScrapCollected && currentText == scrap)
@@ -163,7 +163,7 @@ namespace MetroidClone.Metroid
 
             if (!PickedUpWrench)
                 foreach (WrenchPickup WrenchPickUp in World.GameObjects.OfType<WrenchPickup>().ToList())
-                    if ((World.Player.Position - WrenchPickUp.Position).Length() <= tutorialRange)
+                    if ((World.Player.Position - WrenchPickUp.Position).Length() <= tutorialRange && !World.PointOutOfView(WrenchPickUp.Position))
                         currentText = wrench;
 
             if (PickedUpWrench && currentText == wrench)
@@ -174,7 +174,7 @@ namespace MetroidClone.Metroid
 
             if (!PickedUpRocket)
                 foreach (RocketPickup RocketPickUp in World.GameObjects.OfType<RocketPickup>().ToList())
-                    if ((World.Player.Position - RocketPickUp.Position).Length() <= tutorialRange)
+                    if ((World.Player.Position - RocketPickUp.Position).Length() <= tutorialRange && !World.PointOutOfView(RocketPickUp.Position))
                         currentText = rocket;
 
             if (PickedUpRocket && currentText == rocket)
@@ -189,7 +189,7 @@ namespace MetroidClone.Metroid
             if (!AmmoCollected)
             {
                 foreach (RocketAmmo RocketAmmo in World.GameObjects.OfType<RocketAmmo>().ToList())
-                    if ((World.Player.Position - RocketAmmo.Position).Length() <= tutorialRange)
+                    if ((World.Player.Position - RocketAmmo.Position).Length() <= tutorialRange && !World.PointOutOfView(RocketAmmo.Position))
                         currentText = ammo;
                 if (World.Player.RocketAmmo == 0)
                     currentText = ammo;
