@@ -16,9 +16,6 @@ namespace MetroidClone.Metroid.Monsters
         //time of shooting burst
         float shootTime = 0;
         
-        //has a shot in the burst been fired yet
-        bool shot1 = false, shot2 = false;
-        
         //bullet damage
         public int AttackDamage = 5;
         float AnimationRotation = 0;

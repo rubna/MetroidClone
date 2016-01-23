@@ -14,7 +14,7 @@ namespace MetroidClone.Metroid
     partial class Player : PhysicsObject
     {
         float blinkTimer = 0;
-        int collectedScrap = 100;
+        public int CollectedScrap = 0;
         int timeSinceOnGround = 0;
         const int maxFromPlatformTimeForJump = 5; //The maximum time you can still jump after having moved from a platform.
         float attackTimer = 0;
@@ -326,14 +326,6 @@ namespace MetroidClone.Metroid
                         Hurt(Math.Sign(Position.X - bullet.Position.X), bullet.Damage);
             }
 
-            //And check for scrap
-            foreach (Scrap scrap in World.GameObjects.OfType<Scrap>())
-                if (TranslatedBoundingBox.Intersects(scrap.TranslatedBoundingBox))
-                {
-                    Collect(scrap);
-                    World.Tutorial.ScrapCollected = true;
-                }
-
             //blink
             if (blinkTimer > 0)
             {
@@ -371,10 +363,10 @@ namespace MetroidClone.Metroid
 
         void CreateDrone()
         {
-            if (collectedScrap < 25)
+            if (CollectedScrap < 25)
                 return;
             World.AddObject(new Drone(), Position);
-            collectedScrap -= 25;
+            CollectedScrap -= 25;
         }
 
         public override void Draw()
@@ -438,12 +430,6 @@ namespace MetroidClone.Metroid
             Audio.Play("Audio/GameSounds/Game_Over");
             Input.GamePadVibrate(1, 1, 1000);
             Console.Write("You are dead");
-        }
-
-        void Collect(Scrap scrap)
-        {
-            collectedScrap += scrap.ScrapAmount;
-            scrap.Destroy();
         }
 
         void NextWeapon()
