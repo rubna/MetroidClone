@@ -90,6 +90,7 @@
     <Compile Include="Engine\Level Generation\RoomExit.cs" />
     <Compile Include="Engine\Level Generation\SpecialTileGroupDefinition.cs" />
     <Compile Include="Engine\Collections\WeightedRandomCollection.cs" />
+    <Compile Include="Metroid\Hack This Game system\Hacking opportunities\HealthAndBullets.cs" />
     <Compile Include="Metroid\MainMenu.cs" />
     <Compile Include="Engine\TileLoading.cs" />
     <Compile Include="Engine\DrawWrapper.cs" />

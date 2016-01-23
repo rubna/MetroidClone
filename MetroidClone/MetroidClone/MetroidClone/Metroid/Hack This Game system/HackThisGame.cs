@@ -62,7 +62,7 @@ namespace MetroidClone.Metroid
             if (isConnected)
             {
                 //Draw the game ID.
-                const string basicInfo = "Game ID:";
+                const string basicInfo = "spaceaid.tk";
                 Drawing.DrawRectangleUnscaled(new Rectangle(10, (int)Drawing.GUISize.Y - 80, (int)Drawing.MeasureText("font14", basicInfo).X + 20, 70),
                     guiColor);
                 Drawing.DrawText("font14", basicInfo, new Vector2(20, (int)Drawing.GUISize.Y - 75), Color.White);

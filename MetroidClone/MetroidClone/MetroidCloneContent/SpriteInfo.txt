@@ -29,4 +29,5 @@ platform topleft 1x1
 slope* topleft 1x1
 smoke center 1x1
 playergun middle 1x1
-playerrocket 0.5x0.5 1x1
+playerrocket middle 1x1
+wrench middle 1x1

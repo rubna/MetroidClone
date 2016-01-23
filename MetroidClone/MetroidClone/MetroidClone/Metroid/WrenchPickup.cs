@@ -8,7 +8,8 @@ namespace MetroidClone.Metroid
         public override void Create()
         {
             base.Create();
-            BoundingBox = new Rectangle(-5, -3, 10, 6);
+            BoundingBox = new Rectangle(-23, -12, 46, 24);
+            SetSprite("Pickups/wrench");
         }
         public override void Update(GameTime gameTime)
         {
@@ -20,12 +21,6 @@ namespace MetroidClone.Metroid
                 Destroy();
             }
             base.Update(gameTime);
-        }
-
-        public override void Draw()
-        {
-            base.Draw();
-            Drawing.DrawRectangle(DrawBoundingBox, Color.DarkBlue);
         }
     }
 }
