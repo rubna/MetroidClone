@@ -124,6 +124,13 @@ namespace MetroidClone.Metroid
             if (VectorExtensions.AngleDifference(kneeRot, 0) > 0)
                 kneeRot = 0;
             kneeRight.TargetRotation = kneeRot;
+
+            antennaLeft1.TargetRotation = 15 + VectorExtensions.LengthDirectionY(10, AnimationRotation * 2 + 50);
+            antennaRight1.TargetRotation = 12 + VectorExtensions.LengthDirectionY(12, AnimationRotation * 2);
+
+            antennaLeft2.TargetRotation = 70 + VectorExtensions.LengthDirectionX(20, AnimationRotation * 2 + 60);
+            antennaRight2.TargetRotation = 60 + VectorExtensions.LengthDirectionX(16, AnimationRotation * 2);
+
         }
 
         void PlayAnimationLegsIdle()
@@ -140,6 +147,13 @@ namespace MetroidClone.Metroid
 
             hipRight.TargetRotation = -30 + VectorExtensions.LengthDirectionY(11, AnimationRotation + 180);
             kneeRight.TargetRotation = 30 + VectorExtensions.LengthDirectionY(22, AnimationRotation);
+
+
+            antennaLeft1.TargetRotation = 15 + VectorExtensions.LengthDirectionX(1, AnimationRotation + 50);
+            antennaRight1.TargetRotation = 12 + VectorExtensions.LengthDirectionX(1, AnimationRotation);
+
+            antennaLeft2.TargetRotation = 70 + VectorExtensions.LengthDirectionX(4, AnimationRotation + 60);
+            antennaRight2.TargetRotation = 60 + VectorExtensions.LengthDirectionX(4, AnimationRotation);
         }
 
         void PlayAnimationArmsLooseIdle()
@@ -179,7 +193,13 @@ namespace MetroidClone.Metroid
             kneeLeft.TargetRotation = 0 + factor * 10;
 
             hipRight.TargetRotation = -90 + factor * 45;
-            kneeRight.TargetRotation = 90 - factor * 85; ;
+            kneeRight.TargetRotation = 90 - factor * 85;
+
+            antennaLeft1.TargetRotation = 30 - factor * 15;
+            antennaRight1.TargetRotation = 26 - factor * 15;
+
+            antennaLeft2.TargetRotation = 95 - factor * 80;
+            antennaRight2.TargetRotation = 100 - factor * 75;
         }
 
         void PlayAnimationArmsLooseInAir()

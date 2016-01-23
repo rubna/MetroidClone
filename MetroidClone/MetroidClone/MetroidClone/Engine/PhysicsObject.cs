@@ -14,7 +14,7 @@ namespace MetroidClone.Engine
         public Vector2 Speed = Vector2.Zero;
         Vector2 subPixelSpeed = Vector2.Zero;
         public Vector2 PositionPrevious = Vector2.Zero;
-        protected Vector2 Friction = new Vector2(0.8f, 1);
+        public Vector2 Friction = new Vector2(0.8f, 1);
         protected float Gravity = 0.3f;
         protected bool OnJumpThrough = false;
         protected bool OnGround = false;

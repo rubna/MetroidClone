@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MetroidClone.Engine;
-
+using Microsoft.Xna.Framework.Input;
 
 namespace MetroidClone.Metroid.Monsters
 {
@@ -23,7 +23,7 @@ namespace MetroidClone.Metroid.Monsters
         public override void Create()
         {
             base.Create();
-            BoundingBox = new Rectangle(-10, -10, 20, 20);
+            BoundingBox = new Rectangle(-13, -27, 26, 40);
             SpeedOnHit = new Vector2(3, -2);
             HitPoints = 10;
             Damage = 5;
@@ -34,7 +34,7 @@ namespace MetroidClone.Metroid.Monsters
             //animation rig
             body = new AnimationBone(this, new Vector2(0, -8));
             head = new AnimationBone(body, new Vector2(3, -28));
-            hipLeft = new AnimationBone(body, new Vector2(6, 0)) { DepthOffset = 1 };
+            hipLeft = new AnimationBone(body, new Vector2(6, 0)) { DepthOffset = 2 };
             kneeLeft = new AnimationBone(hipLeft, new Vector2(0, 8)) { DepthOffset = -1 };
             hipRight = new AnimationBone(body, new Vector2(-6, 0)) { DepthOffset = 1 };
             kneeRight = new AnimationBone(hipRight, new Vector2(0, 8)) { DepthOffset = -1 };
@@ -76,11 +76,33 @@ namespace MetroidClone.Metroid.Monsters
             base.Update(gameTime);
             AnimationRotation += 4;
 
-            PlayAnimationLegsIdle();
-            if (shotAnimationTimer > 0)
-                PlayAnimationArmsShooting((World.Player.Position - Position).Angle());
+            if (Input.KeyboardCheckPressed(Keys.LeftAlt))
+            {
+                Speed.Y = -5;
+            }
+
+            if (!OnGround)
+            {
+                PlayAnimationLegsInAir();
+            }
             else
-                PlayAnimationArmsIdle();
+            if (Input.KeyboardCheckDown(Keys.Space))
+            {
+                PlayAnimationLegsWalking();
+                if (shotAnimationTimer > 0)
+                    PlayAnimationArmsShooting((World.Player.Position - Position).Angle());
+                else
+                    PlayAnimationArmsWalking();
+                AnimationRotation += 4;
+            }
+            else
+            {
+                PlayAnimationLegsIdle();
+                if (shotAnimationTimer > 0)
+                    PlayAnimationArmsShooting((World.Player.Position - Position).Angle());
+                else
+                    PlayAnimationArmsIdle();
+            }
 
             //has shot
             if (shotAnimationTimer > 0)
@@ -127,7 +149,7 @@ namespace MetroidClone.Metroid.Monsters
         public override void Draw()
         {
             base.Draw();
-            Drawing.DrawRectangle(DrawBoundingBox, Color.Purple);
+            //Drawing.DrawRectangle(DrawBoundingBox, Color.Purple);
         }
     }
 }

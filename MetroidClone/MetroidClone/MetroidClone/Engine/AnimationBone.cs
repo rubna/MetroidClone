@@ -28,7 +28,7 @@ namespace MetroidClone.Engine
             }
         }
 
-        public float SpriteScale = 0.08f;
+        public float SpriteScale = 0;// = 0.08f;
         public float TargetRotation = 0;
         public float RotationLerpFactor = 0.3f;
         public float PositionLerpFactor = 0.9f;
@@ -64,13 +64,18 @@ namespace MetroidClone.Engine
         {
             get
             {
-                if (Parent is AnimationBone)
+                if (SpriteScale == 0)
                 {
-                    var par = Parent as AnimationBone;
-                    return par.GlobalSpriteScale;
+                    if (Parent is AnimationBone)
+                    {
+                        var par = Parent as AnimationBone;
+                        return par.GlobalSpriteScale;
+                    }
+                    else
+                        return Parent.SpriteScale;
                 }
                 else
-                    return Parent.SpriteScale;
+                    return SpriteScale;
             }
         }
 
@@ -91,6 +96,7 @@ namespace MetroidClone.Engine
             Offset = offset;
             RotationOffset = rotationOffset;
             OriginalOffset = offset;
+            Gravity = 0;
         }
 
         public override void Create()
@@ -104,7 +110,6 @@ namespace MetroidClone.Engine
         {
             base.Update(gameTime);
             FlipX = Parent.FlipX;
-            //Position += (TargetPosition - Position) * PositionLerpFactor;
             ImageRotation += VectorExtensions.AngleDifference(ImageRotation, TargetRotation) * RotationLerpFactor;
             Speed = (TargetPosition - Position) * PositionLerpFactor;
             Depth = Parent.Depth + DepthOffset;
