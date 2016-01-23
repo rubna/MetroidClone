@@ -32,18 +32,25 @@ namespace MetroidClone.Engine
             GetLevelBlocks();
         }
 
-        public void Generate(World world, Vector2 position, List<RoomExit> roomExits = null, List<string> guaranteedSpecialBlocks = null, string theme = "")
+        //Generate the level
+        public void Generate(World world, Vector2 position, List<RoomExit> roomExits = null, List<string> guaranteedSpecialBlocks = null, string theme = "",
+            int enemyNum = 0, List<Type> possibleEnemyTypes = null)
         {
-            //Null arguments
+            //Convert null arguments into default values
             roomExits = roomExits ?? new List<RoomExit>();
             guaranteedSpecialBlocks = guaranteedSpecialBlocks ?? new List<string>();
-            
+            possibleEnemyTypes = possibleEnemyTypes ?? new List<Type>();
+
             //Create vars
             World = world;
 
             //Create the basic grid for the level. This will contain the main path through the level.
             int hBlocks = Width / BlockWidth, vBlocks = Height / BlockHeight;
             LevelBlockRequirements[,] basicGrid = new LevelBlockRequirements[hBlocks, vBlocks];
+            int[,] enemyNumber = new int[hBlocks, vBlocks];
+
+            //List for positions with enemies
+            List<Point> pointsThatCanHaveEnemies = new List<Point>();
 
             //By default, all sides are walls, unless this is an Open room, in which case all sides (except the walls) are open.
             for (int i = 0; i < hBlocks; i++)
@@ -51,6 +58,7 @@ namespace MetroidClone.Engine
                 for (int j = 0; j < vBlocks; j++)
                 {
                     basicGrid[i, j] = new LevelBlockRequirements(SideType.Wall);
+                    pointsThatCanHaveEnemies.Add(new Point(i, j));
                 }
             }
 
@@ -65,6 +73,9 @@ namespace MetroidClone.Engine
                     basicGrid[exit.Position.X, exit.Position.Y].TopSideType = SideType.Exit;
                 if (exit.Direction == Direction.Down)
                     basicGrid[exit.Position.X, exit.Position.Y].BottomSideType = SideType.Exit;
+                
+                //Level blocks with an exit can't have enemies
+                pointsThatCanHaveEnemies.Remove(new Point(exit.Position.X, exit.Position.Y));
             }
 
             //Connect the exits
@@ -136,6 +147,15 @@ namespace MetroidClone.Engine
                 }
             }
 
+            //Add enemies
+            for (int i = 0; i < enemyNum; i++)
+            {
+                Point placeEnemyAt = pointsThatCanHaveEnemies.GetRandomItem();
+                enemyNumber[placeEnemyAt.X, placeEnemyAt.Y]++;
+                if (enemyNumber[placeEnemyAt.X, placeEnemyAt.Y] >= 3)
+                    pointsThatCanHaveEnemies.Remove(placeEnemyAt);
+            }
+
             //And place them
             for (int i = 0; i < hBlocks; i++)
             {
@@ -144,7 +164,7 @@ namespace MetroidClone.Engine
                     levelGrid[i, j].Place(World, specialTiles, (int) position.X + i * BlockWidth * World.TileWidth,
                         (int) position.Y + j * BlockHeight * World.TileHeight, basicGrid[i, j].LeftSideType == SideType.Wall,
                         basicGrid[i, j].RightSideType == SideType.Wall, basicGrid[i, j].TopSideType == SideType.Wall,
-                        basicGrid[i, j].BottomSideType == SideType.Wall, j == vBlocks - 1);
+                        basicGrid[i, j].BottomSideType == SideType.Wall, j == vBlocks - 1, enemyNumber[i, j], possibleEnemyTypes);
                 }
             }
         }

@@ -33,12 +33,14 @@ namespace MetroidClone.Metroid.Monsters
         AnimationBone body, hipLeft, kneeLeft, hipRight, kneeRight, head,
                     shoulderLeft, shoulderRight, elbowLeft, elbowRight, gun;
 
+        Vector2 startingPos;
+
         public override void Create()
         {
             base.Create();
             BoundingBox = new Rectangle(-13, -27, 26, 40);
             SpeedOnHit = new Vector2(3, -2);
-            HitPoints = 10;
+            HitPoints = 5;
             Damage = 5;
             ScoreOnKill = 20;
 
@@ -87,10 +89,15 @@ namespace MetroidClone.Metroid.Monsters
             stateTimer = 60;
 
             Gravity = 0.2f;
+
+            startingPos = Position;
         }
 
         public override void Update(GameTime gameTime)
         {
+            //Only update if we're inside the view
+            if (!World.PointOutOfView(Position))
+            {
             base.Update(gameTime);
             AnimationRotation += 4;
 
@@ -138,9 +145,9 @@ namespace MetroidClone.Metroid.Monsters
                     //Move left/right if required.
                     if (jumpType == JumpType.AlwaysMove || (jumpType == JumpType.MoveInTheEnd && Speed.Y > -2))
                     {
-                        if (jumpDirection == Direction.Left)
+                            if (jumpDirection == Direction.Left && Position.X > World.Camera.X + 10) //Move left as long as we're not on near the edge
                             Speed.X -= baseSpeed;
-                        else if (jumpDirection == Direction.Right)
+                            else if (jumpDirection == Direction.Right && Position.X < World.Camera.X + (World.TileWidth * WorldGenerator.LevelWidth) - 10) //Move right as long as we're not on near the edge
                             Speed.X += baseSpeed;
                     }
 
@@ -167,7 +174,7 @@ namespace MetroidClone.Metroid.Monsters
                             }
                         }
                     }
-                    //If we need to do something else (which is moving)
+                        //If we need to do something else (which is moving (in some way))
                     else if (State != MonsterState.ChangeState)
                     {
                         Direction preferDir = Direction.None;
@@ -187,10 +194,10 @@ namespace MetroidClone.Metroid.Monsters
                         //Move if needed
 
                         //Left
-                        if (preferDir == Direction.Left)
+                            if (preferDir == Direction.Left && Position.X > World.Camera.X + 10) //Move left as long as we're not near the edge
                             Speed.X -= baseSpeed;    
                         //Right
-                        else if (preferDir == Direction.Right)
+                            else if (preferDir == Direction.Right && Position.X < World.Camera.X + (World.TileWidth * WorldGenerator.LevelWidth) - 10) //Move right as long as we're not near the edge
                             Speed.X += baseSpeed;
 
                         //Jump
@@ -220,15 +227,15 @@ namespace MetroidClone.Metroid.Monsters
                             if (Math.Abs(Position.X - World.Player.Position.X) > 20 && previousXPos != Math.Round(Position.X))
                                 State = MonsterState.Moving;
                             else //Move randomly if moving towards towards the player would be useless.
-                {
+                            {
                                 if (World.Random.Next(2) == 1 && !InsideWall(-3, 0, TranslatedBoundingBox))
                                     State = MonsterState.PatrollingLeft;
                                 else
                                     State = MonsterState.PatrollingRight;
 
-                                stateTimer = -80 - World.Random.Next(50); //Give it some more time.
+                                    stateTimer = -80 - World.Random.Next(50); //Give it some more time to do its thing.
                             }
-                            previousXPos = (int) Math.Round(Position.X);
+                                previousXPos = (int)Math.Round(Position.X);
                         }
                     }
                     else
@@ -238,6 +245,13 @@ namespace MetroidClone.Metroid.Monsters
             else
             {
                 stateTimer = 0;
+                }
+            }
+            else
+            {
+                stateTimer = 0;
+                if (World.PointOutOfView(Position, -50)) //If the position is very near the view edge, reset it.
+                    Position = startingPos;
             }
         }
 

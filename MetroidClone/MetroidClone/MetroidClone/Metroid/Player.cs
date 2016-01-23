@@ -145,7 +145,6 @@ namespace MetroidClone.Metroid
 
             movementSpeedModifier = 1;
             jumpHeightModifier = 1;
-            //PlayAnimation("tempplayer", speed: 0f);
         }
 
         public override void Update(GameTime gameTime)
@@ -298,6 +297,7 @@ namespace MetroidClone.Metroid
                 }
             }
 
+            //Melee attacks
             if (Input.KeyboardCheckPressed(Keys.F) || Input.MouseWheelPressed() || Input.GamePadCheckPressed(Buttons.B))
             {
                 if (attackTimer == 0 && UnlockedWeapons.Contains(Weapon.Wrench))
@@ -329,9 +329,21 @@ namespace MetroidClone.Metroid
                 foreach (Monster monster in World.GameObjects.OfType<Monster>())
                     if (TranslatedBoundingBox.Intersects(monster.TranslatedBoundingBox))
                         Hurt(Math.Sign(Position.X - monster.Position.X), monster.Damage);
+
+                List<MonsterBullet> destroyedBullets = new List<MonsterBullet>();
                 foreach (MonsterBullet bullet in World.GameObjects.OfType<MonsterBullet>())
+                {
                     if (TranslatedBoundingBox.Intersects(bullet.TranslatedBoundingBox))
+                    {
                         Hurt(Math.Sign(Position.X - bullet.Position.X), bullet.Damage);
+                        destroyedBullets.Add(bullet);
+                    }
+                }
+
+                for (int i = 0; i < destroyedBullets.Count; i++)
+                {
+                    destroyedBullets[i].Destroy();
+                }
             }
 
             //blink

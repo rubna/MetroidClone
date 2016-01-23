@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using MetroidClone.Metroid;
+using MetroidClone.Metroid.Monsters;
 
 namespace MetroidClone.Engine
 {
@@ -23,6 +24,12 @@ namespace MetroidClone.Engine
             string[] areaBorderNameRight = { "SecondRightBorder", "ThirdRightBorder" }; //The names of area borders.
             string[] areaBorderNameLeft = { "SecondLeftBorder", "ThirdLeftBorder" };
 
+            //Enemy types for each area
+            List<List<Type>> enemyTypes = new List<List<Type>>();
+            enemyTypes.Add(new List<Type>() { typeof(ShootingMonster) });
+            enemyTypes.Add(new List<Type>() { typeof(ShootingMonster) });
+            enemyTypes.Add(new List<Type>() { typeof(ShootingMonster) });
+
             //Define and initialize variables
             bool[,] isRoom = new bool[WorldWidth, WorldHeight]; //Whether this is a room.
             int[,] area = new int[WorldWidth, WorldHeight]; //The area (for example, 0 for the starting area)
@@ -31,6 +38,7 @@ namespace MetroidClone.Engine
             bool[,] CanHaveBottomExit = new bool[WorldWidth, WorldHeight]; //Whether this room can potentially have a right exit.
             List<RoomExit>[,] roomExits = new List<RoomExit>[WorldWidth, WorldHeight];
             List<string>[,] guaranteedSpecialBlocks = new List<string>[WorldWidth, WorldHeight]; //Guaranteed blocks.
+            int[,] enemies = new int[WorldWidth, WorldHeight];
             for (int i = 0; i < WorldWidth; i++)
                 for (int j = 0; j < WorldHeight; j++)
                 {
@@ -41,6 +49,7 @@ namespace MetroidClone.Engine
                     theme[i, j] = "";
                     CanHaveRightExit[i, j] = true;
                     CanHaveBottomExit[i, j] = true;
+                    enemies[i, j] = 0;
                 }
 
             int startingY = WorldHeight / 2 + World.Random.Next(-2, 3);
@@ -71,6 +80,12 @@ namespace MetroidClone.Engine
                         area[i, j] = 1;
                     else
                         area[i, j] = 0;
+
+                    //These areas have a normal amount of enemies, with more enemies in later areas.
+                    if (area[i, j] == 0)
+                        enemies[i, j] = World.Random.Next(2, 3);
+                    else
+                        enemies[i, j] = World.Random.Next(3, 6) + area[i, j];
                 }
 
             //Add a wrench pickup and a rocket pickup. The rocket pickup should have some distance from the starting area.
@@ -109,6 +124,9 @@ namespace MetroidClone.Engine
                             CanHaveBottomExit[i, j] = true;
                         else
                             CanHaveBottomExit[i, j] = false;
+
+                        //These areas often have lots of enemies
+                        enemies[i, j] = World.Random.Next(6, 10);
                     }
                 }
 
@@ -143,7 +161,7 @@ namespace MetroidClone.Engine
                 {
                     if (isRoom[i, j])
                         levelGenerator.Generate(world, new Vector2(LevelWidth * World.TileWidth * i, LevelHeight * World.TileHeight * j), roomExits[i, j],
-                            guaranteedSpecialBlocks[i, j], theme[i, j]);
+                            guaranteedSpecialBlocks[i, j], theme[i, j], enemies[i, j], enemyTypes[area[i, j]]);
                 }
 
             //Add the "hack this game" object

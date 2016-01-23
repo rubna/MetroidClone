@@ -27,8 +27,6 @@ namespace MetroidClone.Engine
 
         public override void Update(GameTime gameTime)
         {
-            MainGame.Profiler.LogEventStart("PhysicsObject Update");
-
             base.Update(gameTime);
 
             Speed *= Friction;
@@ -56,9 +54,6 @@ namespace MetroidClone.Engine
             }
             else
                 Position += Speed;
-
-            MainGame.Profiler.LogEventEnd("PhysicsObject Update");
-
         }
 
         void CheckOnGround()

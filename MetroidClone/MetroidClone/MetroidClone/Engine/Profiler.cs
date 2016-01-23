@@ -1,6 +1,12 @@
 ﻿#if DEBUG
-//#define USING_PROFILER
+#define USING_PROFILER
 #endif
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
 
 namespace MetroidClone.Engine
 {
