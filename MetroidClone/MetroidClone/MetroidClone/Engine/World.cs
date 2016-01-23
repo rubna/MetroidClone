@@ -192,23 +192,23 @@ namespace MetroidClone.Engine
             // update the main menu
             if (PlayingState == GameState.MainMenu)
             {
-                MainMenu.Update2(gameTime);
+                MainMenu.UpdateMenu(gameTime);
             }
             //update the pause menu
             if (PlayingState == GameState.Paused)
             {
-                PauseMenu.Update2(gameTime);
+                PauseMenu.UpdateMenu(gameTime);
             }
            // update the options menu
            if (PlayingState == GameState.OptionsMenu)
             {
                 OptionsMenu.Paused = PauseMenu.Paused;
-                OptionsMenu.Update2(gameTime);
+                OptionsMenu.UpdateMenu(gameTime);
             }
             // update the game over menu
             if (PlayingState == GameState.GameOver)
             {
-                GameOverMenu.Update2(gameTime);
+                GameOverMenu.UpdateMenu(gameTime);
             }
         }
 
@@ -286,16 +286,16 @@ namespace MetroidClone.Engine
             }
                 // draw the pause menu
             if (PlayingState == GameState.Paused)
-                PauseMenu.Draw2();
+                PauseMenu.DrawMenu();
             // draw the main menu
             if (PlayingState == GameState.MainMenu)
-                MainMenu.Draw2();
+                MainMenu.DrawMenu();
             // draw the options menu
             if (PlayingState == GameState.OptionsMenu)
-                OptionsMenu.Draw2();
+                OptionsMenu.DrawMenu();
             // draw the options menu
             if (PlayingState == GameState.GameOver)
-                GameOverMenu.Draw2();
+                GameOverMenu.DrawMenu();
         }
 
         public void DrawGUI()

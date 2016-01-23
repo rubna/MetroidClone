@@ -1,8 +1,6 @@
 ﻿using MetroidClone.Engine;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using MetroidClone.Metroid.Abstract;
 
@@ -10,11 +8,12 @@ namespace MetroidClone.Metroid
 {
     abstract class Monster : PhysicsObject
     {
+        protected MonsterState State;
+        protected enum MonsterState { Moving, Attacking, Jumping, PatrollingLeft, PatrollingRight, ChangeState }
+
         public int HitPoints = 1;
         public int Damage = 10;
         protected Vector2 SpeedOnHit = Vector2.Zero;
-
-        int randomLoot;
 
         public Monster()
         {
@@ -53,17 +52,18 @@ namespace MetroidClone.Metroid
                 }
             }
         }
+
         public override void Destroy()
         {
+            int randomLoot;
             base.Destroy();
-            World.Tutorial.MonsterKilled = true;
             // When a monster is destroyed, you have a chance that a rocket or a health pack will drop
             if (World.Player.UnlockedWeapons.Contains(Weapon.Rocket))
             {
                 randomLoot = World.Random.Next(100);
-                if (randomLoot < 5)
+                if (randomLoot < 5 || randomLoot < 15 && World.Player.RocketAmmo < 3)
                     World.AddObject(new RocketAmmo(), Position.X, Position.Y);
-                if (randomLoot > 14 && randomLoot < 20)
+                if (randomLoot > 14 && randomLoot < 20 || randomLoot > 14 && randomLoot < 30 && World.Player.HitPoints < 25)
                     World.AddObject(new HealthDrop(), Position.X, Position.Y);
             }
             else

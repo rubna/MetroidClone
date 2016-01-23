@@ -18,9 +18,9 @@ namespace MetroidClone.Metroid
         public bool RestartButtonIntersects;
         public bool ExitButtonIntersects;
 
-        public override void Update2(GameTime gameTime)
+        public void UpdateMenu(GameTime gameTime)
         {
-            base.Update2(gameTime);
+            
             MouseCheck((int)Input.MouseCheckPosition().X, (int)Input.MouseCheckPosition().Y);
             // change the color of the buttons if the mouse is on them and changes the gamestate if a button is clicked
             if (RestartButtonIntersects)
@@ -60,9 +60,9 @@ namespace MetroidClone.Metroid
                 ExitMenu = false;
             }
         }
-        public override void Draw2()
+        public void DrawMenu()
         { //draw the Mainmenu
-            base.Draw2();
+            
             Vector2 TextSize = Drawing.MeasureText("font48", "You Are Dead");
             if (!FullScreen)
                 Drawing.DrawText("font48", "You Are Dead", new Vector2(Drawing.GUISize.X / 2, Drawing.ScreenSize.Y / 2 - TextSize.Y / 2 - 150), Color.Red, alignment: Engine.Asset.Font.Alignment.TopCenter);

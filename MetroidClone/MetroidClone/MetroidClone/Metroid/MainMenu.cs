@@ -20,9 +20,8 @@ namespace MetroidClone.Metroid
         public bool OptionsButtonIntersects;
         public bool ExitButtonIntersects;
 
-        public override void Update2(GameTime gameTime)
+        public void UpdateMenu(GameTime gameTime)
         {
-            base.Update2(gameTime);
             MouseCheck((int)Input.MouseCheckPosition().X, (int)Input.MouseCheckPosition().Y);
             // change the color of the buttons if the mouse is on them and changes the gamestate if a button is clicked
             if (StartButtonIntersects)
@@ -72,9 +71,9 @@ namespace MetroidClone.Metroid
                 StartGame = false;
             }
         }
-        public override void Draw2()
+        public void DrawMenu()
         { //draw the Mainmenu
-            base.Draw2();
+            
             DrawButton("start", startButtonCheck);
             DrawButton("options", optionsButtonCheck);
             DrawButton("exit", exitButtonCheck);

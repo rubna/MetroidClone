@@ -19,10 +19,10 @@ namespace MetroidClone.Metroid
         public bool ResumeButtonIntersects;
         public bool OptionsButtonIntersects;
         public bool ExitButtonIntersects;
-
-        public override void Update2(GameTime gameTime)
+        
+        public void UpdateMenu(GameTime gameTime)
             {
-            base.Update2(gameTime);
+            
             Paused = false;
             MouseCheck((int)Input.MouseCheckPosition().X, (int)Input.MouseCheckPosition().Y);
             // change the color of the buttons if the mouse is on them and changes the gamestate if a button is clicked
@@ -78,10 +78,9 @@ namespace MetroidClone.Metroid
                 ExitMenu = false;
             }
         }
-        public override void Draw2()
+        public void DrawMenu()
         { //draw the Pause menu
             ButtonNumber = 1;
-            base.Draw2();
             DrawButton("resume", resumeButtonCheck);
             DrawButton("options", optionsButtonCheck);
             DrawButton("exit", exitButtonCheck);

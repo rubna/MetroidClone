@@ -22,12 +22,6 @@ namespace MetroidClone.Metroid
         protected int ButtonNumber = 1;
 
 
-        public virtual void Update2(GameTime gameTime)
-        {
-        }
-        public virtual void Draw2()
-        {
-        }
         protected void DrawButton(string buttonName, int i, int m = 0)
         {
             //Draws a button
