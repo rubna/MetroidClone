@@ -16,7 +16,7 @@ namespace MetroidClone.Metroid
             BoundingBox = new Rectangle(-4, -4, 8, 8);
             Friction.X = 1;
             Gravity = 0;
-            CollideWithWalls = false;
+            CollideWithWalls = true;
             if (Input.ControllerInUse)
             {
                 Vector2 dir = Input.ThumbStickCheckDirection(false);
@@ -34,7 +34,7 @@ namespace MetroidClone.Metroid
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            if (Speed.X < 0.01f || Position.Y != PositionPrevious.Y)
+            if (HadHCollision || HadVCollision)
                 Destroy();
         }
 

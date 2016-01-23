@@ -9,6 +9,7 @@ tempplayer middle 4x1
 foreground* topleft 1x1
 connection* topleft 1x1
 background* topleft 1x1
+//robot
 RobotSpriteBody 0.5x0.9 1x1
 RobotSpriteHead 0.5x0.95 1x1
 RobotSpriteLLeg1 0.5x0.1 1x1
@@ -23,5 +24,22 @@ RobotSpriteRHand 0.9x0.5 1x1
 RobotSpriteLArm1 0.1x0.5 1x1
 RobotSpriteLArm2 0.2x0.8 1x1
 RobotSpriteLHand 0.1x0.5 1x1
+RobotSpriteLAntennae1 0.5x0.9 1x1
+RobotSpriteLAntennae2 0.5x0.9 1x1
+RobotSpriteRAntennae1 0.5x0.9 1x1
+RobotSpriteRAntennae2 0.5x0.9 1x1
 gun 0.175x0.5 1x1
+playerrocket 0.3x0.8 1x1
 smoke center 1x1
+//enemy 1 (alien)
+Body 0.5x0.85 1x1
+Enemygun 0.2x0.75 1x1
+Head 0.5x0.9 1x1
+LArm1 0.1x0.5 1x1
+LArm2 0.1x0.5 1x1
+LLeg 0.5x0.2 1x1
+LFoot 0.3x0.2 1x1
+RArm1 0.85x0.5 1x1
+RArm2 0.9x0.45 1x1
+RLeg 0.5x0.2 1x1
+RFoot 0.4x0.15 1x1

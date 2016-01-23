@@ -28,6 +28,7 @@ namespace MetroidClone.Engine
         public AudioWrapper AudioWrapper { get; set; }
         public AssetManager AssetManager { get; set; }
         public Level Level;
+        public Tutorial Tutorial;
         public MainMenu MainMenu;
         public PauseMenu PauseMenu;
         public OptionsMenu OptionsMenu;
@@ -81,6 +82,8 @@ namespace MetroidClone.Engine
             AddObject(OptionsMenu);
             AddObject(GameOverMenu);
             (new WorldGenerator()).Generate(this);
+            Tutorial = new Tutorial();
+            AddObject(Tutorial);
             AudioWrapper.PlayLooping("Audio/Music/Area 1");
             UpdateCamera(true);
 
@@ -91,6 +94,7 @@ namespace MetroidClone.Engine
             }
             UpdateSolidGrid();
             PathfindingGrid();
+            //AStarMap = new AStarMap(PathfindingGrid());
         }
 
         public void UpdateSolidGrid()
@@ -195,7 +199,7 @@ namespace MetroidClone.Engine
             if (PlayingState == GameState.Paused)
             {
                 PauseMenu.Update2(gameTime);
-            }
+        }
            // update the options menu
            if (PlayingState == GameState.OptionsMenu)
             {
@@ -264,22 +268,22 @@ namespace MetroidClone.Engine
             //Only draw objects that are visible (within the view)
             if (PlayingState == GameState.Playing)
             {
-                for (int i = 0; i < WorldGenerator.LevelWidth + 1; i++)
-                    for (int j = 0; j < WorldGenerator.LevelHeight + 1; j++)
-                    {
-                        int xpos = startX + i, ypos = startY + j;
-                        DrawWrapper.DrawSprite("BackgroundTileset/background" + ((xpos % 3 + xpos % 9 + ypos + ypos % 5 + ypos % 9) % 4 + 1), new Vector2(i * 48 - removeFromX, j * 48 - removeFromY), 0f, tileSize);
-                    }
-                foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
+            for (int i = 0; i < WorldGenerator.LevelWidth + 1; i++)
+                for (int j = 0; j < WorldGenerator.LevelHeight + 1; j++)
                 {
-                    Vector2 drawPos = gameObject.CenterPosition - Camera;
-                    if (drawPos.X > -100 && drawPos.Y > -100 &&
-                        drawPos.X < WorldGenerator.LevelWidth * TileWidth + 100 &&
-                        drawPos.Y < WorldGenerator.LevelHeight * TileHeight + 100)
-                    {
-                        gameObject.Draw();
-                    }
+                    int xpos = startX + i, ypos = startY + j;
+                    DrawWrapper.DrawSprite("BackgroundTileset/background" + ((xpos % 3 + xpos % 9 + ypos + ypos % 5 + ypos % 9) % 4 + 1), new Vector2(i * 48 - removeFromX, j * 48 - removeFromY), 0f, tileSize);
                 }
+            foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
+            {
+                Vector2 drawPos = gameObject.CenterPosition - Camera;
+                if (drawPos.X > -100 && drawPos.Y > -100 &&
+                    drawPos.X < WorldGenerator.LevelWidth * TileWidth + 100 &&
+                    drawPos.Y < WorldGenerator.LevelHeight * TileHeight + 100)
+                {
+                    gameObject.Draw();
+                }
+            }
             }
                 // draw the pause menu
             if (PlayingState == GameState.Paused)

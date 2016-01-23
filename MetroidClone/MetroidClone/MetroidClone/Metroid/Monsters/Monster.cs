@@ -30,8 +30,8 @@ namespace MetroidClone.Metroid
                 PhysicsObject attack = attackInterface as PhysicsObject;
                 if (TranslatedBoundingBox.Intersects(attack.TranslatedBoundingBox))
                 {
-                    attack.Destroy();
                     Hurt(Math.Sign(Position.X - attack.Position.X), true);
+                    attack.Destroy();
                 }
             }
         }
@@ -56,6 +56,7 @@ namespace MetroidClone.Metroid
         public override void Destroy()
         {
             base.Destroy();
+            World.Tutorial.MonsterKilled = true;
             // When a monster is destroyed, you have a chance that a rocket or a health pack will drop
             if (World.Player.UnlockedWeapons.Contains(Weapon.Rocket))
             {

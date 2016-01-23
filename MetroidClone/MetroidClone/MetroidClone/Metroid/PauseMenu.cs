@@ -21,7 +21,7 @@ namespace MetroidClone.Metroid
         public bool ExitButtonIntersects;
 
         public override void Update2(GameTime gameTime)
-        {
+            {
             base.Update2(gameTime);
             Paused = false;
             MouseCheck((int)Input.MouseCheckPosition().X, (int)Input.MouseCheckPosition().Y);
@@ -32,26 +32,26 @@ namespace MetroidClone.Metroid
                 if (Input.MouseButtonCheckPressed(true))
                 {
                     ResumeGame = true;
-                }
             }
+        }
             else
                 resumeButtonCheck = 1;
             if (OptionsButtonIntersects)
-            {
+        {
                 optionsButtonCheck = 2;
                 if (Input.MouseButtonCheckPressed(true))
                 {
                     GoToOptions = true;
-                }
+        }
             }
             else
                 optionsButtonCheck = 1;
 
             if (ExitButtonIntersects)
-            {
+        {
                 exitButtonCheck = 2;
                 if (Input.MouseButtonCheckPressed(true))
-                {
+            {
                     ExitMenu = true;
                 }
             }
@@ -84,7 +84,7 @@ namespace MetroidClone.Metroid
             DrawButton("resume", resumeButtonCheck);
             DrawButton("options", optionsButtonCheck);
             DrawButton("exit", exitButtonCheck);
-        }
+            }
         void MouseCheck(int x, int y)
         {
             ButtonNumber = 1;

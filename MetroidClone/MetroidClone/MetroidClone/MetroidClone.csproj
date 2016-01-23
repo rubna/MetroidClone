@@ -126,6 +126,7 @@
     <Compile Include="Metroid\Monsters\MonsterAttack\MonsterAttack.cs" />
     <Compile Include="Metroid\Menu.cs" />
     <Compile Include="Metroid\PauseMenu.cs" />
+    <Compile Include="Metroid\Monsters\ShootingMonsterAnimations.cs" />
     <Compile Include="Metroid\Player Attacks\Smoke.cs" />
     <Compile Include="Metroid\PlayerAnimations.cs" />
     <Compile Include="Metroid\RocketAmmo.cs" />
@@ -144,6 +145,7 @@
     <Compile Include="Metroid\Player.cs" />
     <Compile Include="Metroid\RocketPickup.cs" />
     <Compile Include="Metroid\Switch.cs" />
+    <Compile Include="Metroid\Tutorial.cs" />
     <Compile Include="Metroid\WrenchPickup.cs" />
     <Compile Include="Metroid\Scrap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

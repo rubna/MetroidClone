@@ -20,6 +20,7 @@ namespace MetroidClone.Metroid
             {
                 if (World.Player.RocketAmmo < 5)
                 {
+                    World.Tutorial.AmmoCollected = true;
                     World.Player.RocketAmmo++;
                     Destroy();
                 }

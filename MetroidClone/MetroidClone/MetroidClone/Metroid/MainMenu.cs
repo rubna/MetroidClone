@@ -21,7 +21,7 @@ namespace MetroidClone.Metroid
         public bool ExitButtonIntersects;
 
         public override void Update2(GameTime gameTime)
-            {
+        {
             base.Update2(gameTime);
             MouseCheck((int)Input.MouseCheckPosition().X, (int)Input.MouseCheckPosition().Y);
             // change the color of the buttons if the mouse is on them and changes the gamestate if a button is clicked
@@ -31,26 +31,27 @@ namespace MetroidClone.Metroid
                 if (Input.MouseButtonCheckPressed(true))
                 {
                     StartGame = true;
-                }
             }
+
+        }
             else
                 startButtonCheck = 1;
             if (OptionsButtonIntersects)
-            {
+        {
                 optionsButtonCheck = 2;
                 if (Input.MouseButtonCheckPressed(true))
                 {
                     GoToOptions = true;
-                }
+        }
             }
             else
                 optionsButtonCheck = 1;
 
             if (ExitButtonIntersects)
-            {
+        {
                 exitButtonCheck = 2;
                 if (Input.MouseButtonCheckPressed(true))
-                {
+            {
                     ExitGame = true;
                 }
             }
@@ -93,4 +94,3 @@ namespace MetroidClone.Metroid
         }
     }
 }
-

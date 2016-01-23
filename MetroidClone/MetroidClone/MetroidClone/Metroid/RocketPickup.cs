@@ -18,6 +18,7 @@ namespace MetroidClone.Metroid
         {
             if (CollidesWith(Position, World.Player))
             {
+                World.Tutorial.PickedUpRocket = true;
                 Audio.Play("Audio/PickUps/Powerup03");
                 World.Player.UnlockedWeapons.Remove(Weapon.Nothing);
                 World.Player.UnlockedWeapons.Add(Weapon.Rocket);
