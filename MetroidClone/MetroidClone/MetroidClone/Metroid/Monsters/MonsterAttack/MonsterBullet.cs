@@ -11,6 +11,7 @@ namespace MetroidClone.Metroid
     class MonsterBullet : PhysicsObject, IMonsterAttack
     {
         public int Damage;
+        public const int baseSpeed = 5;
 
         public MonsterBullet(int damage)
         {
@@ -25,12 +26,14 @@ namespace MetroidClone.Metroid
             CollideWithWalls = false;
             Vector2 dir = World.Player.Position - Position;
             dir.Normalize();
-            Speed = 5 * dir;
+            Speed = baseSpeed * dir;
         }
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
             if (InsideWall(TranslatedBoundingBox))
+                Destroy();
+            if (World.PointOutOfView(Position))
                 Destroy();
         }
 

@@ -1,10 +1,7 @@
-﻿using MetroidClone.Metroid;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace MetroidClone.Engine
 {
@@ -30,8 +27,6 @@ namespace MetroidClone.Engine
 
         public override void Update(GameTime gameTime)
         {
-            MainGame.Profiler.LogEventStart("PhysicsObject Update");
-
             base.Update(gameTime);
 
             Speed *= Friction;
@@ -59,9 +54,6 @@ namespace MetroidClone.Engine
             }
             else
                 Position += Speed;
-
-            MainGame.Profiler.LogEventEnd("PhysicsObject Update");
-
         }
 
         void CheckOnGround()
@@ -152,9 +144,22 @@ namespace MetroidClone.Engine
             }
         }
 
+        // Get the first collision with the specified type.
+        protected ISolid GetCollisionWithSolid<T>(Rectangle boundingbox)
+        {
+            foreach (ISolid collider in World.GetNearSolids(Position).OfType<T>())
+            {
+                if (!(collider is JumpThrough && Speed.Y < 0) && collider.CollidesWith(boundingbox) && !(collider == this))
+                {
+                    return collider;
+                }
+            }
+            return null;
+        }
+
         protected bool InsideWall(Rectangle boundingbox)
         {
-            List<ISolid> solids = World.GetNearSolids(Position);
+            List<ISolid> solids = World.GetNearSolids(boundingbox.Center.ToVector2());
             int numberOfSolids = solids.Count;
             for (int i = 0; i < numberOfSolids; i++)
             {

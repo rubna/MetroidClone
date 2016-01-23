@@ -1,11 +1,4 @@
-﻿using MetroidClone.Engine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
 
 // creates the pause menu.
 namespace MetroidClone.Metroid
@@ -21,8 +14,8 @@ namespace MetroidClone.Metroid
         public bool ExitButtonIntersects;
         
         public void UpdateMenu(GameTime gameTime)
-            {
-            
+        {
+
             Paused = false;
             MouseCheck((int)Input.MouseCheckPosition().X, (int)Input.MouseCheckPosition().Y);
             // change the color of the buttons if the mouse is on them and changes the gamestate if a button is clicked
@@ -60,13 +53,13 @@ namespace MetroidClone.Metroid
             // resumes the game if the resume button is pressed
             if (ResumeGame)
             {
-                World.PlayingState = World.GameState.Playing;
+                World.PlayingState = Engine.World.GameState.Playing;
                 ResumeGame = false;
             }
             // goes to the options menu if the options button is pressed
             if (GoToOptions)
             {
-                World.PlayingState = World.GameState.OptionsMenu;
+                World.PlayingState = Engine.World.GameState.OptionsMenu;
                 GoToOptions = false;
                 Paused = true;
             }
@@ -74,7 +67,7 @@ namespace MetroidClone.Metroid
             if (ExitMenu)
             {
                 World.Initialize();
-                World.PlayingState = World.GameState.MainMenu;
+                World.PlayingState = Engine.World.GameState.MainMenu;
                 ExitMenu = false;
             }
         }

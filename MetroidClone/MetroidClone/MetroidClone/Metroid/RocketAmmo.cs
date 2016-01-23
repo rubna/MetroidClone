@@ -1,8 +1,4 @@
 ﻿using MetroidClone.Engine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 
 // creates a gameobject which can drop if you kill a monster and gives you 1 extra rocket
@@ -19,7 +15,7 @@ namespace MetroidClone.Metroid
         {
             if (CollidesWith(Position, World.Player))
             {
-                if (World.Player.RocketAmmo < 5)
+                if (World.Player.RocketAmmo < World.Player.MaximumRocketAmmo)
                 {
                     World.Tutorial.AmmoCollected = true;
                     World.Player.RocketAmmo++;

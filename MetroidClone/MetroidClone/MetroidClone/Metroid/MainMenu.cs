@@ -1,18 +1,12 @@
 ﻿using MetroidClone.Engine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 // creates the main menu. 
 namespace MetroidClone.Metroid
 {
     class MainMenu : Menu
     {
-       
+
         private int startButtonCheck = 1;
         private int optionsButtonCheck = 1;
         private int exitButtonCheck = 1;

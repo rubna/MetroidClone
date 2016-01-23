@@ -55,23 +55,39 @@ namespace MetroidClone.Metroid
 
         public override void Destroy()
         {
-            int randomLoot;
+            World.Tutorial.MonsterKilled = true;
+            // When a monster is destroyed, you have a chance that a healthpack, rocket ammo, scrap metal or nothing will drop
+            float ammoChance = (1 - ((float)World.Player.RocketAmmo / (float)World.Player.MaximumRocketAmmo)) * 40;
+            float scrapChance = 40;
+            float healthChance = (1 - ((float)World.Player.HitPoints / (float)World.Player.MaxHitPoints)) * 40;
+            float randomLoot = World.Random.Next(101);
+            if (randomLoot <= healthChance)
+                World.AddObject(new HealthDrop(Damage), Position);
+            else if (randomLoot <= ammoChance + healthChance)
+                World.AddObject(new RocketAmmo(), Position);
+            else if (randomLoot <= scrapChance + ammoChance + healthChance)
+                World.AddObject(new Scrap(), Position);
             base.Destroy();
-            // When a monster is destroyed, you have a chance that a rocket or a health pack will drop
-            if (World.Player.UnlockedWeapons.Contains(Weapon.Rocket))
+        }
+
+        //Check if a bullet could reach the player
+        protected bool CanReachPlayer()
+        {
+            Vector2 emulatedBulletPos = Position;
+            Vector2 dir = World.Player.Position - Position;
+            dir.Normalize();
+
+            while ((emulatedBulletPos - World.Player.Position).Length() > 8)
             {
-                randomLoot = World.Random.Next(100);
-                if (randomLoot < 5 || randomLoot < 15 && World.Player.RocketAmmo < 3)
-                    World.AddObject(new RocketAmmo(), Position.X, Position.Y);
-                if (randomLoot > 14 && randomLoot < 20 || randomLoot > 14 && randomLoot < 30 && World.Player.HitPoints < 25)
-                    World.AddObject(new HealthDrop(), Position.X, Position.Y);
-            }
-            else
+                emulatedBulletPos += MonsterBullet.baseSpeed * dir;
+
+                if (InsideWall(new Rectangle((int) emulatedBulletPos.X - 4, (int) emulatedBulletPos.Y - 4, 8, 8)))
             {
-                randomLoot = World.Random.Next(100);
-                if (randomLoot < 5 || randomLoot < 15 && World.Player.HitPoints < 25)
-                    World.AddObject(new HealthDrop(), Position.X, Position.Y);
+                    return false;
             }
+            }
+
+            return true;
         }
     }
 }
