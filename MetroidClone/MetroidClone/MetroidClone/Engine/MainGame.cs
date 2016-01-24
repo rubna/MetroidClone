@@ -148,7 +148,7 @@ namespace MetroidClone.Engine
                     break;
                 case GameState.Playing:
                     world.Update(gameTime);
-                    if (inputHelper.KeyboardCheckPressed(Keys.Escape))
+                    if (inputHelper.KeyboardCheckPressed(Keys.Escape) || inputHelper.GamePadCheckPressed(Buttons.Start))
                     {
                         currentState = GameState.Paused;
                         pauseMenu = new PauseMenu(drawWrapper);

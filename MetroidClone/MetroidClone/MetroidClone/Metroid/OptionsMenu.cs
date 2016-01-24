@@ -21,8 +21,8 @@ namespace MetroidClone.Metroid
         public bool Sound = true, Music = true, Controller = false, Fullscreen = false, Quit;
         string sound = "SOUND", music = "MUSIC", controller = "CONTROLLER", fullscreen = "FULLSCREEN", quit = "EXIT";
         Rectangle soundButton, musicButton, controllerButton, fullscreenButton, quitButton, cursor;
-        Color soundColor = Color.DarkSlateGray, musicColor = Color.DarkSlateGray, controllerColor = Color.DarkSlateGray,
-            fullscreenColor = Color.DarkSlateGray, quitColor = Color.DarkSlateGray;
+        Color soundColor = Color.DarkGreen, musicColor = Color.DarkGreen, controllerColor = Color.DarkGreen,
+            fullscreenColor = Color.DarkRed, quitColor = Color.DarkSlateGray;
 
         public OptionsMenu(DrawWrapper Drawing)
         {
@@ -40,13 +40,16 @@ namespace MetroidClone.Metroid
             quitButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 + 250, 200, 100);
             
             cursor = Input.ControllerInUse ? new Rectangle(0, 0, 0, 0) : new Rectangle(Input.MouseCheckPosition().X, Input.MouseCheckPosition().Y, 1, 1);
-            
+
 
             if (cursor.Intersects(soundButton) || selectedButton == Buttons.Sound)
             {
                 soundColor.A = 200;
                 if (Input.MouseButtonCheckPressed(true) || Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.A))
-                    Sound = !Sound;
+                {
+                    soundColor = soundColor.R == 0 ? Color.DarkRed : Color.DarkGreen;
+                    Sound = true;
+                }
             }
             else soundColor.A = 255;
 
@@ -54,7 +57,10 @@ namespace MetroidClone.Metroid
             {
                 musicColor.A = 200;
                 if (Input.MouseButtonCheckPressed(true) || Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.A))
-                    Music = !Music;
+                {
+                    musicColor = musicColor.R == 0 ? Color.DarkRed : Color.DarkGreen;
+                    Music = true;
+                }
             }
             else musicColor.A = 255;
 
@@ -63,6 +69,7 @@ namespace MetroidClone.Metroid
                 controllerColor.A = 200;
                 if (Input.MouseButtonCheckPressed(true) || Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.A))
                 {
+                    controllerColor = controllerColor.R == 0 ? Color.DarkRed : Color.DarkGreen;
                     Input.SwitchControls();
                     selectedButton = Input.ControllerInUse ? Buttons.Controller : Buttons.None;
                 }
@@ -73,7 +80,10 @@ namespace MetroidClone.Metroid
             {
                 fullscreenColor.A = 200;
                 if (Input.MouseButtonCheckPressed(true) || Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.A))
-                    Fullscreen = !Fullscreen;
+                {
+                    fullscreenColor = fullscreenColor.R == 0 ? Color.DarkRed : Color.DarkGreen;
+                    Fullscreen = true;
+                }
             }
             else fullscreenColor.A = 255;
 
