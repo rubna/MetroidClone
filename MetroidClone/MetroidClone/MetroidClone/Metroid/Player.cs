@@ -327,13 +327,6 @@ namespace MetroidClone.Metroid
                 }
             }
 
-            //testing: adds monster
-            if (Input.KeyboardCheckPressed(Keys.F))
-            {
-                World.AddObject(new Turret(), Input.MouseCheckUnscaledPosition(Drawing).ToVector2() + World.Camera);
-                Console.WriteLine("Monster Added");
-            }
-
             //switch weapons
             if (Input.KeyboardCheckPressed(Keys.Q) || Input.MouseWheelCheckScroll(true) || Input.MouseWheelCheckScroll(false) || Input.GamePadCheckPressed(Buttons.Y))
             {
@@ -357,7 +350,7 @@ namespace MetroidClone.Metroid
                     if (TranslatedBoundingBox.Intersects(monster.TranslatedBoundingBox))
                     {
                         if (monster.Damage > 0)
-                            Hurt(Math.Sign(Position.X - monster.Position.X), monster.Damage);
+                        Hurt(Math.Sign(Position.X - monster.Position.X), monster.Damage);
                     }
 
                 List<MonsterBullet> destroyedBullets = new List<MonsterBullet>();
@@ -366,7 +359,7 @@ namespace MetroidClone.Metroid
                     if (TranslatedBoundingBox.Intersects(bullet.TranslatedBoundingBox))
                     {
                         if (bullet.Damage > 0)
-                            Hurt(Math.Sign(Position.X - bullet.Position.X), bullet.Damage);
+                        Hurt(Math.Sign(Position.X - bullet.Position.X), bullet.Damage);
                         destroyedBullets.Add(bullet);
                     }
                 }

@@ -96,6 +96,7 @@ namespace MetroidClone.Engine
             RotationOffset = rotationOffset;
             OriginalOffset = offset;
             Gravity = 0;
+            Depth = -0.1f;
         }
 
         public override void Create()
