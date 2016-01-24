@@ -502,7 +502,7 @@ namespace MetroidClone.Metroid
             blinkTimer = 1;
             Visible = false;
             Speed = new Vector2(xDirection * 3, -2);
-            if (HitPoints <= -100000) //TODO
+            if (HitPoints <= 0) //TODO
                 Die();
         }
 
@@ -511,7 +511,6 @@ namespace MetroidClone.Metroid
             Audio.Play("Audio/GameSounds/Game_Over");
             Input.GamePadVibrate(1, 1, 1000);
             Dead = true;
-            Console.Write("You are dead");
         }
 
         void NextWeapon()

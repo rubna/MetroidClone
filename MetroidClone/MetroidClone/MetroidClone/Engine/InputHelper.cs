@@ -30,11 +30,6 @@ namespace MetroidClone.Engine
                 keyBoardState = Keyboard.GetState();
                 lastMouseState = mouseState;
                 mouseState = Mouse.GetState();
-                if (KeyboardCheckPressed(Keys.Enter))
-                {
-                    ControllerInUse = true;
-                    GamePadVibrate(1, 1, 200);
-                }
             }
             else
             {
@@ -45,12 +40,24 @@ namespace MetroidClone.Engine
                     vibrateStopwatch.Reset();
                     GamePad.SetVibration(PlayerIndex.One, 0, 0);
                 }
-                if (GamePadCheckDown(Buttons.Start) || !gamePadState.IsConnected)
-                {
-                    GamePad.SetVibration(PlayerIndex.One, 0, 0);
+                if (!gamePadState.IsConnected)
                     ControllerInUse = false;
-                }
             }
+        }
+
+        public void SwitchControls()
+        {
+            if (ControllerInUse)
+            {
+                lastGamePadState = gamePadState;
+                GamePad.SetVibration(PlayerIndex.One, 0, 0);
+            }
+            else
+            {
+                lastKeyboardState = keyBoardState;
+                lastMouseState = mouseState;
+            }
+            ControllerInUse = !ControllerInUse;
         }
 
         public bool KeyboardCheckDown(Keys k)

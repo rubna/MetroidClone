@@ -63,14 +63,8 @@ namespace MetroidClone.Metroid
                 controllerColor.A = 200;
                 if (Input.MouseButtonCheckPressed(true) || Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.A))
                 {
-                    if (!Input.ControllerInUse)
-                    {
-                        selectedButton = Buttons.Controller;
-                        controllerColor.A = 255;
-                    }
-                    else
-                        selectedButton = Buttons.None;
-                    Controller = !Controller;
+                    Input.SwitchControls();
+                    selectedButton = Input.ControllerInUse ? Buttons.Controller : Buttons.None;
                 }
             }
             else controllerColor.A = 255;

@@ -154,7 +154,10 @@ namespace MetroidClone.Engine
                         pauseMenu = new PauseMenu(drawWrapper);
                     }
                     if (world.Player.Dead)
+                    {
                         currentState = GameState.GameOver;
+                        gameOverMenu = new GameOverMenu(drawWrapper);
+                    }
                     break;
                 case GameState.Paused:
                     pauseMenu.Update(gameTime, inputHelper);
@@ -189,11 +192,6 @@ namespace MetroidClone.Engine
                     {
                         optionsMenu.Music = false;
                         audioWrapper.MusicIsEnabled = !audioWrapper.MusicIsEnabled;
-                    }
-                    else if (optionsMenu.Controller)
-                    {
-                        optionsMenu.Controller = false;
-                        inputHelper.ControllerInUse = !inputHelper.ControllerInUse;
                     }
                     else if (optionsMenu.Fullscreen)
                     {

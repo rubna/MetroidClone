@@ -27,6 +27,7 @@ namespace MetroidClone.Metroid
             ExitGame = false;
             Start = false;
             Options = false;
+            selectedButton = Buttons.None;
         }
 
         public void Update(GameTime gameTime, InputHelper Input)
