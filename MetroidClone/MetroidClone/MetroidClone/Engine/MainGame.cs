@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using MetroidClone.Metroid;
 
 namespace MetroidClone.Engine
 {
@@ -20,8 +21,18 @@ namespace MetroidClone.Engine
         private DrawWrapper drawWrapper;
         private AudioWrapper audioWrapper;
 
-        private World world;
+        public enum GameState
+        {
+            MainMenu,
+            Playing,
+            Paused
+        }
+        GameState currentState;
+        MainMenu mainMenu;
+        PauseMenu pauseMenu;
 
+        private World world;
+        
         static void Main()
         {
             MainGame game = new MainGame();
@@ -45,6 +56,8 @@ namespace MetroidClone.Engine
             audioWrapper = new AudioWrapper(assetManager);
 
             world = new World();
+            mainMenu = new MainMenu(drawWrapper);
+
             Graphics.PreferMultiSampling = true;
             Graphics.SynchronizeWithVerticalRetrace = true;
             Graphics.PreferredBackBufferWidth = 24 * 20 * 2;
@@ -78,9 +91,6 @@ namespace MetroidClone.Engine
             drawWrapper.SmartScale(Graphics.PreferredBackBufferWidth, Graphics.PreferredBackBufferHeight);
 
             Graphics.ApplyChanges();
-
-            world.MainMenu.FullScreen = !world.MainMenu.FullScreen;
-            world.PauseMenu.FullScreen = !world.PauseMenu.FullScreen;
         }
 
         protected override void LoadContent()
@@ -88,8 +98,6 @@ namespace MetroidClone.Engine
             world.DrawWrapper = drawWrapper;
             world.AudioWrapper = audioWrapper;
             world.AssetManager = assetManager;
-
-            world.Initialize();
         }
 
         protected override void UnloadContent()
@@ -109,24 +117,51 @@ namespace MetroidClone.Engine
             {
                 SwitchFullscreen();
             }
+            if (inputHelper.KeyboardCheckPressed(Keys.Escape))
+            {
+                currentState = GameState.Paused;
+                pauseMenu = new PauseMenu(drawWrapper);
+            }
+
             Profiler.LogGameStepStart();
 
             Profiler.LogEventStart("Update");
             inputHelper.Update();
-            ;
-            if (inputHelper.KeyboardCheckPressed(Keys.Escape))// && world.PlayingState == World.GameState.MainMenu)
-                Exit();
-            if (inputHelper.KeyboardCheckPressed(Keys.Escape) && world.PlayingState == World.GameState.Playing)
-            {
-                world.PlayingState = World.GameState.Paused;
-                Console.WriteLine(world.PlayingState);
-            }
-            if (world.MainMenu.ExitGame)
-                Exit();
-            world.Update(gameTime);
-            base.Update(gameTime);
-            Profiler.LogEventEnd("Update");
             
+            switch (currentState)
+            {
+                case GameState.MainMenu:
+                    mainMenu.Update(gameTime, inputHelper);
+                    if (mainMenu.ExitGame)
+                        Exit();
+                    if (mainMenu.Initialize)
+                    {
+                        world.Initialize();
+                        currentState = GameState.Playing;
+                        mainMenu = null;
+                    }
+                    break;
+                case GameState.Playing:
+                    world.Update(gameTime);
+                    break;
+                case GameState.Paused:
+                    pauseMenu.Update(gameTime, inputHelper);
+                    if (pauseMenu.Resume)
+                    {
+                        currentState = GameState.Playing;
+                    }
+                    if (pauseMenu.Quit)
+                    {
+                        currentState = GameState.MainMenu;
+                        world = new World();
+                        LoadContent();
+                        mainMenu = new MainMenu(drawWrapper);
+                        pauseMenu = null;
+                    }
+                    break;
+            }
+
+            Profiler.LogEventEnd("Update");
         }
 
         protected override void Draw(GameTime gameTime)
@@ -137,7 +172,19 @@ namespace MetroidClone.Engine
             drawWrapper.BeginDraw(); //Start drawing
             world.Draw(); //Draw the game world
             drawWrapper.BeginDrawGUI(); //Start drawing the GUI
-            world.DrawGUI(); //Draw the GUI
+            switch (currentState)
+            {
+                case GameState.MainMenu:
+                    mainMenu.DrawGUI(); //Draw the Main Menu
+                    break;
+                case GameState.Playing:
+                    
+                    world.DrawGUI(); //Draw the GUI
+                    break;
+                case GameState.Paused:
+                    pauseMenu.DrawGUI();
+                    break;
+            }
             drawWrapper.EndOfDraw(); //Stop drawing
 
             base.Draw(gameTime);

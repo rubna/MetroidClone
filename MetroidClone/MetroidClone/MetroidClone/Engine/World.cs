@@ -9,13 +9,6 @@ namespace MetroidClone.Engine
 {
     class World
     {
-        public enum GameState
-        {
-            MainMenu,
-            Playing,
-            Paused
-        }
-
         public List<GameObject> GameObjects; //Gameobjects that have been created before this update
         List<GameObject> GameObjectsToUpdate; //Gameobjects that should be updated during Update.
         List<GameObject> GameObjectsWithGUI; //Gameobjects with a GUI event.
@@ -27,13 +20,10 @@ namespace MetroidClone.Engine
         public AssetManager AssetManager { get; set; }
         public Level Level;
         public Tutorial Tutorial;
-        public MainMenu MainMenu;
-        public PauseMenu PauseMenu;
         public Player Player;
         public static Random Random;
         public Vector2 Camera;
-        public GameState PlayingState = GameState.Playing;
-        private bool worldInitialized = false;
+        public bool ExitGame = false;
 
         //The width and height of the world.
         public float Width { get; protected set; } = WorldGenerator.LevelWidth * WorldGenerator.WorldWidth * TileWidth + 200;
@@ -64,16 +54,11 @@ namespace MetroidClone.Engine
             Random = new Random();
 
             Camera = new Vector2(0);
-
-            MainMenu = new MainMenu();
-            PauseMenu = new PauseMenu();
         }
 
         public void Initialize()
         {
             GameObjects.Clear();
-            AddObject(MainMenu);
-            AddObject(PauseMenu);
             (new WorldGenerator()).Generate(this);
             Tutorial = new Tutorial();
             AddObject(Tutorial);
@@ -167,47 +152,20 @@ namespace MetroidClone.Engine
         {
             AddedGameObjects.Clear();
             RemovedGameObjects.Clear();
+            
+            foreach (GameObject gameObject in GameObjectsToUpdate)
+                gameObject.Update(gameTime);
 
-            if (PlayingState == GameState.Playing)
+            foreach (GameObject gameObject in AddedGameObjects)
             {
-                foreach (GameObject gameObject in GameObjectsToUpdate)
-                    gameObject.Update(gameTime);
+                if (gameObject.ShouldUpdate)
+                    GameObjectsToUpdate.Add(gameObject);
+            }
 
-                foreach (GameObject gameObject in AddedGameObjects)
-                {
-                    if (gameObject.ShouldUpdate)
-                        GameObjectsToUpdate.Add(gameObject);
-                }
+            foreach (GameObject gameObject in RemovedGameObjects)
+                GameObjectsToUpdate.Remove(gameObject);
 
-                foreach (GameObject gameObject in RemovedGameObjects)
-                    GameObjectsToUpdate.Remove(gameObject);
-
-                UpdateCamera(); //Update the position of the camera.
-                PauseMenu.ResumeGame = false;
-                MainMenu.StartGame = false;
-            }
-            if (PlayingState == GameState.MainMenu)
-            {
-                MainMenu.Update(gameTime);
-                PauseMenu.ExitGame = false;
-            }
-            if (PlayingState == GameState.Paused)
-            {
-                PauseMenu.Update(gameTime);
-        }
-            if (MainMenu.StartGame && worldInitialized == false)
-            {
-                Initialize();
-                PlayingState = GameState.Playing;
-                worldInitialized = true;
-            }
-            if (PauseMenu.ResumeGame)
-                PlayingState = GameState.Playing;
-            if (PauseMenu.ExitGame)
-            {
-                worldInitialized = false;
-                PlayingState = GameState.MainMenu;
-            }
+            UpdateCamera(); //Update the position of the camera
         }
 
         void UpdateCamera(bool jumpToGoal = false)
@@ -267,9 +225,6 @@ namespace MetroidClone.Engine
                     DrawWrapper.DrawSprite("BackgroundTileset/background" + ((xpos % 3 + xpos % 9 + ypos + ypos % 5 + ypos % 9) % 4 + 1), new Vector2(i * 48 - removeFromX, j * 48 - removeFromY), 0f, tileSize);
                 }
 
-            //Only draw objects that are visible (within the view)
-            if (PlayingState == GameState.Playing)
-            {
             foreach (GameObject gameObject in GameObjects.OrderByDescending(x => x.Depth))
             {
                 Vector2 drawPos = gameObject.CenterPosition - Camera;
@@ -280,11 +235,7 @@ namespace MetroidClone.Engine
                     gameObject.Draw();
                 }
             }
-            }
-            if (PlayingState == GameState.Paused)
-                PauseMenu.Draw2();
-            if (PlayingState == GameState.MainMenu)
-                MainMenu.Draw2();
+            
         }
 
         public void DrawGUI()

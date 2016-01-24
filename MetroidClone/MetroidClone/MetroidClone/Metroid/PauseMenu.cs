@@ -8,62 +8,81 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 // creates the pause menu. A large part of the code is based on code made by Nico Vermeir.
-namespace MetroidClone.Engine
+namespace MetroidClone.Metroid
 {
-    class PauseMenu : GameObject
+    class PauseMenu
     {
-        public bool ResumeGame = false;
-        public bool ExitGame = false;
-        public bool FullScreen = false;
-        InputHelper inputHelper = InputHelper.Instance;
-        Rectangle resumeButtonRect;
-        Rectangle exitButtonRect;
-
-        public void Update(GameTime gameTime)
+        DrawWrapper drawing;
+        public bool Resume, Options, Quit;
+        string resume = "RESUME", options = "OPTIONS", quit = "QUIT";
+        Rectangle resumeButton, optionsButton, quitButton, cursor;
+        Color resumeColor = Color.DarkSlateGray, optionsColor = Color.DarkSlateGray, quitColor = Color.DarkSlateGray;
+        
+        public PauseMenu(DrawWrapper Drawing)
         {
-
-
-            //wait for mouseclick
-            if (inputHelper.MouseButtonCheckPressed(true))
-            {
-                MouseClicked((int)inputHelper.MouseCheckPosition().X, (int)inputHelper.MouseCheckPosition().Y);
-            }
-        }
-        public void Draw2()
-        {
-
-            Drawing.DrawRectangle(new Rectangle((int)(Drawing.ScreenSize.X / 2), (int)(Drawing.ScreenSize.Y / 2) - 50, 200, 100), Color.Black);
-            Drawing.DrawRectangle(new Rectangle((int)(Drawing.ScreenSize.X / 2), (int)(Drawing.ScreenSize.Y / 2) + 150, 200, 100), Color.Black);
-
-            //draw the pause menu
-
-
-
+            drawing = Drawing;
+            Resume = false;
+            Options = false;
+            Quit = false;
         }
 
-        void MouseClicked(int x, int y)
+        public void Update(GameTime gameTime, InputHelper Input)
         {
-            //creates a rectangle of 10x10 around the place where the mouse was clicked
-            Rectangle mouseClickRect = new Rectangle(x, y, 10, 10);
+            resumeButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 200, 200, 100);
+            optionsButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 50, 200, 100);
+            quitButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
+            cursor = new Rectangle(Input.MouseCheckPosition().X, Input.MouseCheckPosition().Y, 1, 1);
 
-            if (!FullScreen)
+            if (!Input.ControllerInUse)
             {
-                resumeButtonRect = new Rectangle((int)(Drawing.ScreenSize.X / 2), (int)(Drawing.ScreenSize.Y / 2) - 50, 200, 100);
-                exitButtonRect = new Rectangle((int)(Drawing.ScreenSize.X / 2), (int)(Drawing.ScreenSize.Y / 2) + 150, 200, 100);
+                if (cursor.Intersects(resumeButton))
+                {
+                    resumeColor.A = 200;
+                    if (Input.MouseButtonCheckPressed(true))
+                    {
+                        Resume = true;
+                    }
+                }
+                else
+                    resumeColor.A = 255;
+
+                if (cursor.Intersects(optionsButton))
+                {
+                    optionsColor.A = 200;
+                    if (Input.MouseButtonCheckPressed(true))
+                    {
+                        Options = true;
+                    }
+                }
+                else
+                    optionsColor.A = 255;
+
+                if (cursor.Intersects(quitButton))
+                {
+                    quitColor.A = 200;
+                    if (Input.MouseButtonCheckPressed(true))
+                    {
+                        Quit = true;
+                    }
+                }
+                else
+                    quitColor.A = 255;
             }
-            else
-            {
-                resumeButtonRect = new Rectangle((int)(Drawing.ScreenSize.X) + 50, (int)(Drawing.ScreenSize.Y / 1.7f) + 25, 290, 125);
-                exitButtonRect = new Rectangle((int)(Drawing.ScreenSize.X) + 50, (int)(Drawing.ScreenSize.Y / 1.7f) + 310, 290, 140);
-            }
-            if (mouseClickRect.Intersects(resumeButtonRect)) //player clicked Resume button
-            {
-                ResumeGame = true;
-            }
-            else if (mouseClickRect.Intersects(exitButtonRect)) //player clicked exit button
-            {
-                ExitGame = true;
-            }
+        }
+
+        public void DrawGUI()
+        {
+            //resume button
+            drawing.DrawRectangleUnscaled(resumeButton, resumeColor);
+            drawing.DrawText("font18", resume, new Vector2(drawing.GUISize.X / 2, drawing.GUISize.Y / 2 - 150), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+
+            //options button
+            drawing.DrawRectangleUnscaled(optionsButton, optionsColor);
+            drawing.DrawText("font18", options, new Vector2(drawing.GUISize.X / 2, drawing.GUISize.Y / 2), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+
+            //quit button
+            drawing.DrawRectangleUnscaled(quitButton, quitColor);
+            drawing.DrawText("font18", quit, new Vector2(drawing.GUISize.X / 2, drawing.GUISize.Y / 2 + 150), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
         }
     }
 }

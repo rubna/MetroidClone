@@ -7,57 +7,82 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-// creates the main menu. A large part of the code is based on code made by Nico Vermeir.
 namespace MetroidClone.Metroid
 {
-    class MainMenu : GameObject
+    class MainMenu
     {
-        public bool StartGame = false;
-        public bool ExitGame = false;
-        public bool FullScreen = false;
-        Rectangle startButtonRect;
-        Rectangle exitButtonRect;
-        InputHelper inputHelper = InputHelper.Instance;
+        public bool ExitGame;
+        public bool Initialize;
 
-        public void Update(GameTime gameTime)
+        DrawWrapper drawing;
+
+        string start = "START", options = "OPTIONS", exit = "EXIT";
+        Rectangle startButton, optionsButton, exitButton, cursor;
+        Color startColor = Color.DarkSlateGray, optionsColor = Color.DarkSlateGray, exitColor = Color.DarkSlateGray;
+
+        public MainMenu(DrawWrapper Drawing)
         {
-            //wait for mouseclick
-            if (inputHelper.MouseButtonCheckPressed(true))
-            {
-                MouseClicked(inputHelper.MouseCheckPosition().X, inputHelper.MouseCheckPosition().Y);
-            }
-
-        }
-        public void Draw2()
-        {
-
-            Drawing.DrawRectangle(new Rectangle((int)(Drawing.ScreenSize.X / 2), (int)(Drawing.ScreenSize.Y / 2) - 50, 200, 100), Color.Black);
-            Drawing.DrawRectangle(new Rectangle((int)(Drawing.ScreenSize.X / 2), (int)(Drawing.ScreenSize.Y / 2) + 100, 200, 100), Color.Black);
-            //draw the Mainmenu
+            drawing = Drawing;
+            ExitGame = false;
+            Initialize = false;
         }
 
-        void MouseClicked(int x, int y)
+        public void Update(GameTime gameTime, InputHelper input)
         {
-            //creates a rectangle of 10x10 around the place where the mouse was clicked
-            Rectangle mouseClickRect = new Rectangle(x, y, 10, 10);
-            if (!FullScreen)
+            startButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 200, 200, 100);
+            optionsButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 50, 200, 100);
+            exitButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
+            cursor = new Rectangle(input.MouseCheckPosition().X, input.MouseCheckPosition().Y, 1, 1);
+            
+            if (!input.ControllerInUse)
             {
-                startButtonRect = new Rectangle((int)(Drawing.ScreenSize.X / 2), (int)(Drawing.ScreenSize.Y / 2) - 50, 200, 100);
-                exitButtonRect = new Rectangle((int)(Drawing.ScreenSize.X / 2), (int)(Drawing.ScreenSize.Y / 2) + 150, 200, 100);
+                if (cursor.Intersects(startButton))
+                {
+                    startColor.A = 200;
+                    if (input.MouseButtonCheckPressed(true))
+                    {
+                        Initialize = true;
+                    }
+                }
+                else
+                    startColor.A = 255;
+
+                if (cursor.Intersects(optionsButton))
+                {
+                    optionsColor.A = 200;
+                    if (input.MouseButtonCheckPressed(true))
+                    {
+
+                    }
+                }
+                else optionsColor.A = 255;
+
+                if (cursor.Intersects(exitButton))
+                {
+                    exitColor.A = 200;
+                    if (input.MouseButtonCheckPressed(true))
+                    {
+                        ExitGame = true;
+                    }
+                }
+                else
+                    exitColor.A = 255;
             }
-            else
-            {
-                startButtonRect = new Rectangle((int)(Drawing.ScreenSize.X) + 50, (int)(Drawing.ScreenSize.Y / 1.7f) + 25, 290, 125);
-                exitButtonRect = new Rectangle((int)(Drawing.ScreenSize.X) + 50, (int)(Drawing.ScreenSize.Y / 1.7f) + 240, 290, 125);
-            }
-            if (mouseClickRect.Intersects(startButtonRect)) //player clicked start button
-            {
-                StartGame = true;
-            }
-            else if (mouseClickRect.Intersects(exitButtonRect)) //player clicked exit button
-            {
-                ExitGame = true;
-            }
+        }
+
+        public void DrawGUI()
+        {
+            //start button
+            drawing.DrawRectangleUnscaled(startButton, startColor);
+            drawing.DrawText("font18", start, new Vector2(drawing.GUISize.X /2, drawing.GUISize.Y / 2 - 150), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+
+            //options button
+            drawing.DrawRectangleUnscaled(optionsButton, optionsColor);
+            drawing.DrawText("font18", options, new Vector2(drawing.GUISize.X / 2, drawing.GUISize.Y / 2), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+
+            //quit button
+            drawing.DrawRectangleUnscaled(exitButton, exitColor);
+            drawing.DrawText("font18", exit, new Vector2(drawing.GUISize.X / 2, drawing.GUISize.Y / 2 + 150), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
         }
     }
 }
