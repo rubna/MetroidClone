@@ -69,9 +69,9 @@ namespace MetroidClone.Metroid
         {
             World.Tutorial.MonsterKilled = true;
             // When a monster is destroyed, you have a chance that a healthpack, rocket ammo, scrap metal or nothing will drop
-            float ammoChance = (1 - ((float)World.Player.RocketAmmo / (float)World.Player.MaximumRocketAmmo)) * 40;
+            float ammoChance = (1 - ((float)World.Player.RocketAmmo / (float)World.Player.MaximumRocketAmmo)) * 100;
             float scrapChance = 40;
-            float healthChance = (1 - ((float)World.Player.HitPoints / (float)World.Player.MaxHitPoints)) * 40;
+            float healthChance = (1 - ((float)World.Player.HitPoints / (float)World.Player.MaxHitPoints)) * 100;
             float randomLoot = World.Random.Next(101);
             if (randomLoot <= healthChance)
                 World.AddObject(new HealthDrop(Damage * 2), Position);

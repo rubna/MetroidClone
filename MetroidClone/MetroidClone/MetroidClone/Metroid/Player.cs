@@ -25,6 +25,8 @@ namespace MetroidClone.Metroid
 
         bool startedSlowingDownJump; //This is used to make sure that the player will jump the maximum height if releasing the jump button slightly before reaching it.
 
+        public bool Dead = false;
+
         float moveXAxis = 0;
         bool up = false;
         bool upPressed = false;
@@ -500,7 +502,7 @@ namespace MetroidClone.Metroid
             blinkTimer = 1;
             Visible = false;
             Speed = new Vector2(xDirection * 3, -2);
-            if (HitPoints <= -100000) //TODO
+            if (HitPoints <= 0) //TODO
                 Die();
         }
 
@@ -508,8 +510,7 @@ namespace MetroidClone.Metroid
         {
             Audio.Play("Audio/GameSounds/Game_Over");
             Input.GamePadVibrate(1, 1, 1000);
-            World.PlayingState = World.GameState.GameOver;
-            Console.Write("You are dead");
+            Dead = true;
         }
 
         void NextWeapon()
