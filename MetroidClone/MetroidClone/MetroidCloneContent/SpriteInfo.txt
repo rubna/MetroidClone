@@ -29,11 +29,11 @@ RobotSpriteLAntennae2 0.5x0.9 1x1
 RobotSpriteRAntennae1 0.5x0.9 1x1
 RobotSpriteRAntennae2 0.5x0.9 1x1
 doorsprite* topleft 1x1
-/gun$ 0.175x0.5 1x1
+/gun 0.175x0.5 1x1
 platform topleft 1x1
 slope* topleft 1x1
-playerrocket 0.3x0.8 1x1
-wrench 0.2x0.5 1x1
+Items/playerrocket 0.3x0.8 1x1
+Items/wrench 0.2x0.5 1x1
 smoke center 1x1
 //enemy 1 (alien)
 Body 0.5x0.85 1x1
@@ -47,6 +47,7 @@ RArm1 0.85x0.5 1x1
 RArm2 0.9x0.45 1x1
 RLeg 0.5x0.2 1x1
 RFoot 0.4x0.15 1x1
-playergun middle 1x1
-playerrocket middle 1x1
+Pickups/playergun middle 1x1
+Pickups/wrench middle 1x1
+Pickups/playerrocket middle 1x1
 dronesmall center 1x1

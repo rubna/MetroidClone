@@ -6,6 +6,8 @@ namespace MetroidClone.Metroid.Player_Attacks
 {
     class PlayerExplosion : PhysicsObject, IPlayerAttack
     {
+        public float Damage => 1;
+
         float radius = 50;
         float destroyTimer = 0f;
 

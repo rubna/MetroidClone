@@ -120,12 +120,9 @@ namespace MetroidClone.Engine
 
         public override void Draw()
         {
-            if (!World.PointOutOfView(Position))
-            {
-                base.Draw();
-                if (CurrentSprite != null && Visible && GlobalVisible)
-                    Drawing.DrawSprite(CurrentSprite, DrawPosition, 0, CurrentSprite.Size * GlobalSpriteScale * new Vector2(GetFlip, 1), null, MathHelper.ToRadians(GlobalRotation) * GetFlip);// ImageScaling, Color.White, ImageRotation);
-            }
+            base.Draw();
+            if (CurrentSprite != null && Visible && GlobalVisible)
+                Drawing.DrawSprite(CurrentSprite, DrawPosition, 0, CurrentSprite.Size * GlobalSpriteScale * new Vector2(GetFlip, 1), null, MathHelper.ToRadians(GlobalRotation) * GetFlip);// ImageScaling, Color.White, ImageRotation);
         }
     }
 }

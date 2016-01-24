@@ -49,7 +49,7 @@ namespace MetroidClone.Metroid
         string wrench = "Walk over the wrench to pick it up.";
         public bool PickedUpWrench = false;
 
-        string kbwrench = "Press F or Middle Mouse Button to\nperform a melee attack.";
+        string kbwrench = "Use the Right Mouse Button to\nperform a melee attack.";
         string gpwrench = "Press B to perform a melee attack.";
         public bool WrenchUsed = false;
 
@@ -112,7 +112,7 @@ namespace MetroidClone.Metroid
                 {
                     if ((World.Player.Position - Door.Position).Length() <= tutorialRange && !World.PointOutOfView(Door.Position) && !Door.Activated)
                     {
-                        if (currentText != wrenchdoor)
+                        if (currentText != wrenchdoor && currentText != wrenchdoorNoWrench)
                             previousText = currentText;
                         currentText = World.Player.UnlockedWeapons.Contains(Weapon.Wrench) ? wrenchdoor : wrenchdoorNoWrench;
                         doorInRange = true;
@@ -121,10 +121,13 @@ namespace MetroidClone.Metroid
 
                 if (!doorInRange)
                 {
-                    if (previousText != null)
-                        currentText = previousText;
-                    else if (currentText == wrenchdoor || currentText == wrenchdoorNoWrench)
-                        currentText = null;
+                    if (currentText == wrenchdoor || currentText == wrenchdoorNoWrench)
+                    {
+                        if (previousText != null)
+                            currentText = previousText;
+                        else
+                            currentText = null;
+                    }
                 }
             }
             else if (currentText == wrenchdoor || currentText == wrenchdoorNoWrench)

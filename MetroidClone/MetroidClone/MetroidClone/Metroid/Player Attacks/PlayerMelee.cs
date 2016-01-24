@@ -6,6 +6,8 @@ namespace MetroidClone.Metroid.Player_Attacks
 {
     class PlayerMelee : PhysicsObject, IPlayerAttack
     {
+        public float Damage => 1;
+
         float removeCounter = 0f;
         public override void Create()
         {

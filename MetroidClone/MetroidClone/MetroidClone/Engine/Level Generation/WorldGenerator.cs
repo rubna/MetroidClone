@@ -26,9 +26,9 @@ namespace MetroidClone.Engine
 
             //Enemy types for each area
             List<List<Type>> enemyTypes = new List<List<Type>>();
-            enemyTypes.Add(new List<Type>() { typeof(ShootingMonster) });
-            enemyTypes.Add(new List<Type>() { typeof(ShootingMonster) });
-            enemyTypes.Add(new List<Type>() { typeof(ShootingMonster) });
+            enemyTypes.Add(new List<Type>() { typeof(MeleeMonster) });
+            enemyTypes.Add(new List<Type>() { typeof(ShootingMonster), typeof(MeleeMonster) });
+            enemyTypes.Add(new List<Type>() { typeof(ShootingMonster), typeof(MeleeMonster) });
 
             //Define and initialize variables
             bool[,] isRoom = new bool[WorldWidth, WorldHeight]; //Whether this is a room.
@@ -133,6 +133,8 @@ namespace MetroidClone.Engine
                     }
                 }
 
+            //Add the special bonus gun upgrade
+            guaranteedSpecialBlocks[0, 0].Add("GunUpgradePickup");
 
             //Place the exits
             for (int i = 0; i < WorldWidth; i++)

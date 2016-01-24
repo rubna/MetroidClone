@@ -7,6 +7,8 @@ namespace MetroidClone.Metroid.Player_Attacks
 {
     class PlayerRocket : PhysicsObject, IPlayerAttack
     {
+        public float Damage => 3;
+
         private Vector2 direction;
         int smokeTrailTime;
 

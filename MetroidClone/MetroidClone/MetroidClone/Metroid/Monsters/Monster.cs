@@ -9,11 +9,12 @@ namespace MetroidClone.Metroid
     abstract class Monster : PhysicsObject
     {
         //Basic properties
-        public int HitPoints = 1;
+        public float HitPoints = 1;
         public int Damage = 10;
         protected Vector2 SpeedOnHit = Vector2.Zero;
         const float jumpSpeed = 8f;
-        const float baseSpeed = 0.4f;
+
+        protected float BaseSpeed = 0.4f;
 
         //Basic AI variables
         protected MonsterState State;
@@ -40,16 +41,16 @@ namespace MetroidClone.Metroid
                 PhysicsObject attack = attackInterface as PhysicsObject;
                 if (TranslatedBoundingBox.Intersects(attack.TranslatedBoundingBox))
                 {
-                    Hurt(Math.Sign(Position.X - attack.Position.X), true);
+                    Hurt(Math.Sign(Position.X - attack.Position.X), true, attackInterface.Damage);
                     attack.Destroy();
                 }
             }
         }
 
-        void Hurt(int xDirection, bool hitByPlayer)
+        void Hurt(int xDirection, bool hitByPlayer, float damage = 1f)
         {
-            // if am attack from the player hits
-            HitPoints--;
+            // if an attack from the player hits
+            HitPoints -= damage;
             if (SpeedOnHit != Vector2.Zero)
                 Speed = new Vector2(xDirection * SpeedOnHit.X, SpeedOnHit.Y);
             if (HitPoints <= 0)
@@ -115,9 +116,9 @@ namespace MetroidClone.Metroid
                     if (jumpType == JumpType.AlwaysMove || (jumpType == JumpType.MoveInTheEnd && Speed.Y > -2))
                     {
                         if (jumpDirection == Direction.Left && Position.X > World.Camera.X + 10) //Move left as long as we're not on near the edge
-                            Speed.X -= baseSpeed;
+                            Speed.X -= BaseSpeed;
                         else if (jumpDirection == Direction.Right && Position.X < World.Camera.X + (World.TileWidth * WorldGenerator.LevelWidth) - 10) //Move right as long as we're not on near the edge
-                            Speed.X += baseSpeed;
+                            Speed.X += BaseSpeed;
                     }
 
                     //When we landed again.
@@ -129,7 +130,7 @@ namespace MetroidClone.Metroid
                     else
                     {
                         //Shoot if this is taking too long.
-                        if (CanReachPlayer() && (StateTimer >= 40 && StateTimer % 10 == 0))
+                        if (canShoot && CanReachPlayer() && (StateTimer >= 40 && StateTimer % 10 == 0))
                             Attack();
 
                         StateTimer++;
@@ -176,10 +177,10 @@ namespace MetroidClone.Metroid
 
                         //Left
                         if (preferDir == Direction.Left && Position.X > World.Camera.X + 10) //Move left as long as we're not near the edge
-                            Speed.X -= baseSpeed;
+                            Speed.X -= BaseSpeed;
                         //Right
                         else if (preferDir == Direction.Right && Position.X < World.Camera.X + (World.TileWidth * WorldGenerator.LevelWidth) - 10) //Move right as long as we're not near the edge
-                            Speed.X += baseSpeed;
+                            Speed.X += BaseSpeed;
 
                         //Jump
                         if ((World.Player.Position.Y < Position.Y - 20 || HadHCollision) && OnGround && World.Random.Next(10) == 1)
@@ -199,7 +200,7 @@ namespace MetroidClone.Metroid
                     {
                         StateTimer = 0;
                         //If we can reach the player, shoot.
-                        if (CanReachPlayer())
+                        if (canShoot && CanReachPlayer())
                             State = MonsterState.Attacking;
                         //else, try moving in the general direction of the player.
                         else

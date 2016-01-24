@@ -6,6 +6,12 @@ namespace MetroidClone.Metroid
 {
     class PlayerBullet : PhysicsObject, IPlayerAttack
     {
+        //The gun upgrade makes the player deal more damage.
+        public float Damage
+        {
+            get { return World.Player.HasGunUpgrade ? 1.5f : 1f; }
+        }
+
         public override void Create()
         {
             base.Create();

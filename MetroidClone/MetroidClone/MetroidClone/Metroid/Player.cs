@@ -56,6 +56,20 @@ namespace MetroidClone.Metroid
         const float jumpSpeed = 8f; //The base jumping speed. Was: 10f
         const float gravity = 0.2f; //The base gravity. Was: 0.3f
 
+        //Whether the player has the gun upgrade.
+        public bool HasGunUpgrade
+        {
+            get { return hasGunUpgrade; }
+            set
+            {
+                hasGunUpgrade = value;
+                if (hasGunUpgrade)
+                    gun.SetSprite("Items/gunUpgraded");
+                else
+                    gun.SetSprite("Items/gun");
+            }
+        }
+        public bool hasGunUpgrade = false;
         public override void Create()
         {
             base.Create();
@@ -281,34 +295,37 @@ namespace MetroidClone.Metroid
                         case (int)Weapon.Gun:
                             {
                                 World.Tutorial.GunShot = true;
-                                attackTimer = 0.1f;
+                                attackTimer = 0.11f;
                                 break;
                             }
                         case (int)Weapon.Rocket:
                             {
                                 World.Tutorial.RocketShot = true;
-                                attackTimer = 0.2f;
+                                attackTimer = 0.22f;
                                 break;
                             }
                     }
                 }
             }
 
-            //hold up wrench!
-            if ((Input.MouseButtonCheckDown(false) || Input.MouseWheelPressed() || Input.GamePadCheckPressed(Buttons.B)))
-                meleeAnimationTimer = 1;
-            else
-            if (meleeAnimationTimer > 0)
-                meleeAnimationTimer -= 0.05f;
+            if (UnlockedWeapons.Contains(Weapon.Wrench))
+            {
+                //hold up wrench!
+                if ((Input.MouseButtonCheckDown(false) || Input.MouseWheelPressed() || Input.GamePadCheckPressed(Buttons.B)))
+                    meleeAnimationTimer = 1;
+                else
+                if (meleeAnimationTimer > 0)
+                    meleeAnimationTimer -= 0.05f;
 
-            //melee attack
-            if ((Input.MouseButtonCheckReleased(false) || Input.MouseWheelPressed() || Input.GamePadCheckPressed(Buttons.B))
-                 && attackTimer == 0 && UnlockedWeapons.Contains(Weapon.Wrench))
+                //melee attack
+                if ((Input.MouseButtonCheckReleased(false) || Input.MouseWheelPressed() || Input.GamePadCheckPressed(Buttons.B))
+                     && attackTimer == 0)
                 {
                     World.Tutorial.WrenchUsed = true;
                     World.AddObject(new PlayerMelee(), Position + GetFlip * Vector2.UnitX * 20);
                     attackTimer = 0.1f;
                 }
+            }
 
             //testing: adds monster
             if (Input.KeyboardCheckPressed(Keys.F))
@@ -464,12 +481,12 @@ namespace MetroidClone.Metroid
                 }
                 case Weapon.Rocket:
                 {
-                        if (RocketAmmo > 0)
-                        {
-                            Audio.Play("Audio/Combat/Gunshots/Rocket/Rocket_Shoot");
-                            World.AddObject(new PlayerRocket(), Position);
-                            RocketAmmo --;
-                        }
+                    if (RocketAmmo > 0)
+                    {
+                        Audio.Play("Audio/Combat/Gunshots/Rocket/Rocket_Shoot");
+                        World.AddObject(new PlayerRocket(), Position);
+                        RocketAmmo --;
+                    }
                     break;
                 }
             }
@@ -483,7 +500,7 @@ namespace MetroidClone.Metroid
             blinkTimer = 1;
             Visible = false;
             Speed = new Vector2(xDirection * 3, -2);
-            if (HitPoints <= 0)
+            if (HitPoints <= -100000) //TODO
                 Die();
         }
 
@@ -498,9 +515,8 @@ namespace MetroidClone.Metroid
         void NextWeapon()
         {
             if (CurrentWeapon == Weapon.Gun && UnlockedWeapons.Contains(Weapon.Rocket))
-
                 CurrentWeapon = Weapon.Rocket;
-            if (CurrentWeapon == Weapon.Rocket && UnlockedWeapons.Contains(Weapon.Gun))
+            else if (CurrentWeapon == Weapon.Rocket && UnlockedWeapons.Contains(Weapon.Gun))
             {
                 CurrentWeapon = Weapon.Gun;
                 World.Tutorial.WeaponSwitched = true;

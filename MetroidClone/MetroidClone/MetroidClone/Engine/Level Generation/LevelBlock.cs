@@ -169,6 +169,8 @@ namespace MetroidClone.Engine
                         world.AddObject(new MeleeDoor(), baseX + World.TileWidth / 2, baseY);
                     else if (data == 'G') //A gun pickup block
                         world.AddObject(new GunPickup(), centerX, centerY);
+                    else if (data == 'U') //A gun upgrade pickup block
+                        world.AddObject(new GunUpgrade(), centerX, centerY);
                     else if (data == 'W') //A wrench pickup block
                         world.AddObject(new WrenchPickup(), centerX, centerY);
                     else if (data == 'R') //A rocket pickup block

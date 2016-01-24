@@ -2,6 +2,6 @@
 {
     interface IPlayerAttack
     {
-
+        float Damage { get; }
     }
 }
