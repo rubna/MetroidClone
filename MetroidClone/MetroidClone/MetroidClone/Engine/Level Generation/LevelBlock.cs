@@ -2,8 +2,6 @@
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace MetroidClone.Engine
 {
@@ -83,10 +81,17 @@ namespace MetroidClone.Engine
         // if the level has the wall type (for example, preferLeftWall can be ignored if HasLeftWall is false).
         //If a wall isn't preferred at a position, an exit is used instead if Has*Exit is true.
         public void Place(World world, Dictionary<char, ISpecialTileDefinition> specialTiles, int x, int y, bool preferLeftWall = true,
-            bool preferRightWall = true, bool preferTopWall = true, bool preferBottomWall = true, bool isBottomOfRoom = false)
+            bool preferRightWall = true, bool preferTopWall = true, bool preferBottomWall = true, bool isBottomOfRoom = false, int numberOfEnemies = 0,
+            List<Type> possibleEnemyTypes = null)
         {
+            possibleEnemyTypes = possibleEnemyTypes ?? new List<Type>();
+
             int BlockID = random.Next(int.MaxValue);
 
+            bool[,] isActuallyEmpty = new bool[Width, Height];
+            FairRandomCollection<Vector2> possibleEnemyPositions = new FairRandomCollection<Vector2>();
+
+            //Place the tiles in the level
             for (int i = 0; i < Width; i++)
             {
                 for (int j = 0; j < Height; j++)
@@ -140,25 +145,43 @@ namespace MetroidClone.Engine
                         }
                     }
 
-                    int baseX = x + (int)World.TileWidth * i, baseY = y + (int)World.TileHeight * j;
+                    int baseX = x + World.TileWidth * i, baseY = y + World.TileHeight * j;
                     float centerX = baseX + World.TileWidth / 2, centerY = baseY + World.TileHeight / 2;
-                    Rectangle stdCollisionRect = new Rectangle(baseX, baseY, (int)World.TileWidth, (int)World.TileHeight);
+                    Rectangle stdCollisionRect = new Rectangle(baseX, baseY, World.TileWidth, World.TileHeight);
 
                     //If it's nothing or something the player can move through, and the bottom of the room, then add a jumpthrough.
                     if (data == '.' | data == '/' | data == '\\' && j == Height - 1 && isBottomOfRoom)
-                        world.AddObject(new JumpThrough(new Rectangle(baseX, baseY, (int)World.TileWidth, 1)));
+                        world.AddObject(new JumpThrough(new Rectangle(baseX, baseY, World.TileWidth, 1)));
 
                     if (data == '1') //A wall
+                    {
                         world.AddObject(new Wall(stdCollisionRect));
+
+                        if (j != 0 && isActuallyEmpty[i, j - 1])
+                        {
+                            //We can place an enemy here!
+                            possibleEnemyPositions.Add(new Vector2(centerX, centerY - World.TileHeight + 10));
+                        }
+                    }
+                    else if (data == 'D') //A gun door
+                        world.AddObject(new GunDoor(), baseX + World.TileWidth / 2, baseY);
+                    else if (data == 'M') //A melee door
+                        world.AddObject(new MeleeDoor(), baseX + World.TileWidth / 2, baseY);
+                    else if (data == 'G') //A gun pickup block
+                        world.AddObject(new GunPickup(), centerX, centerY);
+                    else if (data == 'U') //A gun upgrade pickup block
+                        world.AddObject(new GunUpgrade(), centerX, centerY);
+                    else if (data == 'W') //A wrench pickup block
+                        world.AddObject(new WrenchPickup(), centerX, centerY);
+                    else if (data == 'R') //A rocket pickup block
+                        world.AddObject(new RocketPickup(), centerX, centerY);
                     else if (data == 'P') //The player
                     {
                         world.Player = new Player();
                         world.AddObject(world.Player, centerX, centerY);
                     }
                     else if (data == 'J') //A jumpthrough block
-                        world.AddObject(new JumpThrough(new Rectangle(baseX, baseY, (int)World.TileWidth, 1)));
-                    else if (data == 'G') //A gun pickup block
-                        world.AddObject(new GunPickup(), centerX, centerY);
+                        world.AddObject(new JumpThrough(new Rectangle(baseX, baseY, World.TileWidth, 1)));
                     else if (data == '\\') //A slope
                         world.AddObject(new SlopeLeft(stdCollisionRect));
                     else if (data == '/') //A slope
@@ -166,9 +189,17 @@ namespace MetroidClone.Engine
                     else if (data == '.')
                     {
                         //Nothing
+                        isActuallyEmpty[i, j] = true;
                     }
                 }
             }
+
+            //Place some enemies.
+            for (int i = 0; i < numberOfEnemies; i++)
+                if (possibleEnemyPositions.Count != 0)
+                {
+                    world.AddObject(Activator.CreateInstance(possibleEnemyTypes.GetRandomItem()) as GameObject, possibleEnemyPositions.Get());
+                }
         }
 
         //Check if the level block meets the given requirements.

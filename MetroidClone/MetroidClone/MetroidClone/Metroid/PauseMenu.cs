@@ -1,29 +1,33 @@
-﻿using MetroidClone.Engine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
+using MetroidClone.Engine;
 
-// creates the pause menu. A large part of the code is based on code made by Nico Vermeir.
 namespace MetroidClone.Metroid
 {
     class PauseMenu
     {
+        enum Buttons
+        {
+            Resume,
+            Options,
+            Quit,
+            None
+        }
+
+        Buttons selectedButton;
+
         DrawWrapper drawing;
         public bool Resume, Options, Quit;
         string resume = "RESUME", options = "OPTIONS", quit = "QUIT";
         Rectangle resumeButton, optionsButton, quitButton, cursor;
         Color resumeColor = Color.DarkSlateGray, optionsColor = Color.DarkSlateGray, quitColor = Color.DarkSlateGray;
-        
+
         public PauseMenu(DrawWrapper Drawing)
         {
             drawing = Drawing;
             Resume = false;
             Options = false;
             Quit = false;
+            selectedButton = Buttons.None;
         }
 
         public void Update(GameTime gameTime, InputHelper Input)
@@ -31,42 +35,56 @@ namespace MetroidClone.Metroid
             resumeButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 200, 200, 100);
             optionsButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 50, 200, 100);
             quitButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
-            cursor = new Rectangle(Input.MouseCheckPosition().X, Input.MouseCheckPosition().Y, 1, 1);
+            cursor = Input.ControllerInUse ? new Rectangle(0, 0, 0, 0) : new Rectangle(Input.MouseCheckPosition().X, Input.MouseCheckPosition().Y, 1, 1);
 
-            if (!Input.ControllerInUse)
+            if (cursor.Intersects(resumeButton) || selectedButton == Buttons.Resume)
             {
-                if (cursor.Intersects(resumeButton))
+                resumeColor.A = 200;
+                if (Input.MouseButtonCheckPressed(true) || Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.A))
                 {
-                    resumeColor.A = 200;
-                    if (Input.MouseButtonCheckPressed(true))
-                    {
-                        Resume = true;
-                    }
+                    Resume = true;
                 }
-                else
-                    resumeColor.A = 255;
+            }
+            else resumeColor.A = 255;
 
-                if (cursor.Intersects(optionsButton))
+            if (cursor.Intersects(optionsButton) || selectedButton == Buttons.Options)
+            {
+                optionsColor.A = 200;
+                if (Input.MouseButtonCheckPressed(true) || Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.A))
                 {
-                    optionsColor.A = 200;
-                    if (Input.MouseButtonCheckPressed(true))
-                    {
-                        Options = true;
-                    }
+                    Options = true;
                 }
-                else
-                    optionsColor.A = 255;
+            }
+            else optionsColor.A = 255;
 
-                if (cursor.Intersects(quitButton))
+            if (cursor.Intersects(quitButton) || selectedButton == Buttons.Quit)
+            {
+                quitColor.A = 200;
+                if (Input.MouseButtonCheckPressed(true) || Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.A))
                 {
-                    quitColor.A = 200;
-                    if (Input.MouseButtonCheckPressed(true))
-                    {
-                        Quit = true;
-                    }
+                    Quit = true;
                 }
+            }
+            else quitColor.A = 255;
+
+            if (Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickDown))
+            {
+                if (selectedButton == Buttons.None)
+                    selectedButton = Buttons.Resume;
                 else
-                    quitColor.A = 255;
+                    selectedButton++;
+                if (selectedButton == Buttons.None)
+                    selectedButton = Buttons.Resume;
+            }
+
+            if (Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickUp))
+            {
+                if (selectedButton == Buttons.None)
+                    selectedButton = Buttons.Quit;
+                else if (selectedButton == Buttons.Resume)
+                    selectedButton = Buttons.Quit;
+                else
+                    selectedButton--;
             }
         }
 
@@ -86,3 +104,5 @@ namespace MetroidClone.Metroid
         }
     }
 }
+
+

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MetroidClone.Engine;
+﻿using MetroidClone.Engine;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -57,6 +53,8 @@ namespace MetroidClone.Metroid
                 Point cell = getCell(gameObject.CenterPosition);
                 if (gameObject.Visible && hasVisitedCell[cell.X, cell.Y])
                 {
+                    int hsizemod = 1, vsizemod = 1;
+
                     Color drawColor;
                     Point position = gameObject.Position.ToPoint();
                     if (gameObject is Wall)
@@ -71,14 +69,23 @@ namespace MetroidClone.Metroid
                     }
                     else if (gameObject is GunPickup || gameObject is RocketPickup || gameObject is WrenchPickup)
                     {
-                        drawColor = Color.LawnGreen;
+                        drawColor = Color.DarkGreen;
                         position = gameObject.Position.ToPoint();
+                    }
+                    else if (gameObject is Door)
+                    {
+                        if ((gameObject as Door).Activated)
+                            drawColor = Color.Gray;
+                        else
+                            drawColor = Color.LawnGreen;
+                        position = gameObject.Position.ToPoint();
+                        vsizemod = 2;
                     }
                     else
                         continue;
 
-                    Drawing.DrawRectangleUnscaled(new Rectangle((int) (position.X /  World.TileWidth) * mapSquareSize + (int) positionModifier.X,
-                        (int) (position.Y / World.TileHeight) * mapSquareSize + (int) positionModifier.Y, mapSquareSize, mapSquareSize), drawColor);
+                    Drawing.DrawRectangleUnscaled(new Rectangle(position.X / World.TileWidth * mapSquareSize + (int) positionModifier.X,
+                         position.Y / World.TileHeight * mapSquareSize + (int) positionModifier.Y, mapSquareSize * hsizemod, mapSquareSize * vsizemod), drawColor);
                 }
             }
         }

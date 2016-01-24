@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using MetroidClone.Metroid;
+using MetroidClone.Metroid.Monsters;
 
 namespace MetroidClone.Engine
 {
@@ -24,6 +24,12 @@ namespace MetroidClone.Engine
             string[] areaBorderNameRight = { "SecondRightBorder", "ThirdRightBorder" }; //The names of area borders.
             string[] areaBorderNameLeft = { "SecondLeftBorder", "ThirdLeftBorder" };
 
+            //Enemy types for each area
+            List<List<Type>> enemyTypes = new List<List<Type>>();
+            enemyTypes.Add(new List<Type>() { typeof(MeleeMonster) });
+            enemyTypes.Add(new List<Type>() { typeof(ShootingMonster), typeof(MeleeMonster) });
+            enemyTypes.Add(new List<Type>() { typeof(ShootingMonster), typeof(MeleeMonster) });
+
             //Define and initialize variables
             bool[,] isRoom = new bool[WorldWidth, WorldHeight]; //Whether this is a room.
             int[,] area = new int[WorldWidth, WorldHeight]; //The area (for example, 0 for the starting area)
@@ -32,6 +38,7 @@ namespace MetroidClone.Engine
             bool[,] CanHaveBottomExit = new bool[WorldWidth, WorldHeight]; //Whether this room can potentially have a right exit.
             List<RoomExit>[,] roomExits = new List<RoomExit>[WorldWidth, WorldHeight];
             List<string>[,] guaranteedSpecialBlocks = new List<string>[WorldWidth, WorldHeight]; //Guaranteed blocks.
+            int[,] enemies = new int[WorldWidth, WorldHeight];
             for (int i = 0; i < WorldWidth; i++)
                 for (int j = 0; j < WorldHeight; j++)
                 {
@@ -42,15 +49,17 @@ namespace MetroidClone.Engine
                     theme[i, j] = "";
                     CanHaveRightExit[i, j] = true;
                     CanHaveBottomExit[i, j] = true;
+                    enemies[i, j] = 0;
                 }
 
             int startingY = WorldHeight / 2 + World.Random.Next(-2, 3);
 
             isRoom[0, startingY] = true; //Starting room
             guaranteedSpecialBlocks[0, startingY].Add("PlayerStart");
-            guaranteedSpecialBlocks[1, startingY].Add("GunPickup");
-
+           
             isRoom[1, startingY] = true; //Room right of starting room.
+            guaranteedSpecialBlocks[1, startingY].Add("GunPickup");
+            guaranteedSpecialBlocks[1, startingY].Add(areaBorderNameRight[0]);
 
             //Other rooms (main areas).
             int areaTwoBorderStart = 3, areaThreeBorderStart = 6;
@@ -71,7 +80,29 @@ namespace MetroidClone.Engine
                         area[i, j] = 1;
                     else
                         area[i, j] = 0;
+
+                    //These areas have a normal amount of enemies, with more enemies in later areas.
+                    if (area[i, j] == 0)
+                        enemies[i, j] = World.Random.Next(2, 3);
+                    else
+                        enemies[i, j] = World.Random.Next(3, 6) + area[i, j];
                 }
+
+            //There should only be one enemy in the third room.
+            enemies[2, startingY] = 1;
+
+            //Add a wrench pickup and a rocket pickup. The rocket pickup should have some distance from the starting area.
+            int wrenchPos, rocketPos;
+            do
+            {
+                wrenchPos = World.Random.Next(1, WorldHeight - 1);
+            }
+            while (Math.Abs(wrenchPos - startingY) < 2);
+
+            rocketPos = World.Random.Next(1, WorldHeight - 1);
+
+            guaranteedSpecialBlocks[areaTwoBorderStart + 1, wrenchPos].Add("WrenchPickup");
+            guaranteedSpecialBlocks[areaThreeBorderStart + 1, rocketPos].Add("RocketPickup");
 
             //Other rooms (secondary areas)
             for (int i = 0; i < 2; i++)
@@ -96,9 +127,14 @@ namespace MetroidClone.Engine
                             CanHaveBottomExit[i, j] = true;
                         else
                             CanHaveBottomExit[i, j] = false;
+
+                        //These areas often have lots of enemies
+                        enemies[i, j] = World.Random.Next(6, 10);
                     }
                 }
 
+            //Add the special bonus gun upgrade
+            guaranteedSpecialBlocks[0, 0].Add("GunUpgradePickup");
 
             //Place the exits
             for (int i = 0; i < WorldWidth; i++)
@@ -130,7 +166,7 @@ namespace MetroidClone.Engine
                 {
                     if (isRoom[i, j])
                         levelGenerator.Generate(world, new Vector2(LevelWidth * World.TileWidth * i, LevelHeight * World.TileHeight * j), roomExits[i, j],
-                            guaranteedSpecialBlocks[i, j], theme[i, j]);
+                            guaranteedSpecialBlocks[i, j], theme[i, j], enemies[i, j], enemyTypes[area[i, j]]);
                 }
 
             //Add the "hack this game" object
@@ -138,6 +174,9 @@ namespace MetroidClone.Engine
 
             //Add the map object
             world.AddObject(new Map());
+
+            //Add the GUI object
+            world.AddObject(new GUI());
 
             //Autotile the world.
             Autotile(world);
@@ -147,8 +186,9 @@ namespace MetroidClone.Engine
         void Autotile(World world)
         {
             //Create an array for objects that are walls and initialize it.
-            bool[,] isWall = new bool[LevelWidth * WorldWidth, LevelHeight * WorldHeight];
-            isWall.Initialize();
+            bool[,] isWall = new bool[LevelWidth * WorldWidth, LevelHeight * WorldHeight],
+                isLeftSlope = new bool[LevelWidth * WorldWidth, LevelHeight * WorldHeight],
+                isRightSlope = new bool[LevelWidth * WorldWidth, LevelHeight * WorldHeight];
 
             //Do the same for an array that defines background tile positions.
             bool[,] doNotCreateBackground = new bool[LevelWidth * WorldWidth, LevelHeight * WorldHeight];
@@ -158,7 +198,21 @@ namespace MetroidClone.Engine
             IEnumerable<Wall> walls = world.GameObjects.Where(w => w is Wall).Select(w => w as Wall);
             foreach (Wall wall in walls)
             {
-                isWall[wall.BoundingBox.X / (int) World.TileWidth, wall.BoundingBox.Y / (int) World.TileHeight] = true;
+                isWall[wall.BoundingBox.X / World.TileWidth, wall.BoundingBox.Y / World.TileHeight] = true;
+            }
+
+            //Left slopes
+            IEnumerable<SlopeLeft> lSlopes = world.GameObjects.Where(s => s is SlopeLeft).Select(s => s as SlopeLeft);
+            foreach (SlopeLeft slope in lSlopes)
+            {
+                isLeftSlope[slope.BoundingBox.X / World.TileWidth, slope.BoundingBox.Y / World.TileHeight] = true;
+            }
+
+            //Right slopes
+            IEnumerable<SlopeRight> rSlopes = world.GameObjects.Where(s => s is SlopeRight).Select(s => s as SlopeRight);
+            foreach (SlopeRight slope in rSlopes)
+            {
+                isRightSlope[slope.BoundingBox.X / World.TileWidth, slope.BoundingBox.Y / World.TileHeight] = true;
             }
 
             foreach (Wall wall in walls)
@@ -166,8 +220,8 @@ namespace MetroidClone.Engine
                 string tileName = "Tileset/foreground";
                 wall.BasicConnectionSprite = "Tileset/connection";
 
-                Point positionIndex = new Point(wall.BoundingBox.Left / (int) World.TileWidth,
-                    wall.BoundingBox.Top / (int) World.TileHeight);
+                Point positionIndex = new Point(wall.BoundingBox.Left / World.TileWidth,
+                    wall.BoundingBox.Top / World.TileHeight);
 
                 bool isTop = positionIndex.Y <= 0,
                     isRight = positionIndex.X >= LevelWidth * WorldWidth - 1,
@@ -191,19 +245,22 @@ namespace MetroidClone.Engine
                     tileName += "L";
                 }
 
-                if (!isTop && !isLeft && tileName.Contains("U") && tileName.Contains("L") && ! isWall[positionIndex.X - 1, positionIndex.Y - 1])
+                if (!isTop && !isLeft && tileName.Contains("U") && tileName.Contains("L") && !isWall[positionIndex.X - 1, positionIndex.Y - 1])
                 {
                     wall.ShouldShowTopLeftConnection = true;
                 }
-                if (!isTop && !isRight && tileName.Contains("U") && tileName.Contains("R") && !isWall[positionIndex.X + 1, positionIndex.Y - 1])
+
+                if (!isTop && !isRight && tileName.Contains("U") && tileName.Contains("R") && ! isWall[positionIndex.X + 1, positionIndex.Y - 1])
                 {
                     wall.ShouldShowTopRightConnection = true;
                 }
-                if (!isBottom && !isLeft && tileName.Contains("D") && tileName.Contains("L") && !isWall[positionIndex.X - 1, positionIndex.Y + 1])
+
+                if (!isBottom && !isLeft && tileName.Contains("D") && tileName.Contains("L") && ! isWall[positionIndex.X - 1, positionIndex.Y + 1])
                 {
                     wall.ShouldShowBottomLeftConnection = true;
                 }
-                if (!isBottom && !isRight && tileName.Contains("D") && tileName.Contains("R") && !isWall[positionIndex.X + 1, positionIndex.Y + 1])
+
+                if (!isBottom && !isRight && tileName.Contains("D") && tileName.Contains("R") && ! isWall[positionIndex.X + 1, positionIndex.Y + 1])
                 {
                     wall.ShouldShowBottomRightConnection = true;
                 }

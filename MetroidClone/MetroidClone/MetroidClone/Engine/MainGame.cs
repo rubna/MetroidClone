@@ -25,14 +25,18 @@ namespace MetroidClone.Engine
         {
             MainMenu,
             Playing,
-            Paused
+            Paused,
+            Options,
+            GameOver
         }
-        GameState currentState;
+        GameState currentState, previousState;
         MainMenu mainMenu;
         PauseMenu pauseMenu;
+        OptionsMenu optionsMenu;
+        GameOverMenu gameOverMenu;
 
         private World world;
-        
+
         static void Main()
         {
             MainGame game = new MainGame();
@@ -91,6 +95,7 @@ namespace MetroidClone.Engine
             drawWrapper.SmartScale(Graphics.PreferredBackBufferWidth, Graphics.PreferredBackBufferHeight);
 
             Graphics.ApplyChanges();
+
         }
 
         protected override void LoadContent()
@@ -104,37 +109,37 @@ namespace MetroidClone.Engine
         {
             Content.Unload();
         }
-
         protected override void Update(GameTime gameTime)
         {
             var inputHelper = InputHelper.Instance;
 
             Profiler.LogEventEnd("FinalizeStep");
-
             if (inputHelper.KeyboardCheckReleased(Keys.F12))
                 Profiler.ShowOutput();
-            if (inputHelper.KeyboardCheckReleased(Keys.F4))
-            {
-                SwitchFullscreen();
-            }
-            if (inputHelper.KeyboardCheckPressed(Keys.Escape))
-            {
-                currentState = GameState.Paused;
-                pauseMenu = new PauseMenu(drawWrapper);
-            }
 
             Profiler.LogGameStepStart();
 
             Profiler.LogEventStart("Update");
             inputHelper.Update();
-            
+
+            if (inputHelper.KeyboardCheckPressed(Keys.F4))
+                SwitchFullscreen();
+
+            //updating menus or world
             switch (currentState)
             {
                 case GameState.MainMenu:
                     mainMenu.Update(gameTime, inputHelper);
-                    if (mainMenu.ExitGame)
+                if (mainMenu.ExitGame)
                         Exit();
-                    if (mainMenu.Initialize)
+                    else if (mainMenu.Options)
+                    {
+                        previousState = currentState;
+                        currentState = GameState.Options;
+                        optionsMenu = new OptionsMenu(drawWrapper);
+                        mainMenu = null;
+                    }
+                    else if (mainMenu.Start)
                     {
                         world.Initialize();
                         currentState = GameState.Playing;
@@ -143,6 +148,13 @@ namespace MetroidClone.Engine
                     break;
                 case GameState.Playing:
                     world.Update(gameTime);
+                    if (inputHelper.KeyboardCheckPressed(Keys.Escape))
+                    {
+                        currentState = GameState.Paused;
+                        pauseMenu = new PauseMenu(drawWrapper);
+                    }
+                    if (world.Player.Dead)
+                        currentState = GameState.GameOver;
                     break;
                 case GameState.Paused:
                     pauseMenu.Update(gameTime, inputHelper);
@@ -150,13 +162,72 @@ namespace MetroidClone.Engine
                     {
                         currentState = GameState.Playing;
                     }
-                    if (pauseMenu.Quit)
+                    else if (pauseMenu.Options)
+                    {
+                        previousState = currentState;
+                        currentState = GameState.Options;
+                        optionsMenu = new OptionsMenu(drawWrapper);
+                        pauseMenu = null;
+                    }
+                    else if (pauseMenu.Quit)
                     {
                         currentState = GameState.MainMenu;
                         world = new World();
                         LoadContent();
                         mainMenu = new MainMenu(drawWrapper);
                         pauseMenu = null;
+                    }
+                    break;
+                case GameState.Options:
+                    optionsMenu.Update(gameTime, inputHelper);
+                    if (optionsMenu.Sound)
+                    {
+                        optionsMenu.Sound = false;
+                        audioWrapper.AudioIsEnabled = !audioWrapper.AudioIsEnabled;
+                    }
+                    else if (optionsMenu.Music)
+                    {
+                        optionsMenu.Music = false;
+                        audioWrapper.MusicIsEnabled = !audioWrapper.MusicIsEnabled;
+                    }
+                    else if (optionsMenu.Controller)
+                    {
+                        optionsMenu.Controller = false;
+                        inputHelper.ControllerInUse = !inputHelper.ControllerInUse;
+                    }
+                    else if (optionsMenu.Fullscreen)
+                    {
+                        SwitchFullscreen();
+                        optionsMenu.Fullscreen = false;
+                    }
+                    else if (optionsMenu.Quit)
+                    {
+                        if (previousState == GameState.Paused)
+                            currentState = GameState.Playing;
+                        else
+                        {
+                            currentState = GameState.MainMenu;
+                            mainMenu = new MainMenu(drawWrapper);
+                        }
+                        optionsMenu = null;
+                    }
+                    break;
+                case GameState.GameOver:
+                    gameOverMenu.Update(gameTime, inputHelper);
+                    if (gameOverMenu.Restart)
+                    {
+                        world = new World();
+                        LoadContent();
+                        world.Initialize();
+                        currentState = GameState.Playing;
+                        gameOverMenu = null;
+                    }
+                    else if (gameOverMenu.Quit)
+                    {
+                        world = new World();
+                        LoadContent();
+                        currentState = GameState.MainMenu;
+                        gameOverMenu = null;
                     }
                     break;
             }
@@ -178,11 +249,16 @@ namespace MetroidClone.Engine
                     mainMenu.DrawGUI(); //Draw the Main Menu
                     break;
                 case GameState.Playing:
-                    
                     world.DrawGUI(); //Draw the GUI
                     break;
                 case GameState.Paused:
                     pauseMenu.DrawGUI();
+                    break;
+                case GameState.Options:
+                    optionsMenu.DrawGUI();
+                    break;
+                case GameState.GameOver:
+                    gameOverMenu.DrawGUI();
                     break;
             }
             drawWrapper.EndOfDraw(); //Stop drawing

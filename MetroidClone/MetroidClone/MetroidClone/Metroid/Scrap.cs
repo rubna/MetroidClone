@@ -1,21 +1,17 @@
 ﻿using MetroidClone.Engine;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace MetroidClone.Metroid
 {
     class Scrap : Collectible
     {
-        int scrapAmount;
+        public int ScrapAmount;
 
         public override void Create()
         {
             base.Create();
             BoundingBox = new Rectangle(-10, -10, 20, 20);
-            scrapAmount = World.Random.Next(5, 11);
+            ScrapAmount = World.Random.Next(5, 11);
         }
 
         public override void Update(GameTime gameTime)
@@ -23,7 +19,7 @@ namespace MetroidClone.Metroid
             if (CollidesWith(Position, World.Player))
             {
                 World.Tutorial.ScrapCollected = true;
-                World.Player.CollectedScrap += scrapAmount;
+                World.Player.CollectedScrap += ScrapAmount;
                 Destroy();
             }
             base.Update(gameTime);

@@ -1,21 +1,22 @@
 ﻿using MetroidClone.Engine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace MetroidClone.Metroid
 {
     class MainMenu
     {
-        public bool ExitGame;
-        public bool Initialize;
+        enum Buttons
+        {
+            Start,
+            Options,
+            ExitGame,
+            None
+        }
+
+        Buttons selectedButton;
 
         DrawWrapper drawing;
-
+        public bool Start, Options, ExitGame;
         string start = "START", options = "OPTIONS", exit = "EXIT";
         Rectangle startButton, optionsButton, exitButton, cursor;
         Color startColor = Color.DarkSlateGray, optionsColor = Color.DarkSlateGray, exitColor = Color.DarkSlateGray;
@@ -24,49 +25,66 @@ namespace MetroidClone.Metroid
         {
             drawing = Drawing;
             ExitGame = false;
-            Initialize = false;
+            Start = false;
+            Options = false;
         }
 
-        public void Update(GameTime gameTime, InputHelper input)
+        public void Update(GameTime gameTime, InputHelper Input)
         {
             startButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 200, 200, 100);
             optionsButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 50, 200, 100);
             exitButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
-            cursor = new Rectangle(input.MouseCheckPosition().X, input.MouseCheckPosition().Y, 1, 1);
-            
-            if (!input.ControllerInUse)
+
+            cursor = Input.ControllerInUse ? new Rectangle(0, 0, 0, 0) : new Rectangle(Input.MouseCheckPosition().X, Input.MouseCheckPosition().Y, 1, 1);
+
+            if (cursor.Intersects(startButton) || selectedButton == Buttons.Start)
             {
-                if (cursor.Intersects(startButton))
+                startColor.A = 200;
+                if (Input.MouseButtonCheckPressed(true) || Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.A))
                 {
-                    startColor.A = 200;
-                    if (input.MouseButtonCheckPressed(true))
-                    {
-                        Initialize = true;
-                    }
+                    Start = true;
                 }
+            }
+            else startColor.A = 255;
+
+            if (cursor.Intersects(optionsButton) || selectedButton == Buttons.Options)
+            {
+                optionsColor.A = 200;
+                if (Input.MouseButtonCheckPressed(true) || Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.A))
+                {
+                    Options = true;
+                }
+            }
+            else optionsColor.A = 255;
+
+            if (cursor.Intersects(exitButton) || selectedButton == Buttons.ExitGame)
+            {
+                exitColor.A = 200;
+                if (Input.MouseButtonCheckPressed(true) || Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.A))
+                {
+                    ExitGame = true;
+                }
+            }
+            else exitColor.A = 255;
+
+            if (Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickDown))
+            {
+                if (selectedButton == Buttons.None)
+                    selectedButton = Buttons.Start;
                 else
-                    startColor.A = 255;
+                    selectedButton++;
+                if (selectedButton == Buttons.None)
+                    selectedButton = Buttons.Start;
+            }
 
-                if (cursor.Intersects(optionsButton))
-                {
-                    optionsColor.A = 200;
-                    if (input.MouseButtonCheckPressed(true))
-                    {
-
-                    }
-                }
-                else optionsColor.A = 255;
-
-                if (cursor.Intersects(exitButton))
-                {
-                    exitColor.A = 200;
-                    if (input.MouseButtonCheckPressed(true))
-                    {
-                        ExitGame = true;
-                    }
-                }
+            if (Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickUp))
+            {
+                if (selectedButton == Buttons.None)
+                    selectedButton = Buttons.ExitGame;
+                else if (selectedButton == Buttons.Start)
+                    selectedButton = Buttons.ExitGame;
                 else
-                    exitColor.A = 255;
+                    selectedButton--;
             }
         }
 

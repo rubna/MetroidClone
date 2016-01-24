@@ -10,28 +10,23 @@ namespace MetroidClone.Metroid.Monsters
 {
     partial class ShootingMonster : Monster
     {
-        //distance between player and monster
-        float distance = 0;
-
-        //time of shooting burst
-        float shootTime = 0;
-        
-        //bullet damage
+        //Damage of the monster itself (not used for bullets)
         public int AttackDamage = 5;
         float AnimationRotation = 0;
         float shotAnimationTimer = 0;
 
         AnimationBone body, hipLeft, kneeLeft, hipRight, kneeRight, head,
-                    shoulderLeft, shoulderRight, elbowLeft, elbowRight, gun;
+            shoulderLeft, shoulderRight, elbowLeft, elbowRight, gun;
+
+        Vector2 startingPos;
 
         public override void Create()
         {
             base.Create();
             BoundingBox = new Rectangle(-13, -27, 26, 40);
             SpeedOnHit = new Vector2(3, -2);
-            HitPoints = 10;
+            HitPoints = 5;
             Damage = 5;
-            ScoreOnKill = 20;
 
             SpriteScale = 0.2f;
 
@@ -73,24 +68,58 @@ namespace MetroidClone.Metroid.Monsters
             World.AddObject(gun);
             gun.SetSprite("Enemy1/Enemygun");
 
+
+            State = MonsterState.ChangeState;
+            StateTimer = 60;
+
+            Gravity = 0.2f;
+
+            startingPos = Position;
         }
 
         public override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
-            AnimationRotation += 4;
-
-            if (Input.KeyboardCheckPressed(Keys.LeftAlt))
+            //Only update if we're inside the view
+            if (!World.PointOutOfView(Position))
             {
-                Speed.Y = -5;
+                base.Update(gameTime);
+
+                //has shot
+                if (shotAnimationTimer > 0)
+                    shotAnimationTimer -= 0.05f;
+
+                DoBasicAI();
+
+                //play proper animations
+                PlayAnimations();
+                Visible = true;
             }
+            else
+            //not in room
+            {
+                Visible = false;
+                StateTimer = 0;
+                if (World.PointOutOfView(Position, -50)) //If the position is very near the view edge, reset it.
+                    Position = startingPos;
+            }
+        }
+
+        protected override void Attack()
+        {
+            shotAnimationTimer = 1;
+            FlipX = (Position.X - World.Player.Position.X) > 0;
+            World.AddObject(new MonsterBullet(AttackDamage), Position);
+        }
+
+        void PlayAnimations()
+        {
+            AnimationRotation += 4;
 
             if (!OnGround)
             {
                 PlayAnimationLegsInAir();
             }
-            else
-            if (Input.KeyboardCheckDown(Keys.Space))
+            else if (Math.Abs(Speed.X) > 0.1f)
             {
                 PlayAnimationLegsWalking();
                 if (shotAnimationTimer > 0)
@@ -107,43 +136,22 @@ namespace MetroidClone.Metroid.Monsters
                 else
                     PlayAnimationArmsIdle();
             }
-
-            //has shot
-            if (shotAnimationTimer > 0)
-                shotAnimationTimer -= 0.05f;
-            
-            //calculates the distance between monster and player. if player is close enough, the monster will attack player
-            distance = (Position - World.Player.Position).Length();
-
-            //if the player is in range, the monster will shoot every second. if the player gets to far away, the attack cooldown
-            //will decrease, so that the monster will still attack if the player gets in range and out range over and over
-            if (distance <= 10 * World.TileWidth)
-            {
-                shootTime++;
-                if (shootTime >= 60)
-                {
-                    Attack();
-                    shootTime = 0;
-                }
-            }
-            else
-            {
-                if (shootTime > 0)
-                    shootTime--;
-            }
         }
 
-        void Attack()
+        public override void Destroy()
         {
-            shotAnimationTimer = 1;
-            FlipX = (Position.X - World.Player.Position.X) > 0;
-            World.AddObject(new MonsterBullet(AttackDamage), Position);
-        }
-
-        public override void Draw()
-        {
-            base.Draw();
-            //Drawing.DrawRectangle(DrawBoundingBox, Color.Purple);
+            base.Destroy();
+            body.Destroy();
+            hipLeft.Destroy();
+            kneeLeft.Destroy();
+            hipRight.Destroy();
+            kneeRight.Destroy();
+            head.Destroy();
+            shoulderLeft.Destroy();
+            shoulderRight.Destroy();
+            elbowLeft.Destroy();
+            elbowRight.Destroy();
+            gun.Destroy();
         }
     }
 }

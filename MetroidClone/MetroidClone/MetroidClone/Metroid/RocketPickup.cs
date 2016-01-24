@@ -1,8 +1,4 @@
 ﻿using MetroidClone.Engine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 
 namespace MetroidClone.Metroid
@@ -12,7 +8,8 @@ namespace MetroidClone.Metroid
         public override void Create()
         {
             base.Create();
-            BoundingBox = new Rectangle(-5, -3, 10, 6);
+            BoundingBox = new Rectangle(-23, -12, 46, 24);
+            SetSprite("Pickups/playerrocket");
         }
         public override void Update(GameTime gameTime)
         {
@@ -24,14 +21,9 @@ namespace MetroidClone.Metroid
                 World.Player.UnlockedWeapons.Add(Weapon.Rocket);
                 World.Player.CurrentWeapon = Weapon.Rocket;
                 Destroy();
+                World.Player.Score += 500;
             }
             base.Update(gameTime);
-        }
-
-        public override void Draw()
-        {
-            base.Draw();
-            Drawing.DrawRectangle(DrawBoundingBox, Color.Green);
         }
     }
 }

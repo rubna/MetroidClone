@@ -18,8 +18,9 @@ namespace MetroidClone.Engine
         public DrawWrapper DrawWrapper { get; set; }
         public AudioWrapper AudioWrapper { get; set; }
         public AssetManager AssetManager { get; set; }
-        public Level Level;
         public Tutorial Tutorial;
+        public MainMenu MainMenu;
+        public PauseMenu PauseMenu;
         public Player Player;
         public static Random Random;
         public Vector2 Camera;
@@ -30,12 +31,11 @@ namespace MetroidClone.Engine
         public float Height { get; protected set; } = WorldGenerator.LevelHeight * WorldGenerator.WorldHeight * TileWidth + 200;
 
         //The width and height of a tile.
-        public const float TileWidth = 48;
-        public const float TileHeight = 48;
+        public const int TileWidth = 48;
+        public const int TileHeight = 48;
 
         const float GridSize = 100f;
         public List<ISolid>[,] SolidGrid;
-
 
         public List<ISolid> Solids
         {
@@ -56,12 +56,18 @@ namespace MetroidClone.Engine
             Camera = new Vector2(0);
         }
 
+        //Reset the game
         public void Initialize()
         {
+            GameObjectsToUpdate.Clear();
+            GameObjectsWithGUI.Clear();
+            AddedGameObjects.Clear();
+            RemovedGameObjects.Clear();
+
             GameObjects.Clear();
-            (new WorldGenerator()).Generate(this);
             Tutorial = new Tutorial();
             AddObject(Tutorial);
+            (new WorldGenerator()).Generate(this);
             AudioWrapper.PlayLooping("Audio/Music/Area 1");
             UpdateCamera(true);
 
@@ -70,7 +76,6 @@ namespace MetroidClone.Engine
                 if (gameObject.ShouldUpdate)
                     GameObjectsToUpdate.Add(gameObject);
             }
-
             UpdateSolidGrid();
             PathfindingGrid();
             //AStarMap = new AStarMap(PathfindingGrid());
@@ -153,20 +158,20 @@ namespace MetroidClone.Engine
             AddedGameObjects.Clear();
             RemovedGameObjects.Clear();
             
-            foreach (GameObject gameObject in GameObjectsToUpdate)
-                gameObject.Update(gameTime);
+                foreach (GameObject gameObject in GameObjectsToUpdate)
+                    gameObject.Update(gameTime);
 
-            foreach (GameObject gameObject in AddedGameObjects)
-            {
-                if (gameObject.ShouldUpdate)
-                    GameObjectsToUpdate.Add(gameObject);
-            }
+                foreach (GameObject gameObject in AddedGameObjects)
+                {
+                    if (gameObject.ShouldUpdate)
+                        GameObjectsToUpdate.Add(gameObject);
+                }
 
-            foreach (GameObject gameObject in RemovedGameObjects)
-                GameObjectsToUpdate.Remove(gameObject);
+                foreach (GameObject gameObject in RemovedGameObjects)
+                    GameObjectsToUpdate.Remove(gameObject);
 
             UpdateCamera(); //Update the position of the camera
-        }
+            }
 
         void UpdateCamera(bool jumpToGoal = false)
         {
@@ -214,10 +219,12 @@ namespace MetroidClone.Engine
         {
             //Draw the background.
             float removeFromX = Camera.X % TileWidth, removeFromY = Camera.Y % TileHeight;
-            int startX = (int)Camera.X / (int)TileWidth, startY = (int)Camera.Y / (int)TileHeight;
+            int startX = (int)Camera.X / TileWidth, startY = (int)Camera.Y / TileHeight;
             Vector2 tileSize = new Vector2(TileWidth, TileHeight);
 
             //Make the tile placement look random (it isn't)
+
+            //Only draw objects that are visible (within the view)
             for (int i = 0; i < WorldGenerator.LevelWidth + 1; i++)
                 for (int j = 0; j < WorldGenerator.LevelHeight + 1; j++)
                 {
@@ -235,7 +242,6 @@ namespace MetroidClone.Engine
                     gameObject.Draw();
                 }
             }
-            
         }
 
         public void DrawGUI()
@@ -251,6 +257,15 @@ namespace MetroidClone.Engine
                 return SolidGrid[(int)(position.X / GridSize), (int)(position.Y / GridSize)];
             else
                 return new List<ISolid>(); //Nothing here.
+        }
+
+        //Returns whether a point is at least offset pixels away from the view border.
+        public bool PointOutOfView(Vector2 point, int offset = 0)
+        {
+            Vector2 drawPos = point - Camera;
+            return !(drawPos.X > -offset && drawPos.Y > -offset &&
+                drawPos.X < WorldGenerator.LevelWidth * TileWidth + offset &&
+                drawPos.Y < WorldGenerator.LevelHeight * TileHeight + offset);
         }
     }
 }
