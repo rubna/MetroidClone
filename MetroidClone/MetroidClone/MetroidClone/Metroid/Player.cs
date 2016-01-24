@@ -32,11 +32,11 @@ namespace MetroidClone.Metroid
         bool upPressed = false;
         bool down = false;
 
-        public Weapon CurrentWeapon = Weapon.Nothing;
-        public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
+        public Weapon CurrentWeapon = Weapon.Gun;
+        public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Gun, Weapon.Rocket };
         public int HitPoints = 100, MaxHitPoints = 100;
-        public int RocketAmmo = 5;
-        public int MaximumRocketAmmo = 5;
+        public int RocketAmmo = 100;
+        public int MaximumRocketAmmo = 100;
         public int Score = 0;
         public int Timer = 0;
 
@@ -44,7 +44,7 @@ namespace MetroidClone.Metroid
         public float AnimationRotation = 0;
         AnimationBone body, hipLeft, kneeLeft, footLeft, hipRight, kneeRight, footRight, head, 
                     shoulderLeft, shoulderRight, elbowLeft, elbowRight, handLeft, handRight, 
-                    gun, launcher, wrench,
+                    gun, launcher, wrench, gunNuzzle, launcherNuzzle,
                     antennaLeft1, antennaLeft2, antennaRight1, antennaRight2;
 
         float shotAnimationTimer = 0;
@@ -96,7 +96,9 @@ namespace MetroidClone.Metroid
             handLeft = new AnimationBone(elbowLeft, new Vector2(7, 0)) { DepthOffset = 1 };
 
             gun = new AnimationBone(handRight, new Vector2(-2, 0)) { DepthOffset = -4 };
+            gunNuzzle = new AnimationBone(gun, new Vector2(20, -4));
             launcher = new AnimationBone(handRight, new Vector2(-2, 0)) { DepthOffset = -4 };
+            launcherNuzzle = new AnimationBone(launcher, new Vector2(20, -12));
             wrench = new AnimationBone(handLeft, new Vector2(2, 0)) { DepthOffset = 1 };
 
             antennaLeft1 = new AnimationBone(head, new Vector2(3, -18)) { DepthOffset = -1 };
@@ -138,10 +140,12 @@ namespace MetroidClone.Metroid
             World.AddObject(gun);
             gun.SetSprite("Items/gun");
             gun.SpriteScale = 0.2f;
+            World.AddObject(gunNuzzle);
 
             World.AddObject(launcher);
             launcher.SetSprite("Items/playerrocket");
             launcher.SpriteScale = 0.2f;
+            World.AddObject(launcherNuzzle);
 
             World.AddObject(wrench);
             wrench.SetSprite("Items/wrench");
@@ -478,7 +482,7 @@ namespace MetroidClone.Metroid
                 case Weapon.Gun:
                 {
                     Audio.Play("Audio/Combat/Gunshots/Laser/Laser_Shoot01");
-                    World.AddObject(new PlayerBullet(), gun.Position);
+                    World.AddObject(new PlayerBullet(), gunNuzzle.Position);
                     break;
                 }
                 case Weapon.Rocket:
@@ -486,7 +490,7 @@ namespace MetroidClone.Metroid
                     if (RocketAmmo > 0)
                     {
                         Audio.Play("Audio/Combat/Gunshots/Rocket/Rocket_Shoot");
-                        World.AddObject(new PlayerRocket(), Position);
+                        World.AddObject(new PlayerRocket(), launcherNuzzle.Position);
                         RocketAmmo --;
                     }
                     break;
