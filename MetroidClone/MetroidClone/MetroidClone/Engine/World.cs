@@ -19,8 +19,6 @@ namespace MetroidClone.Engine
         public AudioWrapper AudioWrapper { get; set; }
         public AssetManager AssetManager { get; set; }
         public Tutorial Tutorial;
-        public MainMenu MainMenu;
-        public PauseMenu PauseMenu;
         public Player Player;
         public static Random Random;
         public Vector2 Camera;

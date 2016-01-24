@@ -502,7 +502,7 @@ namespace MetroidClone.Metroid
             blinkTimer = 1;
             Visible = false;
             Speed = new Vector2(xDirection * 3, -2);
-            if (HitPoints <= 0) //TODO
+            if (HitPoints <= 0)
                 Die();
         }
 
