@@ -18,7 +18,7 @@ namespace MetroidClone.Metroid
         Buttons selectedButton;
 
         DrawWrapper drawing;
-        public bool Sound = true, Music = true, Controller = false, Fullscreen = false, Quit;
+        public bool Sound, Music, Fullscreen, Quit;
         string sound = "SOUND", music = "MUSIC", controller = "CONTROLLER", fullscreen = "FULLSCREEN", quit = "EXIT";
         Rectangle soundButton, musicButton, controllerButton, fullscreenButton, quitButton, cursor;
         Color soundColor = Color.DarkGreen, musicColor = Color.DarkGreen, controllerColor = Color.DarkGreen,
@@ -27,6 +27,9 @@ namespace MetroidClone.Metroid
         public OptionsMenu(DrawWrapper Drawing)
         {
             drawing = Drawing;
+            Sound = false;
+            Music = false;
+            Fullscreen = false;
             Quit = false;
             selectedButton = Buttons.None;
         }
