@@ -32,11 +32,11 @@ namespace MetroidClone.Metroid
         bool upPressed = false;
         bool down = false;
 
-        public Weapon CurrentWeapon = Weapon.Gun;
-        public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Gun, Weapon.Rocket };
+        public Weapon CurrentWeapon = Weapon.Nothing;
+        public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
         public int HitPoints = 100, MaxHitPoints = 100;
-        public int RocketAmmo = 100;
-        public int MaximumRocketAmmo = 100;
+        public int RocketAmmo = 5;
+        public int MaximumRocketAmmo = 5;
         public int Score = 0;
         public int Timer = 0;
 
