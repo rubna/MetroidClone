@@ -1,11 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using MetroidClone.Engine;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace MetroidClone.Metroid
 {
     class OptionsMenu
     {
-        enum Buttons
+        enum MenuButton
         {
             Sound,
             Music,
@@ -15,23 +17,33 @@ namespace MetroidClone.Metroid
             None
         }
 
-        Buttons selectedButton;
+        MenuButton selectedButton;
 
         DrawWrapper drawing;
-        public bool Sound = true, Music = true, Controller = false, Fullscreen = false, Quit;
+        AudioWrapper audio;
+        GraphicsDeviceManager graphics;
+        InputHelper input;
+        public bool Quit;
         string sound = "SOUND", music = "MUSIC", controller = "CONTROLLER", fullscreen = "FULLSCREEN", quit = "EXIT";
         Rectangle soundButton, musicButton, controllerButton, fullscreenButton, quitButton, cursor;
-        Color soundColor = Color.DarkSlateGray, musicColor = Color.DarkSlateGray, controllerColor = Color.DarkSlateGray,
-            fullscreenColor = Color.DarkSlateGray, quitColor = Color.DarkSlateGray;
+        Color soundColor, musicColor, controllerColor, fullscreenColor, quitColor = Color.DarkSlateGray;
 
-        public OptionsMenu(DrawWrapper Drawing)
+        public OptionsMenu(DrawWrapper Drawing, GraphicsDeviceManager Graphics, AudioWrapper Audio, InputHelper Input)
         {
             drawing = Drawing;
+            audio = Audio;
+            graphics = Graphics;
+            input = Input;
             Quit = false;
-            selectedButton = Buttons.None;
+            selectedButton = MenuButton.None;
+
+            soundColor = audio.AudioIsEnabled ? Color.DarkGreen : Color.DarkRed;
+            musicColor = audio.MusicIsEnabled ? Color.DarkGreen : Color.DarkRed;
+            controllerColor = input.ControllerInUse ? Color.DarkGreen : Color.DarkRed;
+            fullscreenColor = graphics.IsFullScreen ? Color.DarkGreen : Color.DarkRed;
         }
 
-        public void Update(GameTime gameTime, InputHelper Input)
+        public void Update(GameTime gameTime)
         {
             soundButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 350, 200, 100);
             musicButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 200, 200, 100);
@@ -39,68 +51,79 @@ namespace MetroidClone.Metroid
             fullscreenButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
             quitButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 + 250, 200, 100);
             
-            cursor = Input.ControllerInUse ? new Rectangle(0, 0, 0, 0) : new Rectangle(Input.MouseCheckPosition().X, Input.MouseCheckPosition().Y, 1, 1);
-            
+            cursor = input.ControllerInUse ? new Rectangle(0, 0, 0, 0) : new Rectangle(input.MouseCheckPosition().X, input.MouseCheckPosition().Y, 1, 1);
 
-            if (cursor.Intersects(soundButton) || selectedButton == Buttons.Sound)
+
+            if (cursor.Intersects(soundButton) || selectedButton == MenuButton.Sound)
             {
                 soundColor.A = 200;
-                if (Input.MouseButtonCheckPressed(true) || Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.A))
-                    Sound = !Sound;
+                if (input.MouseButtonCheckPressed(true) || input.GamePadCheckPressed(Buttons.A))
+                {
+                    audio.AudioIsEnabled = !audio.AudioIsEnabled;
+                    soundColor = audio.AudioIsEnabled ? Color.DarkGreen : Color.DarkRed;
+                    
+                }
             }
             else soundColor.A = 255;
 
-            if (cursor.Intersects(musicButton) || selectedButton == Buttons.Music)
+            if (cursor.Intersects(musicButton) || selectedButton == MenuButton.Music)
             {
                 musicColor.A = 200;
-                if (Input.MouseButtonCheckPressed(true) || Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.A))
-                    Music = !Music;
+                if (input.MouseButtonCheckPressed(true) || input.GamePadCheckPressed(Buttons.A))
+                {
+                    audio.MusicIsEnabled = !audio.MusicIsEnabled;
+                    musicColor = audio.MusicIsEnabled ? Color.DarkGreen : Color.DarkRed;
+                }
             }
             else musicColor.A = 255;
 
-            if (cursor.Intersects(controllerButton) || selectedButton == Buttons.Controller)
+            if (cursor.Intersects(controllerButton) || selectedButton == MenuButton.Controller)
             {
                 controllerColor.A = 200;
-                if (Input.MouseButtonCheckPressed(true) || Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.A))
+                if (input.MouseButtonCheckPressed(true) || input.GamePadCheckPressed(Buttons.A))
                 {
-                    Input.SwitchControls();
-                    selectedButton = Input.ControllerInUse ? Buttons.Controller : Buttons.None;
+                    controllerColor = controllerColor.R == 0 ? Color.DarkRed : Color.DarkGreen;
+                    input.SwitchControls();
+                    selectedButton = input.ControllerInUse ? MenuButton.Controller : MenuButton.None;
                 }
             }
             else controllerColor.A = 255;
 
-            if (cursor.Intersects(fullscreenButton) || selectedButton == Buttons.Fullscreen)
+            if (cursor.Intersects(fullscreenButton) || selectedButton == MenuButton.Fullscreen)
             {
                 fullscreenColor.A = 200;
-                if (Input.MouseButtonCheckPressed(true) || Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.A))
-                    Fullscreen = !Fullscreen;
+                if (input.MouseButtonCheckPressed(true) || input.GamePadCheckPressed(Buttons.A))
+                {
+                    SwitchFullscreen();
+                    fullscreenColor = graphics.IsFullScreen ? Color.DarkGreen : Color.DarkRed;
+                }
             }
             else fullscreenColor.A = 255;
 
-            if (cursor.Intersects(quitButton) || selectedButton == Buttons.Quit)
+            if (cursor.Intersects(quitButton) || selectedButton == MenuButton.Quit)
             {
                 quitColor.A = 200;
-                if (Input.MouseButtonCheckPressed(true) || Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.A))
+                if (input.MouseButtonCheckPressed(true) || input.GamePadCheckPressed(Buttons.A))
                     Quit = true;
             }
             else quitColor.A = 255;
 
-            if (Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickDown))
+            if (input.GamePadCheckPressed(Buttons.LeftThumbstickDown))
             {
-                if (selectedButton == Buttons.None)
-                    selectedButton = Buttons.Sound;
+                if (selectedButton == MenuButton.None)
+                    selectedButton = MenuButton.Sound;
                 else
                     selectedButton++;
-                if (selectedButton == Buttons.None)
-                    selectedButton = Buttons.Sound;
+                if (selectedButton == MenuButton.None)
+                    selectedButton = MenuButton.Sound;
             }
 
-            if (Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickUp))
+            if (input.GamePadCheckPressed(Buttons.LeftThumbstickUp))
             {
-                if (selectedButton == Buttons.None)
-                    selectedButton = Buttons.Quit;
-                else if (selectedButton == Buttons.Sound)
-                    selectedButton = Buttons.Quit;
+                if (selectedButton == MenuButton.None)
+                    selectedButton = MenuButton.Quit;
+                else if (selectedButton == MenuButton.Sound)
+                    selectedButton = MenuButton.Quit;
                 else
                     selectedButton--;
             }
@@ -127,6 +150,26 @@ namespace MetroidClone.Metroid
             //quit button
             drawing.DrawRectangleUnscaled(quitButton, quitColor);
             drawing.DrawText("font18", quit, new Vector2(drawing.GUISize.X / 2, drawing.GUISize.Y / 2 + 300), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+        }
+
+        void SwitchFullscreen()
+        {
+            if (!graphics.IsFullScreen)
+            {
+                graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                graphics.IsFullScreen = true;
+            }
+            else
+            {
+                graphics.PreferredBackBufferWidth = 24 * 20 * 2;
+                graphics.PreferredBackBufferHeight = 24 * 15 * 2;
+                graphics.IsFullScreen = false;
+            }
+            drawing.SmartScale(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
+
+            graphics.ApplyChanges();
+
         }
     }
 }

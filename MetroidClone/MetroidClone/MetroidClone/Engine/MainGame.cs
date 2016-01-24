@@ -78,26 +78,6 @@ namespace MetroidClone.Engine
             base.Initialize();
         }
 
-        protected void SwitchFullscreen()
-        {
-            if (! Graphics.IsFullScreen)
-            {
-                Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-                Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-                Graphics.IsFullScreen = true;
-            }
-            else
-            {
-                Graphics.PreferredBackBufferWidth = 24 * 20 * 2;
-                Graphics.PreferredBackBufferHeight = 24 * 15 * 2;
-                Graphics.IsFullScreen = false;
-            }
-            drawWrapper.SmartScale(Graphics.PreferredBackBufferWidth, Graphics.PreferredBackBufferHeight);
-
-            Graphics.ApplyChanges();
-
-        }
-
         protected override void LoadContent()
         {
             world.DrawWrapper = drawWrapper;
@@ -122,21 +102,18 @@ namespace MetroidClone.Engine
             Profiler.LogEventStart("Update");
             inputHelper.Update();
 
-            if (inputHelper.KeyboardCheckPressed(Keys.F4))
-                SwitchFullscreen();
-
             //updating menus or world
             switch (currentState)
             {
                 case GameState.MainMenu:
                     mainMenu.Update(gameTime, inputHelper);
-                if (mainMenu.ExitGame)
+                    if (mainMenu.ExitGame)
                         Exit();
                     else if (mainMenu.Options)
                     {
                         previousState = currentState;
                         currentState = GameState.Options;
-                        optionsMenu = new OptionsMenu(drawWrapper);
+                        optionsMenu = new OptionsMenu(drawWrapper, Graphics, audioWrapper, inputHelper);
                         mainMenu = null;
                     }
                     else if (mainMenu.Start)
@@ -148,7 +125,7 @@ namespace MetroidClone.Engine
                     break;
                 case GameState.Playing:
                     world.Update(gameTime);
-                    if (inputHelper.KeyboardCheckPressed(Keys.Escape))
+                    if (inputHelper.KeyboardCheckPressed(Keys.Escape) || inputHelper.GamePadCheckPressed(Buttons.Start))
                     {
                         currentState = GameState.Paused;
                         pauseMenu = new PauseMenu(drawWrapper);
@@ -169,7 +146,7 @@ namespace MetroidClone.Engine
                     {
                         previousState = currentState;
                         currentState = GameState.Options;
-                        optionsMenu = new OptionsMenu(drawWrapper);
+                        optionsMenu = new OptionsMenu(drawWrapper, Graphics, audioWrapper, inputHelper);
                         pauseMenu = null;
                     }
                     else if (pauseMenu.Quit)
@@ -182,23 +159,8 @@ namespace MetroidClone.Engine
                     }
                     break;
                 case GameState.Options:
-                    optionsMenu.Update(gameTime, inputHelper);
-                    if (optionsMenu.Sound)
-                    {
-                        optionsMenu.Sound = false;
-                        audioWrapper.AudioIsEnabled = !audioWrapper.AudioIsEnabled;
-                    }
-                    else if (optionsMenu.Music)
-                    {
-                        optionsMenu.Music = false;
-                        audioWrapper.MusicIsEnabled = !audioWrapper.MusicIsEnabled;
-                    }
-                    else if (optionsMenu.Fullscreen)
-                    {
-                        SwitchFullscreen();
-                        optionsMenu.Fullscreen = false;
-                    }
-                    else if (optionsMenu.Quit)
+                    optionsMenu.Update(gameTime);
+                    if (optionsMenu.Quit)
                     {
                         if (previousState == GameState.Paused)
                             currentState = GameState.Playing;
@@ -243,7 +205,7 @@ namespace MetroidClone.Engine
             drawWrapper.BeginDrawGUI(); //Start drawing the GUI
             switch (currentState)
             {
-                case GameState.MainMenu:
+                case GameState.MainMenu:    
                     mainMenu.DrawGUI(); //Draw the Main Menu
                     break;
                 case GameState.Playing:
