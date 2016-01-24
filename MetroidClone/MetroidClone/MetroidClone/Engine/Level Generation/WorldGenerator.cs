@@ -27,8 +27,8 @@ namespace MetroidClone.Engine
             //Enemy types for each area
             List<List<Type>> enemyTypes = new List<List<Type>>();
             enemyTypes.Add(new List<Type>() { typeof(MeleeMonster) });
-            enemyTypes.Add(new List<Type>() { typeof(ShootingMonster), typeof(MeleeMonster) });
-            enemyTypes.Add(new List<Type>() { typeof(ShootingMonster), typeof(MeleeMonster) });
+            enemyTypes.Add(new List<Type>() { typeof(ShootingMonster), typeof(MeleeMonster), typeof(Turret) });
+            enemyTypes.Add(new List<Type>() { typeof(ShootingMonster), typeof(MeleeMonster), typeof(Turret) });
 
             //Define and initialize variables
             bool[,] isRoom = new bool[WorldWidth, WorldHeight]; //Whether this is a room.

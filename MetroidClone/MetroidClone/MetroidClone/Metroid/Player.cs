@@ -330,7 +330,7 @@ namespace MetroidClone.Metroid
             //testing: adds monster
             if (Input.KeyboardCheckPressed(Keys.F))
             {
-                World.AddObject(new ShootingMonster(), Input.MouseCheckUnscaledPosition(Drawing).ToVector2() + World.Camera);
+                World.AddObject(new Turret(), Input.MouseCheckUnscaledPosition(Drawing).ToVector2() + World.Camera);
                 Console.WriteLine("Monster Added");
             }
 
@@ -355,14 +355,18 @@ namespace MetroidClone.Metroid
             {
                 foreach (Monster monster in World.GameObjects.OfType<Monster>())
                     if (TranslatedBoundingBox.Intersects(monster.TranslatedBoundingBox))
-                        Hurt(Math.Sign(Position.X - monster.Position.X), monster.Damage);
+                    {
+                        if (monster.Damage > 0)
+                            Hurt(Math.Sign(Position.X - monster.Position.X), monster.Damage);
+                    }
 
                 List<MonsterBullet> destroyedBullets = new List<MonsterBullet>();
                 foreach (MonsterBullet bullet in World.GameObjects.OfType<MonsterBullet>())
                 {
                     if (TranslatedBoundingBox.Intersects(bullet.TranslatedBoundingBox))
                     {
-                        Hurt(Math.Sign(Position.X - bullet.Position.X), bullet.Damage);
+                        if (bullet.Damage > 0)
+                            Hurt(Math.Sign(Position.X - bullet.Position.X), bullet.Damage);
                         destroyedBullets.Add(bullet);
                     }
                 }
@@ -500,7 +504,7 @@ namespace MetroidClone.Metroid
             blinkTimer = 1;
             Visible = false;
             Speed = new Vector2(xDirection * 3, -2);
-            if (HitPoints <= -100000) //TODO
+            if (HitPoints <= 0)
                 Die();
         }
 

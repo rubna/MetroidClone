@@ -51,3 +51,4 @@ Pickups/playergun middle 1x1
 Pickups/wrench middle 1x1
 Pickups/playerrocket middle 1x1
 dronesmall center 1x1
+Turret center 1x1

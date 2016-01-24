@@ -111,6 +111,7 @@
     <Compile Include="Engine\Solids\SlopeLeft.cs" />
     <Compile Include="Engine\Solids\SlopeRight.cs" />
     <Compile Include="Metroid\Monsters\MeleeMonster.cs" />
+    <Compile Include="Metroid\Monsters\Turret.cs" />
     <Compile Include="Metroid\OptionsMenu.cs" />
     <Compile Include="Metroid\VectorExtensions.cs" />
     <Compile Include="Engine\Solids\ISolid.cs" />
