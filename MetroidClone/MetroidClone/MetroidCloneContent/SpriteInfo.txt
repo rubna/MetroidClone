@@ -60,7 +60,9 @@ Pickups/playergun middle 1x1
 Pickups/wrench middle 1x1
 Pickups/playerrocket middle 1x1
 dronesmall middle 1x1
-Turret middle 1x1
+Turretbase middle 1x1
+Turretgun 0.9x0.5 1x1
+Turretbullet center 1x1
 playergunbullet middle 1x1
 Scrap middle 1x1
 Spikes topleft 1x1

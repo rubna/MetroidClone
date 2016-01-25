@@ -339,7 +339,7 @@ namespace MetroidClone.Metroid
             //testing: adds monster
             if (Input.KeyboardCheckPressed(Keys.F))
             {
-                World.AddObject(new ShootingMonster(), Input.MouseCheckUnscaledPosition(Drawing).ToVector2() + World.Camera);
+                World.AddObject(new Turret(), Input.MouseCheckUnscaledPosition(Drawing).ToVector2() + World.Camera);
                 Console.WriteLine("Monster Added");
             }
 

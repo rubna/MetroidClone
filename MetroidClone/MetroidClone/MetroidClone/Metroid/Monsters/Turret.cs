@@ -17,18 +17,17 @@ namespace MetroidClone.Metroid.Monsters
         float rotation = 0;
         Vector2 rotationSizeModVector; //How we should scale the turret.
         float firstChargeTimer = 0;
+        Vector2 gunOffset = new Vector2(13, 17);
 
         public override void Create()
         {
             base.Create();
-            BoundingBox = new Rectangle(-15, -15, 30, 30);
-            SpeedOnHit = new Vector2(3, -2);
+            BoundingBox = new Rectangle(-15, -20, 30, 60);
             HitPoints = 10;
             Damage = 0; //The turret itself does no damage
-
+            Gravity = 0;
+            
             SpriteScale = 0.2f;
-
-            Gravity = 0.2f;
 
             SetSprite("Turret/Turretbase");
 
@@ -85,16 +84,17 @@ namespace MetroidClone.Metroid.Monsters
         {
             shotTimer = 2; //It takes some time to recharge
             FlipX = (Position.X - World.Player.Position.X) > 0;
-            World.AddObject(new TurretBullet(AttackDamage), Position - new Vector2(0f, 21f));
+            World.AddObject(new TurretBullet(AttackDamage), Position + gunOffset);
             stayAtRotationTime = 5;
         }
 
         //Draw the turret
         public override void Draw()
         {
-            base.Draw();
+            //Drawing.DrawRectangle(DrawBoundingBox, Color.Blue);
 
-            Drawing.DrawSprite("Turret/Turretgun", DrawPosition - new Vector2(0f, 21f), 0,
+            base.Draw();
+            Drawing.DrawSprite("Turret/Turretgun", DrawPosition + gunOffset, 0,
                 size: new Vector2(BoundingBox.Width + 10, (BoundingBox.Width + 10) / 3) * rotationSizeModVector, rotation: rotation);
         }
     }
