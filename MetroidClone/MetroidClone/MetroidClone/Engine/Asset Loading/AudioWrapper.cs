@@ -30,8 +30,15 @@ namespace MetroidClone.Engine
 
         public void Play(string sound)
         {
-            if (AudioIsEnabled)
-                Play(Assets.GetSound(sound));
+            Play(Assets.GetSound(sound));
+        }
+
+        public void StopOrPlayMusic(bool MusicIsEnabled)
+        {
+            if (MusicIsEnabled)
+                musicInstance.Play();
+            else
+                musicInstance.Stop();
         }
 
         public void PlayLooping(SoundEffect song)
