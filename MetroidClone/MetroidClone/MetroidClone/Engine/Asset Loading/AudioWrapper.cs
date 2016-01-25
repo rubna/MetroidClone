@@ -11,10 +11,13 @@ namespace MetroidClone.Engine
     //The audio wrapper can be used to play sounds and music.
     class AudioWrapper
     {
+        //used in OpionsMenu. if these are off, the soundeffects and music won't play
         public bool AudioIsEnabled = true;
         public bool MusicIsEnabled = true;
 
         public AssetManager Assets;
+        
+        //the music player
         private SoundEffectInstance musicInstance;
 
         public AudioWrapper(AssetManager assetsManager)

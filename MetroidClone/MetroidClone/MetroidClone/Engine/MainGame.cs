@@ -103,6 +103,7 @@ namespace MetroidClone.Engine
             //updating menus or world
             switch (currentState)
             {
+                //updates mainmenu and handles all interactions
                 case GameState.MainMenu:
                     mainMenu.Update(gameTime, inputHelper);
                     if (mainMenu.ExitGame)
@@ -121,6 +122,7 @@ namespace MetroidClone.Engine
                         mainMenu = null;
                     }
                     break;
+                //updates playing state and handles death of player
                 case GameState.Playing:
                     world.Update(gameTime);
                     if (inputHelper.KeyboardCheckPressed(Keys.Escape) || inputHelper.GamePadCheckPressed(Buttons.Start))
@@ -131,9 +133,10 @@ namespace MetroidClone.Engine
                     if (world.Player.Dead)
                     {
                         currentState = GameState.GameOver;
-                        gameOverMenu = new GameOverMenu(drawWrapper);
+                        gameOverMenu = new GameOverMenu(drawWrapper, world.Player.Score);
                     }
                     break;
+                //updates pause menu and all interactions
                 case GameState.Paused:
                     pauseMenu.Update(gameTime, inputHelper);
                     if (pauseMenu.Resume)
@@ -156,10 +159,12 @@ namespace MetroidClone.Engine
                         pauseMenu = null;
                     }
                     break;
+                //updates options menu and all interactions
                 case GameState.Options:
                     optionsMenu.Update(gameTime);
                     if (optionsMenu.Quit)
                     {
+                        //goes back to previous gamestate
                         if (previousState == GameState.Paused)
                             currentState = GameState.Playing;
                         else
@@ -170,6 +175,7 @@ namespace MetroidClone.Engine
                         optionsMenu = null;
                     }
                     break;
+                //updates game over screen and all interactions
                 case GameState.GameOver:
                     gameOverMenu.Update(gameTime, inputHelper);
                     audioWrapper.StopOrPlayMusic(false);
@@ -203,6 +209,7 @@ namespace MetroidClone.Engine
             drawWrapper.BeginDraw(); //Start drawing
             world.Draw(); //Draw the game world
             drawWrapper.BeginDrawGUI(); //Start drawing the GUI
+            //draws GUI depending on GameState
             switch (currentState)
             {
                 case GameState.MainMenu:    

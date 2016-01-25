@@ -5,6 +5,8 @@ namespace MetroidClone.Metroid
 {
     class PauseMenu
     {
+        //for extended comments, see MainMenu.cs, because these classes are very similar
+
         enum Buttons
         {
             Resume,

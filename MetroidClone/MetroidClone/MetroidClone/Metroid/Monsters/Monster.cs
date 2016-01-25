@@ -70,6 +70,7 @@ namespace MetroidClone.Metroid
         {
             World.Tutorial.MonsterKilled = true;
             // When a monster is destroyed, you have a chance that a healthpack, rocket ammo, scrap metal or nothing will drop
+            // The chance of dropping healthpacks and rocket ammo increases if the player is in need of these drops
             float ammoChance = (1 - ((float)World.Player.RocketAmmo / (float)World.Player.MaximumRocketAmmo)) * 40;
             float scrapChance = (this is Turret) ? 60 : 40; //Turrets drop more scrap
             float healthChance = (1 - ((float)World.Player.HitPoints / (float)World.Player.MaxHitPoints)) * 40;
