@@ -1,92 +1,96 @@
-﻿using MetroidClone.Engine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
+using MetroidClone.Engine;
 
-// creates the game over menu. 
 namespace MetroidClone.Metroid
 {
-    class GameOverMenu : Menu
+    class GameOverMenu
     {
-
-        private int restartButtonCheck = 1;
-        private int exitButtonCheck = 1;
-        public bool RestartButtonIntersects;
-        public bool ExitButtonIntersects;
-
-        public void UpdateMenu(GameTime gameTime)
+        enum Buttons
         {
-            
-            MouseCheck((int)Input.MouseCheckPosition().X, (int)Input.MouseCheckPosition().Y);
-            // changes the color of the buttons if the mouse is on them and changes the gamestate if a button is clicked
-            if (RestartButtonIntersects)
+            Restart,
+            Quit,
+            None
+        }
+
+        Buttons selectedButton;
+
+        DrawWrapper drawing;
+        public bool Restart, Quit;
+        string gameOver = "GAME OVER", restart = "RESTART", quit = "QUIT";
+        Rectangle restartButton, quitButton, cursor;
+        Color restartColor = Color.DarkSlateGray, quitColor = Color.DarkSlateGray;
+
+        public GameOverMenu(DrawWrapper Drawing)
+        {
+            drawing = Drawing;
+            Restart = false;
+            Quit = false;
+            selectedButton = Buttons.None;
+        }
+
+        public void Update(GameTime gameTime, InputHelper Input)
+        {
+            restartButton = new Rectangle((int)drawing.GUISize.X / 2 - 300, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
+            quitButton = new Rectangle((int)drawing.GUISize.X / 2 + 100, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
+            cursor = Input.ControllerInUse ? new Rectangle(0, 0, 0, 0) : new Rectangle(Input.MouseCheckPosition().X, Input.MouseCheckPosition().Y, 1, 1);
+
+            if (cursor.Intersects(restartButton) || selectedButton == Buttons.Restart)
             {
-                restartButtonCheck = 2;
-                if (Input.MouseButtonCheckPressed(true))
+                restartColor.A = 200;
+                if (Input.MouseButtonCheckPressed(true) || Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.A))
                 {
-                    StartGame = true;
+                    Restart = true;
                 }
             }
             else
-                restartButtonCheck = 1;
+                restartColor.A = 255;
 
-            if (ExitButtonIntersects)
+            if (cursor.Intersects(quitButton) || selectedButton == Buttons.Quit)
             {
-                exitButtonCheck = 2;
-                if (Input.MouseButtonCheckPressed(true))
+                quitColor.A = 200;
+                if (Input.MouseButtonCheckPressed(true) || Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.A))
                 {
-                    ExitMenu = true;
+                    Quit = true;
                 }
             }
             else
-                exitButtonCheck = 1;
+                quitColor.A = 255;
 
-            // starts the game if the start button is pressed
-            if (StartGame)
+            if (Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickLeft))
             {
-                World.Initialize();
-                World.PlayingState = World.GameState.Playing;
-                StartGame = false;
+                if (selectedButton == Buttons.None)
+                    selectedButton = Buttons.Restart;
+                else
+                    selectedButton++;
+                if (selectedButton == Buttons.None)
+                    selectedButton = Buttons.Restart;
             }
-            // goes to the options menu if the options button is pressed
-            if (ExitMenu)
+
+            if (Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickRight))
             {
-                World.Initialize();
-                World.PlayingState = World.GameState.MainMenu;
-                ExitMenu = false;
+                if (selectedButton == Buttons.None)
+                    selectedButton = Buttons.Quit;
+                else if (selectedButton == Buttons.Restart)
+                    selectedButton = Buttons.Quit;
+                else
+                    selectedButton--;
             }
         }
-        public void DrawMenu()
-        { //draw the Mainmenu
-            
-            Vector2 TextSize = Drawing.MeasureText("font48", "You Are Dead");
-            if (!FullScreen)
-                Drawing.DrawText("font48", "You Are Dead", new Vector2(Drawing.GUISize.X / 2, Drawing.ScreenSize.Y / 2 - TextSize.Y / 2 - 150), Color.Red, alignment: Engine.Asset.Font.Alignment.TopCenter);
-            else
-                Drawing.DrawText("font48", "You Are Dead", new Vector2(Drawing.GUISize.X / 2, Drawing.ScreenSize.Y / 2 - TextSize.Y / 2 - 150), Color.Red, 0, null, 2, alignment: Engine.Asset.Font.Alignment.TopCenter);
-            Vector2 TextSize2 = Drawing.MeasureText("font22", "score:" + World.Player.Score.ToString());
-            if (!FullScreen)
-                Drawing.DrawText("font22", "score:" + World.Player.Score.ToString(), new Vector2(Drawing.GUISize.X / 2, Drawing.ScreenSize.Y / 2 - TextSize2.Y / 2), Color.Black, alignment: Engine.Asset.Font.Alignment.TopCenter);
-            else
-                Drawing.DrawText("font22", "score:" + World.Player.Score.ToString(), new Vector2(Drawing.GUISize.X / 2, (Drawing.ScreenSize.Y / 1.7f)), Color.Black, 0, null, 2, alignment: Engine.Asset.Font.Alignment.TopCenter);
-            ButtonNumber = 2;
-            DrawButton("restart", restartButtonCheck);
-            DrawButton("exit", exitButtonCheck);
-            ButtonNumber = 1;
-        }
-        void MouseCheck(int x, int y)
+
+        public void DrawGUI()
         {
-            //creates a rectangle of 10x10 around the place where the mouse was clicked
-            Rectangle mouseClickRect = new Rectangle(x, y, 10, 10);
-            //creates rectangles for the buttons which make it possible to check if the button is pressed
-            ButtonNumber = 2;
-            RestartButtonIntersects = ButtonStateCheck(mouseClickRect, RestartButtonIntersects);
-            ExitButtonIntersects = ButtonStateCheck(mouseClickRect, ExitButtonIntersects);
-            ButtonNumber = 1;
+            //game over text
+            drawing.DrawText("font48", gameOver, new Vector2(drawing.GUISize.X / 2, drawing.GUISize.Y / 2), alignment: Engine.Asset.Font.Alignment.BottomCenter);
+
+            //restart button
+            drawing.DrawRectangleUnscaled(restartButton, restartColor);
+            drawing.DrawText("font18", restart, new Vector2(drawing.GUISize.X - 200, drawing.GUISize.Y + 150), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+
+            //quit button
+            drawing.DrawRectangleUnscaled(quitButton, quitColor);
+            drawing.DrawText("font18", quit, new Vector2(drawing.GUISize.X + 200, drawing.GUISize.Y + 150), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
         }
     }
 }
+
+

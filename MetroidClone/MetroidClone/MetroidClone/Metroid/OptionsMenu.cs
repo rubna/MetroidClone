@@ -1,137 +1,177 @@
-﻿using MetroidClone.Engine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using MetroidClone.Engine;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-// creates the options menu. 
 namespace MetroidClone.Metroid
 {
-    class OptionsMenu : Menu
+    class OptionsMenu
     {
-
-        private int exitButtonCheck = 1;
-        public bool ExitButtonIntersects;
-        private int soundButtonCheck = 1;
-        public bool SoundButtonIntersects;
-        private int musicButtonCheck = 1;
-        public bool MusicButtonIntersects;
-        private int controllerButtonCheck = 1;
-        public bool ControllerButtonIntersects;
-        private int fullScreenButtonCheck = 1;
-        public bool FullScreenButtonIntersects;
-        public bool SoundOn = true;
-        public bool MusicOn = true;
-        public bool ControllerOn = false;
-        public bool SwitchFullScreen = false;
-        private int time = 0;
-
-        public void UpdateMenu(GameTime gameTime)
+        enum MenuButton
         {
-            MouseCheck((int)Input.MouseCheckPosition().X, (int)Input.MouseCheckPosition().Y);
-            // changes the color of the buttons if the mouse is on them and changes the gamestate if a button is clicked
-            soundButtonCheck = ButtonIntersects(SoundButtonIntersects, soundButtonCheck);
-            if (soundButtonCheck == 2 && Input.MouseButtonCheckPressed(true))
-                SoundOn = !SoundOn;
-            musicButtonCheck = ButtonIntersects(MusicButtonIntersects, musicButtonCheck);
-            if (musicButtonCheck == 2 && Input.MouseButtonCheckPressed(true))
-                MusicOn = !MusicOn;
-            controllerButtonCheck = ButtonIntersects(ControllerButtonIntersects, controllerButtonCheck);
-            if (controllerButtonCheck == 2 && Input.MouseButtonCheckPressed(true) && time > 10)
-                ControllerOn = !ControllerOn;
-            exitButtonCheck = ButtonIntersects(ExitButtonIntersects, exitButtonCheck);
-            if (exitButtonCheck == 2 && Input.MouseButtonCheckPressed(true))
-                ExitMenu = true;
-            fullScreenButtonCheck = ButtonIntersects(FullScreenButtonIntersects, fullScreenButtonCheck);
-            if (fullScreenButtonCheck == 2 && Input.MouseButtonCheckPressed(true))
-                SwitchFullScreen = true;
-            // goes back to the previous menu if the exit button is pressed
-            if (ExitMenu)
+            Sound,
+            Music,
+            Controller,
+            Fullscreen,
+            Quit,
+            None
+        }
+
+        MenuButton selectedButton;
+
+        DrawWrapper drawing;
+        AudioWrapper audio;
+        GraphicsDeviceManager graphics;
+        InputHelper input;
+        public bool Quit;
+        string sound = "SOUND", music = "MUSIC", controller = "CONTROLLER", fullscreen = "FULLSCREEN", quit = "EXIT";
+        Rectangle soundButton, musicButton, controllerButton, fullscreenButton, quitButton, cursor;
+        Color soundColor, musicColor, controllerColor, fullscreenColor, quitColor = Color.DarkSlateGray;
+
+        public OptionsMenu(DrawWrapper Drawing, GraphicsDeviceManager Graphics, AudioWrapper Audio, InputHelper Input)
+        {
+            drawing = Drawing;
+            audio = Audio;
+            graphics = Graphics;
+            input = Input;
+            Quit = false;
+            selectedButton = MenuButton.None;
+
+            soundColor = audio.AudioIsEnabled ? Color.DarkGreen : Color.DarkRed;
+            musicColor = audio.MusicIsEnabled ? Color.DarkGreen : Color.DarkRed;
+            controllerColor = input.ControllerInUse ? Color.DarkGreen : Color.DarkRed;
+            fullscreenColor = graphics.IsFullScreen ? Color.DarkGreen : Color.DarkRed;
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            soundButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 350, 200, 100);
+            musicButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 200, 200, 100);
+            controllerButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 50, 200, 100);
+            fullscreenButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
+            quitButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 + 250, 200, 100);
+            
+            cursor = input.ControllerInUse ? new Rectangle(0, 0, 0, 0) : new Rectangle(input.MouseCheckPosition().X, input.MouseCheckPosition().Y, 1, 1);
+
+
+            if (cursor.Intersects(soundButton) || selectedButton == MenuButton.Sound)
             {
-                if (Paused)
-                    World.PlayingState = World.GameState.Paused;
-                else
-                    World.PlayingState = World.GameState.MainMenu;
-                time = 0;
-                ExitMenu = false;
-                Paused = false;
-            }
-            if (SoundOn == false)
-                World.AudioWrapper.AudioIsEnabled = false;
-            else
-                World.AudioWrapper.AudioIsEnabled = true;
-            time ++;
-        }
-        public void DrawMenu()
-        { //draw the Mainmenu
-            ButtonNumber = 0;
-            DrawOptionState(SoundOn);
-            DrawButton("sound", soundButtonCheck);
-            DrawOptionState(MusicOn);
-            DrawButton("music", musicButtonCheck);
-            DrawOptionState(ControllerOn);
-            DrawButton("controller", controllerButtonCheck);
-            DrawOptionState(FullScreen);
-            DrawButton("fullscreen", fullScreenButtonCheck);
-            DrawButton("exit options", exitButtonCheck, 1);
-        }
-
-        void MouseCheck(int x, int y)
-        {
-            ButtonNumber = 0;
-            //creates a rectangle of 10x10 around the place where the mouse was clicked
-            Rectangle mouseClickRect = new Rectangle(x, y, 10, 10);
-            //creates rectangles for the buttons which make it possible to check if the button is pressed
-            SoundButtonIntersects = ButtonStateCheck(mouseClickRect, SoundButtonIntersects);
-            MusicButtonIntersects = ButtonStateCheck(mouseClickRect, SoundButtonIntersects);
-            ControllerButtonIntersects = ButtonStateCheck(mouseClickRect, ControllerButtonIntersects);
-            FullScreenButtonIntersects = ButtonStateCheck(mouseClickRect, FullScreenButtonIntersects);
-            ExitButtonIntersects = ButtonStateCheck(mouseClickRect, ExitButtonIntersects); 
-        }
-        
-        void DrawOptionState(bool on)
-        {
-
-            //draws the text wich indicates if a option is turned on or off.
-            if (!FullScreen)
-            {
-                if (on)
+                soundColor.A = 200;
+                if (input.MouseButtonCheckPressed(true) || input.GamePadCheckPressed(Buttons.A))
                 {
-                    Vector2 TextSize = Drawing.MeasureText("font22", "on");
-                    Drawing.DrawText("font22", "on", new Vector2((int)(Drawing.ScreenSize.X / 2) + 250, (int)(Drawing.ScreenSize.Y / 2) - 150 - TextSize.Y / 2 + 150 * ButtonNumber), Color.Green);
-                }
-                else
-                {
-                    Vector2 TextSize = Drawing.MeasureText("font22", "off");
-                    Drawing.DrawText("font22", "off", new Vector2((int)(Drawing.ScreenSize.X / 2) + 250, (int)(Drawing.ScreenSize.Y / 2) - 150 - TextSize.Y / 2 + 150 * ButtonNumber), Color.Red);
+                    audio.AudioIsEnabled = !audio.AudioIsEnabled;
+                    soundColor = audio.AudioIsEnabled ? Color.DarkGreen : Color.DarkRed;
+                    
                 }
             }
-            else
+            else soundColor.A = 255;
+
+            if (cursor.Intersects(musicButton) || selectedButton == MenuButton.Music)
             {
-                if (on)
+                musicColor.A = 200;
+                if (input.MouseButtonCheckPressed(true) || input.GamePadCheckPressed(Buttons.A))
                 {
-                    Vector2 TextSize = Drawing.MeasureText("font22", "on");
-                    Drawing.DrawText("font22", "on", new Vector2((int)(Drawing.ScreenSize.X / 2) + 800, (int)(Drawing.ScreenSize.Y / 1.7f) - 185 - TextSize.Y / 2 + 230 * ButtonNumber), Color.Green, 0, null, 2);
+                    audio.MusicIsEnabled = !audio.MusicIsEnabled;
+                    musicColor = audio.MusicIsEnabled ? Color.DarkGreen : Color.DarkRed;
                 }
+            }
+            else musicColor.A = 255;
+
+            if (cursor.Intersects(controllerButton) || selectedButton == MenuButton.Controller)
+            {
+                controllerColor.A = 200;
+                if (input.MouseButtonCheckPressed(true) || input.GamePadCheckPressed(Buttons.A))
+                {
+                    controllerColor = controllerColor.R == 0 ? Color.DarkRed : Color.DarkGreen;
+                    input.SwitchControls();
+                    selectedButton = input.ControllerInUse ? MenuButton.Controller : MenuButton.None;
+                }
+            }
+            else controllerColor.A = 255;
+
+            if (cursor.Intersects(fullscreenButton) || selectedButton == MenuButton.Fullscreen)
+            {
+                fullscreenColor.A = 200;
+                if (input.MouseButtonCheckPressed(true) || input.GamePadCheckPressed(Buttons.A))
+                {
+                    SwitchFullscreen();
+                    fullscreenColor = graphics.IsFullScreen ? Color.DarkGreen : Color.DarkRed;
+                }
+            }
+            else fullscreenColor.A = 255;
+
+            if (cursor.Intersects(quitButton) || selectedButton == MenuButton.Quit)
+            {
+                quitColor.A = 200;
+                if (input.MouseButtonCheckPressed(true) || input.GamePadCheckPressed(Buttons.A))
+                    Quit = true;
+            }
+            else quitColor.A = 255;
+
+            if (input.GamePadCheckPressed(Buttons.LeftThumbstickDown))
+            {
+                if (selectedButton == MenuButton.None)
+                    selectedButton = MenuButton.Sound;
                 else
-                {
-                    Vector2 TextSize = Drawing.MeasureText("font22", "off");
-                    Drawing.DrawText("font22", "off", new Vector2((int)(Drawing.ScreenSize.X / 2) + 800, (int)(Drawing.ScreenSize.Y / 1.7f) - 185 - TextSize.Y / 2 + 230 * ButtonNumber), Color.Red, 0, null, 2);
-                }
+                    selectedButton++;
+                if (selectedButton == MenuButton.None)
+                    selectedButton = MenuButton.Sound;
+            }
+
+            if (input.GamePadCheckPressed(Buttons.LeftThumbstickUp))
+            {
+                if (selectedButton == MenuButton.None)
+                    selectedButton = MenuButton.Quit;
+                else if (selectedButton == MenuButton.Sound)
+                    selectedButton = MenuButton.Quit;
+                else
+                    selectedButton--;
             }
         }
 
-        int ButtonIntersects(bool buttonIntersects,  int buttonCheck)
+        public void DrawGUI()
         {
-            if (buttonIntersects)
-                buttonCheck = 2;
+            //sound button
+            drawing.DrawRectangleUnscaled(soundButton, soundColor);
+            drawing.DrawText("font18", sound, new Vector2(drawing.GUISize.X / 2, drawing.GUISize.Y / 2 - 300), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+
+            //music button
+            drawing.DrawRectangleUnscaled(musicButton, musicColor);
+            drawing.DrawText("font18", music, new Vector2(drawing.GUISize.X / 2, drawing.GUISize.Y / 2 - 150), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+
+            //controller button
+            drawing.DrawRectangleUnscaled(controllerButton, controllerColor);
+            drawing.DrawText("font18", controller, new Vector2(drawing.GUISize.X / 2, drawing.GUISize.Y / 2), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+
+            //fullscreen button
+            drawing.DrawRectangleUnscaled(fullscreenButton, fullscreenColor);
+            drawing.DrawText("font18", fullscreen, new Vector2(drawing.GUISize.X / 2, drawing.GUISize.Y / 2 + 150), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+
+            //quit button
+            drawing.DrawRectangleUnscaled(quitButton, quitColor);
+            drawing.DrawText("font18", quit, new Vector2(drawing.GUISize.X / 2, drawing.GUISize.Y / 2 + 300), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+        }
+
+        void SwitchFullscreen()
+        {
+            if (!graphics.IsFullScreen)
+            {
+                graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                graphics.IsFullScreen = true;
+            }
             else
-                buttonCheck = 1;
-            return buttonCheck;
+            {
+                graphics.PreferredBackBufferWidth = 24 * 20 * 2;
+                graphics.PreferredBackBufferHeight = 24 * 15 * 2;
+                graphics.IsFullScreen = false;
+            }
+            drawing.SmartScale(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
+
+            graphics.ApplyChanges();
+
         }
     }
 }
+
 
