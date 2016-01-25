@@ -12,7 +12,7 @@ namespace MetroidClone.Engine
     {
         LevelGenerator levelGenerator;
         public const int LevelWidth = 20, LevelHeight = 15;
-        public const int WorldWidth = 9, WorldHeight = 7;
+        public const int WorldWidth = 7, WorldHeight = 5;
 
         public WorldGenerator()
         {
@@ -52,7 +52,7 @@ namespace MetroidClone.Engine
                     enemies[i, j] = 0;
                 }
 
-            int startingY = WorldHeight / 2 + World.Random.Next(-2, 3);
+            int startingY = WorldHeight / 2 + World.Random.Next(-1, 1);
 
             isRoom[0, startingY] = true; //Starting room
             guaranteedSpecialBlocks[0, startingY].Add("PlayerStart");
@@ -62,7 +62,7 @@ namespace MetroidClone.Engine
             guaranteedSpecialBlocks[1, startingY].Add(areaBorderNameRight[0]);
 
             //Other rooms (main areas).
-            int areaTwoBorderStart = 3, areaThreeBorderStart = 6;
+            int areaTwoBorderStart = 3, areaThreeBorderStart = 5;
             for (int i = 2; i < WorldWidth; i++)
                 for (int j = 0; j < WorldHeight; j++)
                 {
@@ -101,7 +101,7 @@ namespace MetroidClone.Engine
             {
                 wrenchPos = World.Random.Next(1, WorldHeight - 1);
             }
-            while (Math.Abs(wrenchPos - startingY) < 2);
+            while (Math.Abs(wrenchPos - startingY) < 1);
 
             rocketPos = World.Random.Next(1, WorldHeight - 1);
 

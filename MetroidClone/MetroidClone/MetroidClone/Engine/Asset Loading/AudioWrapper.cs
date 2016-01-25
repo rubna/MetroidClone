@@ -39,9 +39,9 @@ namespace MetroidClone.Engine
         public void StopOrPlayMusic(bool MusicIsEnabled)
         {
             if (MusicIsEnabled)
-                musicInstance.Play();
+                musicInstance?.Play();
             else
-                musicInstance.Stop();
+                musicInstance?.Stop();
         }
 
         public void PlayLooping(SoundEffect song)
