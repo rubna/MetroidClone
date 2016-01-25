@@ -6,7 +6,9 @@ namespace MetroidClone.Metroid
     class Scrap : Collectible
     {
         public int ScrapAmount;
-
+        /// <summary>
+        /// a pile of scrap metal, used to create drones. the amount of scrap in a pile is random, between 5 and 10
+        /// </summary>
         public override void Create()
         {
             base.Create();

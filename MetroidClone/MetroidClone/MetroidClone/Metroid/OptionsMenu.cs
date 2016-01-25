@@ -7,6 +7,8 @@ namespace MetroidClone.Metroid
 {
     class OptionsMenu
     {
+        //for extended comments see MainMenu.cs, because it is very similar
+        
         enum MenuButton
         {
             Sound,
@@ -82,7 +84,7 @@ namespace MetroidClone.Metroid
                 controllerColor.A = 200;
                 if (input.MouseButtonCheckPressed(true) || input.GamePadCheckPressed(Buttons.A))
                 {
-                    controllerColor = controllerColor.R == 0 ? Color.DarkRed : Color.DarkGreen;
+                    controllerColor = controllerColor == Color.DarkGreen ? Color.DarkRed : Color.DarkGreen;
                     input.SwitchControls();
                     selectedButton = input.ControllerInUse ? MenuButton.Controller : MenuButton.None;
                 }
@@ -152,6 +154,7 @@ namespace MetroidClone.Metroid
             drawing.DrawText("font18", quit, quitButton.Center.ToVector2(), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
         }
 
+        //switches to fullscreen and back, depending on the current state
         void SwitchFullscreen()
         {
             if (!graphics.IsFullScreen)

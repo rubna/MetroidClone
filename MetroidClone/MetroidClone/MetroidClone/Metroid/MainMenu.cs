@@ -16,6 +16,8 @@ namespace MetroidClone.Metroid
         Buttons selectedButton;
 
         DrawWrapper drawing;
+        
+        //used to give signals to MainGame
         public bool Start, Options, ExitGame;
         string start = "START", options = "OPTIONS", exit = "EXIT";
         Rectangle startButton, optionsButton, exitButton, cursor;
@@ -36,8 +38,10 @@ namespace MetroidClone.Metroid
             optionsButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 50, 200, 100);
             exitButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
 
+            //otherwise it would be possible that the cursor rectangle is still on a button eventhough the controller is in use
             cursor = Input.ControllerInUse ? new Rectangle(0, 0, 0, 0) : new Rectangle(Input.MouseCheckPosition().X, Input.MouseCheckPosition().Y, 1, 1);
 
+            //if the cursor is over a button or the button is selected with a controller, the button will change color
             if (cursor.Intersects(startButton) || selectedButton == Buttons.Start)
             {
                 startColor.A = 200;
@@ -68,6 +72,7 @@ namespace MetroidClone.Metroid
             }
             else exitColor.A = 255;
 
+            //scrolling through menu with controller
             if (Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickDown))
             {
                 if (selectedButton == Buttons.None)

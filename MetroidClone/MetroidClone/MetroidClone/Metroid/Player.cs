@@ -526,11 +526,14 @@ namespace MetroidClone.Metroid
             }
         }
 
+        //if the player gets hit by a monster or bullet, the controller will vibrate, a soundeffect will be played,
+        //the player will invincible for a short time and the player will get a slit knockback. if the hitpoints drop below 0,
+        //the player will die.
         void Hurt(int xDirection, int damage)
         {
             Audio.Play("Audio/Combat/Hit_Hurt");
             HitPoints -= damage;
-            Input.GamePadVibrate(0.1f * damage, 0.1f * damage, 0.1f);
+            Input.GamePadVibrate(0.1f * damage, 0.1f * damage, 100);
             blinkTimer = 1;
             Visible = false;
             Speed = new Vector2(xDirection * 3, -2);
@@ -538,6 +541,7 @@ namespace MetroidClone.Metroid
                 Die();
         }
 
+        //sends a signal to MainGame, so the GameState can change to GameOver
         void Die()
         {
             Audio.Play("Audio/GameSounds/Game_Over");

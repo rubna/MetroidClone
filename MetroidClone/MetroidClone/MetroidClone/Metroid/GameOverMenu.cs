@@ -4,6 +4,8 @@ using MetroidClone.Engine;
 namespace MetroidClone.Metroid
 {
     class GameOverMenu
+    //for extended comments, see MainMenu.cs, because these classes are very similar
+
     {
         enum Buttons
         {
@@ -16,22 +18,24 @@ namespace MetroidClone.Metroid
 
         DrawWrapper drawing;
         public bool Restart, Quit;
-        string gameOver = "GAME OVER", restart = "RESTART", quit = "QUIT";
-        Rectangle restartButton, quitButton, cursor;
-        Color restartColor = Color.DarkSlateGray, quitColor = Color.DarkSlateGray;
+        string gameOver = "GAME OVER", restart = "RESTART", score, quit = "QUIT";
+        Rectangle restartButton, scoreButton, quitButton, cursor;
+        Color restartColor = Color.DarkSlateGray, quitColor = Color.DarkSlateGray, scoreColor = Color.DarkSlateGray;
 
-        public GameOverMenu(DrawWrapper Drawing)
+        public GameOverMenu(DrawWrapper Drawing, int Score)
         {
             drawing = Drawing;
             Restart = false;
             Quit = false;
             selectedButton = Buttons.None;
+            score = Score.ToString();
         }
 
         public void Update(GameTime gameTime, InputHelper Input)
         {
-            restartButton = new Rectangle((int)drawing.GUISize.X / 2 - 300, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
-            quitButton = new Rectangle((int)drawing.GUISize.X / 2 + 100, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
+            restartButton = new Rectangle((int)drawing.GUISize.X / 2 - 400, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
+            scoreButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
+            quitButton = new Rectangle((int)drawing.GUISize.X / 2 + 200, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
             cursor = Input.ControllerInUse ? new Rectangle(0, 0, 0, 0) : new Rectangle(Input.MouseCheckPosition().X, Input.MouseCheckPosition().Y, 1, 1);
 
             if (cursor.Intersects(restartButton) || selectedButton == Buttons.Restart)
@@ -86,6 +90,10 @@ namespace MetroidClone.Metroid
             drawing.DrawRectangleUnscaled(restartButton, restartColor);
             drawing.DrawText("font18", restart, restartButton.Center.ToVector2(), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
 
+            //score
+            drawing.DrawRectangleUnscaled(scoreButton, scoreColor);
+            drawing.DrawText("font18", score, scoreButton.Center.ToVector2(), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+            
             //quit button
             drawing.DrawRectangleUnscaled(quitButton, quitColor);
             drawing.DrawText("font18", quit, quitButton.Center.ToVector2(), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
