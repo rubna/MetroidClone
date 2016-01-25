@@ -94,8 +94,6 @@ namespace MetroidClone.Engine
             var inputHelper = InputHelper.Instance;
 
             Profiler.LogEventEnd("FinalizeStep");
-            if (inputHelper.KeyboardCheckReleased(Keys.F12))
-                Profiler.ShowOutput();
 
             Profiler.LogGameStepStart();
 
