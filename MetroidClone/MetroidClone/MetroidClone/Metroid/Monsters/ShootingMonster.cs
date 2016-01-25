@@ -16,7 +16,7 @@ namespace MetroidClone.Metroid.Monsters
         float shotAnimationTimer = 0;
 
         AnimationBone body, hipLeft, kneeLeft, hipRight, kneeRight, head,
-            shoulderLeft, shoulderRight, elbowLeft, elbowRight, gun;
+            shoulderLeft, shoulderRight, elbowLeft, elbowRight, gun, gunNuzzle;
 
         Vector2 startingPos;
 
@@ -43,6 +43,7 @@ namespace MetroidClone.Metroid.Monsters
             shoulderRight = new AnimationBone(body, new Vector2(-6, -20));
             elbowRight = new AnimationBone(shoulderRight, new Vector2(-16, 0));
             gun = new AnimationBone(elbowRight, new Vector2(-10, 0)) { DepthOffset = -1 };
+            gunNuzzle = new AnimationBone(gun, new Vector2(15, -5)) { DepthOffset = -1 };
 
             World.AddObject(body);
             body.SetSprite("Enemy1/Body");
@@ -67,6 +68,7 @@ namespace MetroidClone.Metroid.Monsters
             elbowRight.SetSprite("Enemy1/RArm2");
             World.AddObject(gun);
             gun.SetSprite("Enemy1/Enemygun");
+            World.AddObject(gunNuzzle);
 
 
             State = MonsterState.ChangeState;
@@ -108,7 +110,7 @@ namespace MetroidClone.Metroid.Monsters
         {
             shotAnimationTimer = 1;
             FlipX = (Position.X - World.Player.Position.X) > 0;
-            World.AddObject(new MonsterBullet(AttackDamage), Position);
+            World.AddObject(new MonsterBullet(AttackDamage), gunNuzzle.Position);
         }
 
         void PlayAnimations()
@@ -118,6 +120,10 @@ namespace MetroidClone.Metroid.Monsters
             if (!OnGround)
             {
                 PlayAnimationLegsInAir();
+                if (shotAnimationTimer > 0)
+                    PlayAnimationArmsShooting((World.Player.Position - Position).Angle());
+                else
+                    PlayAnimationArmsIdle();
             }
             else if (Math.Abs(Speed.X) > 0.1f)
             {

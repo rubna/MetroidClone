@@ -33,7 +33,7 @@ namespace MetroidClone.Metroid
         bool down = false;
 
         public Weapon CurrentWeapon = Weapon.Nothing;
-        public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
+        public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing, Weapon.Wrench };
         public int HitPoints = 100, MaxHitPoints = 100;
         public int RocketAmmo = 5;
         public int MaximumRocketAmmo = 5;
@@ -317,8 +317,11 @@ namespace MetroidClone.Metroid
             if (UnlockedWeapons.Contains(Weapon.Wrench))
             {
                 //hold up wrench!
-                if ((Input.MouseButtonCheckDown(false) || Input.MouseWheelPressed() || Input.GamePadCheckPressed(Buttons.B)))
+                if ((Input.MouseButtonCheckDown(false) || Input.MouseWheelPressed() || Input.GamePadCheckPressed(Buttons.B)) && attackTimer == 0)
+                {
                     meleeAnimationTimer = 1;
+                    FlipX = Input.MouseCheckPosition().X < DrawPosition.X;
+                }
                 else
                 if (meleeAnimationTimer > 0)
                     meleeAnimationTimer -= 0.05f;
@@ -329,14 +332,14 @@ namespace MetroidClone.Metroid
                 {
                     World.Tutorial.WrenchUsed = true;
                     World.AddObject(new PlayerMelee(), Position + GetFlip * Vector2.UnitX * 20);
-                    attackTimer = 0.1f;
+                    attackTimer = 0.2f;
                 }
             }
 
             //testing: adds monster
             if (Input.KeyboardCheckPressed(Keys.F))
             {
-                World.AddObject(new MeleeMonster(), Input.MouseCheckUnscaledPosition(Drawing).ToVector2() + World.Camera);
+                World.AddObject(new ShootingMonster(), Input.MouseCheckUnscaledPosition(Drawing).ToVector2() + World.Camera);
                 Console.WriteLine("Monster Added");
             }
 

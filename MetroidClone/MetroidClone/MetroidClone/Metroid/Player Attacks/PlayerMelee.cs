@@ -21,7 +21,7 @@ namespace MetroidClone.Metroid.Player_Attacks
         {
             base.Update(gameTime);
             Position = World.Player.Position + World.Player.GetFlip * Vector2.UnitX * 20;
-            removeCounter += 0.1f;
+            removeCounter += 1f;
 
             //Collide with doors
             ISolid doorCollision = GetCollisionWithSolid<MeleeDoor>(TranslatedBoundingBox);
@@ -39,7 +39,13 @@ namespace MetroidClone.Metroid.Player_Attacks
         public override void Draw()
         {
             base.Draw();
-            Drawing.DrawRectangle(DrawBoundingBox, Color.Blue);
+            //Drawing.DrawRectangle(DrawBoundingBox, Color.Blue);
+        }
+
+        public override void Destroy()
+        {
+            if (removeCounter >= 1)
+                World.RemoveObject(this);
         }
     }
 }
