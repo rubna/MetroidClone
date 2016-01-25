@@ -80,15 +80,15 @@ namespace MetroidClone.Metroid
         public void DrawGUI()
         {
             //game over text
-            drawing.DrawText("font48", gameOver, new Vector2(drawing.GUISize.X / 2, drawing.GUISize.Y / 2), alignment: Engine.Asset.Font.Alignment.BottomCenter);
+            drawing.DrawText("font48", gameOver, new Vector2(drawing.GUISize.X / 2, drawing.GUISize.Y / 2), Color.White, alignment: Engine.Asset.Font.Alignment.BottomCenter);
 
             //restart button
             drawing.DrawRectangleUnscaled(restartButton, restartColor);
-            drawing.DrawText("font18", restart, new Vector2(drawing.GUISize.X - 200, drawing.GUISize.Y + 150), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+            drawing.DrawText("font18", restart, restartButton.Center.ToVector2(), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
 
             //quit button
             drawing.DrawRectangleUnscaled(quitButton, quitColor);
-            drawing.DrawText("font18", quit, new Vector2(drawing.GUISize.X + 200, drawing.GUISize.Y + 150), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+            drawing.DrawText("font18", quit, quitButton.Center.ToVector2(), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
         }
     }
 }
