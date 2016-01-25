@@ -85,7 +85,7 @@ namespace MetroidClone.Metroid.Monsters
         {
             shotTimer = 2; //It takes some time to recharge
             FlipX = (Position.X - World.Player.Position.X) > 0;
-            World.AddObject(new MonsterBullet(AttackDamage), Position - new Vector2(0f, 21f));
+            World.AddObject(new TurretBullet(AttackDamage), Position - new Vector2(0f, 21f));
             stayAtRotationTime = 5;
         }
 

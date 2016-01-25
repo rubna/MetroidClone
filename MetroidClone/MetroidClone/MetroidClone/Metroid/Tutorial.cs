@@ -237,7 +237,7 @@ namespace MetroidClone.Metroid
         {
             if (currentText == null)
                 return;
-            Color guiColor = new Color(50, 50, 50, 200);
+            Color guiColor = new Color(50, 50, 50, 150);
             textSize = Drawing.MeasureText("font18", currentText);
             Drawing.DrawRectangleUnscaled(new Rectangle(((int)Drawing.GUISize.X - (int)textSize.X) / 2 - 10, (int)Drawing.GUISize.Y - 20 - (int)textSize.Y, (int)textSize.X + 20, (int)textSize.Y + 10), guiColor);
             Drawing.DrawText("font18", currentText, new Vector2((int)Drawing.GUISize.X / 2, Drawing.GUISize.Y - 10), Color.White, alignment: Engine.Asset.Font.Alignment.BottomCenter);

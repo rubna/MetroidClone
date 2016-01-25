@@ -1,6 +1,7 @@
 ﻿using MetroidClone.Engine;
 using Microsoft.Xna.Framework;
 using MetroidClone.Metroid.Abstract;
+using System;
 
 namespace MetroidClone.Metroid
 {
@@ -32,6 +33,9 @@ namespace MetroidClone.Metroid
                 Speed.Normalize();
                 Speed *= 5;
             }
+
+            SetSprite("Robot/playergunbullet");
+            ImageRotation = MathHelper.ToRadians(VectorExtensions.Angle(Speed));
         }
         public override void Update(GameTime gameTime)
         {
@@ -58,8 +62,8 @@ namespace MetroidClone.Metroid
 
         public override void Draw()
         {
-            Drawing.DrawRectangle(DrawBoundingBox, Color.Blue);
-            base.Draw();
+            if (CurrentSprite != null && Visible)
+                Drawing.DrawSprite(CurrentSprite, DrawPosition, (int)CurrentImage, size: new Vector2(13, 6), rotation: ImageRotation); //Draw the current image of the sprite.
         }
     }
 }

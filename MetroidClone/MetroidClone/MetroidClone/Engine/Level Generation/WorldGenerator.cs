@@ -56,7 +56,7 @@ namespace MetroidClone.Engine
 
             isRoom[0, startingY] = true; //Starting room
             guaranteedSpecialBlocks[0, startingY].Add("PlayerStart");
-           
+
             isRoom[1, startingY] = true; //Room right of starting room.
             guaranteedSpecialBlocks[1, startingY].Add("GunPickup");
             guaranteedSpecialBlocks[1, startingY].Add(areaBorderNameRight[0]);
@@ -68,10 +68,6 @@ namespace MetroidClone.Engine
                 {
                     bool isTopOrBottomArea = j == 0 || j == WorldHeight - 1;
                     isRoom[i, j] = true;
-                    if (World.Random.Next(100) < (isTopOrBottomArea ? 60 : 20)) //Generate cramped rooms. There are more of 'em at the top and bottom.
-                        theme[i, j] = "Cramped";
-                    else if (World.Random.Next(100) < 20) //Generate an open room
-                        theme[i, j] = "Open";
 
                     //Set the area
                     if (i >= areaThreeBorderStart + World.Random.Next(2) - (isTopOrBottomArea ? 1 : 0))
@@ -80,6 +76,14 @@ namespace MetroidClone.Engine
                         area[i, j] = 1;
                     else
                         area[i, j] = 0;
+
+                    //Set the thema
+                    if (World.Random.Next(100) < (isTopOrBottomArea ? 60 : 20)) //Generate cramped rooms. There are more of 'em at the top and bottom.
+                        theme[i, j] = "Cramped";
+                    else if (World.Random.Next(100) < 20) //Generate an open room
+                        theme[i, j] = "Open";
+                    else if (area[i, j] == 2 && World.Random.Next(100) < 50) //Generate a room with lots of spikes
+                        theme[i, j] = "Spiky";
 
                     //These areas have a normal amount of enemies, with more enemies in later areas.
                     if (area[i, j] == 0)

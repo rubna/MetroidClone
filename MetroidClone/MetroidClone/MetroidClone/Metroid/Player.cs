@@ -353,6 +353,13 @@ namespace MetroidClone.Metroid
                         Hurt(Math.Sign(Position.X - monster.Position.X), monster.Damage);
                     }
 
+                foreach (Spikes spikes in World.GameObjects.OfType<Spikes>())
+                    if (TranslatedBoundingBox.Intersects(spikes.TranslatedBoundingBox))
+                    {
+                        if (spikes.Damage > 0)
+                            Hurt(Math.Sign(Position.X - spikes.Position.X), spikes.Damage);
+                    }
+
                 List<MonsterBullet> destroyedBullets = new List<MonsterBullet>();
                 foreach (MonsterBullet bullet in World.GameObjects.OfType<MonsterBullet>())
                 {
@@ -473,7 +480,7 @@ namespace MetroidClone.Metroid
                 case Weapon.Gun:
                 {
                     Audio.Play("Audio/Combat/Gunshots/Laser/Laser_Shoot01");
-                    World.AddObject(new PlayerBullet(), gun.Position);
+                    World.AddObject(new PlayerBullet(), gun.TargetPosition);
                     break;
                 }
                 case Weapon.Rocket:
