@@ -92,15 +92,15 @@ namespace MetroidClone.Metroid
         {
             //resume button
             drawing.DrawRectangleUnscaled(resumeButton, resumeColor);
-            drawing.DrawText("font18", resume, new Vector2(drawing.GUISize.X / 2, drawing.GUISize.Y / 2 - 150), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+            drawing.DrawText("font18", resume, resumeButton.Center.ToVector2(), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
 
             //options button
             drawing.DrawRectangleUnscaled(optionsButton, optionsColor);
-            drawing.DrawText("font18", options, new Vector2(drawing.GUISize.X / 2, drawing.GUISize.Y / 2), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+            drawing.DrawText("font18", options, optionsButton.Center.ToVector2(), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
 
             //quit button
             drawing.DrawRectangleUnscaled(quitButton, quitColor);
-            drawing.DrawText("font18", quit, new Vector2(drawing.GUISize.X / 2, drawing.GUISize.Y / 2 + 150), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+            drawing.DrawText("font18", quit, quitButton.Center.ToVector2(), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
         }
     }
 }

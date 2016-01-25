@@ -174,6 +174,7 @@ namespace MetroidClone.Engine
                     break;
                 case GameState.GameOver:
                     gameOverMenu.Update(gameTime, inputHelper);
+                    audioWrapper.StopOrPlayMusic(false);
                     if (gameOverMenu.Restart)
                     {
                         world = new World();
@@ -188,6 +189,7 @@ namespace MetroidClone.Engine
                         LoadContent();
                         currentState = GameState.MainMenu;
                         gameOverMenu = null;
+                        mainMenu = new MainMenu(drawWrapper);
                     }
                     break;
             }

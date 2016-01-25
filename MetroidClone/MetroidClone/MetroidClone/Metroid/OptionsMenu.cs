@@ -61,7 +61,6 @@ namespace MetroidClone.Metroid
                 {
                     audio.AudioIsEnabled = !audio.AudioIsEnabled;
                     soundColor = audio.AudioIsEnabled ? Color.DarkGreen : Color.DarkRed;
-                    
                 }
             }
             else soundColor.A = 255;
@@ -73,6 +72,7 @@ namespace MetroidClone.Metroid
                 {
                     audio.MusicIsEnabled = !audio.MusicIsEnabled;
                     musicColor = audio.MusicIsEnabled ? Color.DarkGreen : Color.DarkRed;
+                    audio.StopOrPlayMusic(audio.MusicIsEnabled);
                 }
             }
             else musicColor.A = 255;
@@ -133,23 +133,23 @@ namespace MetroidClone.Metroid
         {
             //sound button
             drawing.DrawRectangleUnscaled(soundButton, soundColor);
-            drawing.DrawText("font18", sound, new Vector2(drawing.GUISize.X / 2, drawing.GUISize.Y / 2 - 300), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+            drawing.DrawText("font18", sound, soundButton.Center.ToVector2(), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
 
             //music button
             drawing.DrawRectangleUnscaled(musicButton, musicColor);
-            drawing.DrawText("font18", music, new Vector2(drawing.GUISize.X / 2, drawing.GUISize.Y / 2 - 150), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+            drawing.DrawText("font18", music, musicButton.Center.ToVector2(), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
 
             //controller button
             drawing.DrawRectangleUnscaled(controllerButton, controllerColor);
-            drawing.DrawText("font18", controller, new Vector2(drawing.GUISize.X / 2, drawing.GUISize.Y / 2), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+            drawing.DrawText("font18", controller, controllerButton.Center.ToVector2(), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
 
             //fullscreen button
             drawing.DrawRectangleUnscaled(fullscreenButton, fullscreenColor);
-            drawing.DrawText("font18", fullscreen, new Vector2(drawing.GUISize.X / 2, drawing.GUISize.Y / 2 + 150), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+            drawing.DrawText("font18", fullscreen, fullscreenButton.Center.ToVector2(), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
 
             //quit button
             drawing.DrawRectangleUnscaled(quitButton, quitColor);
-            drawing.DrawText("font18", quit, new Vector2(drawing.GUISize.X / 2, drawing.GUISize.Y / 2 + 300), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+            drawing.DrawText("font18", quit, quitButton.Center.ToVector2(), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
         }
 
         void SwitchFullscreen()
