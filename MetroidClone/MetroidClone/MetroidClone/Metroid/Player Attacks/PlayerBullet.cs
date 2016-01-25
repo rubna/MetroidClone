@@ -22,11 +22,11 @@ namespace MetroidClone.Metroid
             CollideWithWalls = false;
 
             SetSprite("Robot/playergunbullet");
-            ImageRotation = MathHelper.ToRadians(VectorExtensions.Angle(Speed));
         }
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+            ImageRotation = MathHelper.ToRadians(VectorExtensions.Angle(Speed));
 
             ISolid doorCollision = GetCollisionWithSolid<GunDoor>(TranslatedBoundingBox);
             
