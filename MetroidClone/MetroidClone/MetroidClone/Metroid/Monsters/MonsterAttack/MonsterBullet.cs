@@ -27,6 +27,7 @@ namespace MetroidClone.Metroid
             Vector2 dir = World.Player.Position - Position;
             dir.Normalize();
             Speed = baseSpeed * dir;
+            SetSprite("Enemy1/enemybullet");
         }
         public override void Update(GameTime gameTime)
         {
@@ -39,7 +40,6 @@ namespace MetroidClone.Metroid
 
         public override void Draw()
         {
-            Drawing.DrawRectangle(DrawBoundingBox, Color.Red);
             base.Draw();
         }
     }

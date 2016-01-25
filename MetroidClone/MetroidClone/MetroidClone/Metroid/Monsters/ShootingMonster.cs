@@ -10,7 +10,7 @@ namespace MetroidClone.Metroid.Monsters
 {
     partial class ShootingMonster : Monster
     {
-        //Damage of the monster itself (not used for bullets)
+        //Damage of the bullets
         public int AttackDamage = 5;
         float AnimationRotation = 0;
         float shotAnimationTimer = 0;
@@ -26,7 +26,7 @@ namespace MetroidClone.Metroid.Monsters
             BoundingBox = new Rectangle(-13, -27, 26, 40);
             SpeedOnHit = new Vector2(3, -2);
             HitPoints = 5;
-            Damage = 5;
+            Damage = 5; //Damage of the monster itself
 
             SpriteScale = 0.2f;
 

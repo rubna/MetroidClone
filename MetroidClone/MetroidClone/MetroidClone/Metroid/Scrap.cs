@@ -12,6 +12,7 @@ namespace MetroidClone.Metroid
             base.Create();
             BoundingBox = new Rectangle(-10, -10, 20, 20);
             ScrapAmount = World.Random.Next(5, 11);
+            SetSprite("Scrap/Scrap" + World.Random.Next(1, 7));
         }
 
         public override void Update(GameTime gameTime)
@@ -23,12 +24,6 @@ namespace MetroidClone.Metroid
                 Destroy();
             }
             base.Update(gameTime);
-        }
-
-        public override void Draw()
-        {
-            base.Draw();
-            Drawing.DrawRectangle(DrawBoundingBox, Color.DarkSlateGray);
         }
     }
 }

@@ -66,6 +66,8 @@ namespace MetroidClone.Metroid.Monsters
             Gravity = 0.2f;
 
             startingPos = Position;
+
+            Depth = -10;
         }
 
         public override void Update(GameTime gameTime)

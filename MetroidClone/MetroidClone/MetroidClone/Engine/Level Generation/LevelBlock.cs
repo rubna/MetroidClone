@@ -167,6 +167,8 @@ namespace MetroidClone.Engine
                         world.AddObject(new GunDoor(), baseX + World.TileWidth / 2, baseY);
                     else if (data == 'M') //A melee door
                         world.AddObject(new MeleeDoor(), baseX + World.TileWidth / 2, baseY);
+                    else if (data == 'S') //Spikes
+                        world.AddObject(new Spikes(), baseX, baseY + (int)(World.TileHeight * (100f / 128f)));
                     else if (data == 'G') //A gun pickup block
                         world.AddObject(new GunPickup(), centerX, centerY);
                     else if (data == 'U') //A gun upgrade pickup block

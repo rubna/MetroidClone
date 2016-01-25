@@ -90,6 +90,7 @@
     <Compile Include="Engine\Level Generation\RoomExit.cs" />
     <Compile Include="Engine\Level Generation\SpecialTileGroupDefinition.cs" />
     <Compile Include="Engine\Collections\WeightedRandomCollection.cs" />
+    <Compile Include="Metroid\Spikes.cs" />
     <Compile Include="Metroid\GunUpgrade.cs" />
     <Compile Include="Metroid\Hack This Game system\Hacking opportunities\HealthAndBullets.cs" />
     <Compile Include="Metroid\MainMenu.cs" />
@@ -111,6 +112,8 @@
     <Compile Include="Engine\Solids\SlopeLeft.cs" />
     <Compile Include="Engine\Solids\SlopeRight.cs" />
     <Compile Include="Metroid\Monsters\MeleeMonster.cs" />
+    <Compile Include="Metroid\Monsters\MonsterAttack\TurretBullet.cs" />
+    <Compile Include="Metroid\Monsters\Turret.cs" />
     <Compile Include="Metroid\OptionsMenu.cs" />
     <Compile Include="Metroid\VectorExtensions.cs" />
     <Compile Include="Engine\Solids\ISolid.cs" />

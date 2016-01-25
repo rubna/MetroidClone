@@ -364,13 +364,24 @@ namespace MetroidClone.Metroid
             {
                 foreach (Monster monster in World.GameObjects.OfType<Monster>())
                     if (TranslatedBoundingBox.Intersects(monster.TranslatedBoundingBox))
+                    {
+                        if (monster.Damage > 0)
                         Hurt(Math.Sign(Position.X - monster.Position.X), monster.Damage);
+                    }
+
+                foreach (Spikes spikes in World.GameObjects.OfType<Spikes>())
+                    if (TranslatedBoundingBox.Intersects(spikes.TranslatedBoundingBox))
+                    {
+                        if (spikes.Damage > 0)
+                            Hurt(Math.Sign(Position.X - spikes.Position.X), spikes.Damage);
+                    }
 
                 List<MonsterBullet> destroyedBullets = new List<MonsterBullet>();
                 foreach (MonsterBullet bullet in World.GameObjects.OfType<MonsterBullet>())
                 {
                     if (TranslatedBoundingBox.Intersects(bullet.TranslatedBoundingBox))
                     {
+                        if (bullet.Damage > 0)
                         Hurt(Math.Sign(Position.X - bullet.Position.X), bullet.Damage);
                         destroyedBullets.Add(bullet);
                     }

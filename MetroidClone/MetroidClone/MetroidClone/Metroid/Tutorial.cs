@@ -239,7 +239,7 @@ namespace MetroidClone.Metroid
                 return;
             Color guiColor = new Color(0, 0, 0, 50);
             textSize = Drawing.MeasureText("font18", currentText);
-            Drawing.DrawRectangleUnscaled(new Rectangle(((int)Drawing.GUISize.X - (int)textSize.X) / 2 - 10, (int)Drawing.GUISize.Y - 20 - (int)textSize.Y, (int)textSize.X + 20, (int)textSize.Y + 10), guiColor);
+            Drawing.DrawRectangleUnscaled(new Rectangle(((int)Drawing.GUISize.X - (int)textSize.X) / 2 - 10, (int)Drawing.GUISize.Y - 16 - (int)textSize.Y, (int)textSize.X + 20, (int)textSize.Y + 6), guiColor);
             Drawing.DrawText("font18", currentText, new Vector2((int)Drawing.GUISize.X / 2, Drawing.GUISize.Y - 10), Color.White, alignment: Engine.Asset.Font.Alignment.BottomCenter);
         }
     }
