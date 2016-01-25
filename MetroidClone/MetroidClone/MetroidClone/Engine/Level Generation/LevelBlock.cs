@@ -1,7 +1,9 @@
 ﻿using MetroidClone.Metroid;
+using MetroidClone.Metroid.Monsters;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MetroidClone.Engine
 {
@@ -89,7 +91,9 @@ namespace MetroidClone.Engine
             int BlockID = random.Next(int.MaxValue);
 
             bool[,] isActuallyEmpty = new bool[Width, Height];
+            bool[,] isActuallyWall = new bool[Width, Height];
             FairRandomCollection<Vector2> possibleEnemyPositions = new FairRandomCollection<Vector2>();
+            FairRandomCollection<Vector2> possibleTurretPositions = new FairRandomCollection<Vector2>();
 
             //Place the tiles in the level
             for (int i = 0; i < Width; i++)
@@ -157,6 +161,7 @@ namespace MetroidClone.Engine
                     {
                         world.AddObject(new Wall(stdCollisionRect));
 
+                        isActuallyWall[i, j] = true;
                         if (j != 0 && isActuallyEmpty[i, j - 1])
                         {
                             //We can place an enemy here!
@@ -192,16 +197,31 @@ namespace MetroidClone.Engine
                     {
                         //Nothing
                         isActuallyEmpty[i, j] = true;
+
+                        if (j != 0 && isActuallyWall[i, j - 1])
+                        {
+                            //We can place a turret here!
+                            possibleTurretPositions.Add(new Vector2(centerX, baseY + 15));
+                        }
                     }
                 }
             }
 
+
             //Place some enemies.
             for (int i = 0; i < numberOfEnemies; i++)
-                if (possibleEnemyPositions.Count != 0)
+            {
+                if (possibleEnemyTypes.Contains(typeof(Turret)) && World.Random.Next(3) == 0)
                 {
-                    world.AddObject(Activator.CreateInstance(possibleEnemyTypes.GetRandomItem()) as GameObject, possibleEnemyPositions.Get());
+                    if (possibleTurretPositions.Count != 0)
+                        world.AddObject(new Turret(), possibleTurretPositions.Get());
                 }
+                else if (possibleEnemyPositions.Count != 0)
+                {
+                    world.AddObject(Activator.CreateInstance(possibleEnemyTypes.Except(new List<Type>() { typeof(Turret) }).ToList().GetRandomItem())
+                        as GameObject, possibleEnemyPositions.Get());
+                }
+            }
         }
 
         //Check if the level block meets the given requirements.

@@ -17,12 +17,12 @@ namespace MetroidClone.Metroid.Monsters
         float rotation = 0;
         Vector2 rotationSizeModVector; //How we should scale the turret.
         float firstChargeTimer = 0;
-        Vector2 gunOffset = new Vector2(13, 17);
+        Vector2 gunOffset = new Vector2(12, 10);
 
         public override void Create()
         {
             base.Create();
-            BoundingBox = new Rectangle(-15, -20, 30, 60);
+            BoundingBox = new Rectangle(-15, -15, 30, 30);
             HitPoints = 10;
             Damage = 0; //The turret itself does no damage
             Gravity = 0;
