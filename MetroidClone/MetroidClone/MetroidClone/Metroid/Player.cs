@@ -496,7 +496,21 @@ namespace MetroidClone.Metroid
                 case Weapon.Gun:
                 {
                     Audio.Play("Audio/Combat/Gunshots/Laser/Laser_Shoot01");
-                    World.AddObject(new PlayerBullet(), gunNuzzle.Position);
+                    PlayerBullet bullet = new PlayerBullet();
+                    World.AddObject(bullet, gunNuzzle.Position);
+                    if (Input.ControllerInUse)
+                    {
+                        Vector2 dir = Input.ThumbStickCheckDirection(false);
+                        dir.Y = -dir.Y;
+                        dir.Normalize();
+                        bullet.Speed = 5 * dir;
+                    }
+                    else
+                    {
+                        bullet.Speed = Input.MouseCheckUnscaledPosition(Drawing).ToVector2() - DrawPosition;
+                        bullet.Speed.Normalize();
+                        bullet.Speed *= 5;
+                    }
                     break;
                 }
                 case Weapon.Rocket:

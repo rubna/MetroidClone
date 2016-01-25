@@ -20,19 +20,6 @@ namespace MetroidClone.Metroid
             Friction.X = 1;
             Gravity = 0;
             CollideWithWalls = false;
-            if (Input.ControllerInUse)
-            {
-                Vector2 dir = Input.ThumbStickCheckDirection(false);
-                dir.Y = -dir.Y;
-                dir.Normalize();
-                Speed = 5 * dir;
-            }
-            else
-            {
-                Speed = Input.MouseCheckUnscaledPosition(Drawing).ToVector2() - DrawPosition;
-                Speed.Normalize();
-                Speed *= 5;
-            }
 
             SetSprite("Robot/playergunbullet");
             ImageRotation = MathHelper.ToRadians(VectorExtensions.Angle(Speed));

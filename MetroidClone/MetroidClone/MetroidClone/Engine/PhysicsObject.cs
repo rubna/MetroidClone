@@ -17,6 +17,7 @@ namespace MetroidClone.Engine
         protected bool OnGround = false;
         protected bool OnSlope = false;
         protected Vector2 WallBounce = Vector2.Zero;
+        protected bool IgnoreJumpThroughs = false;
         public float SpriteScale = 1f;
 
         //HadCollision stores whether there was a collision with a wall in the last update.
@@ -164,7 +165,7 @@ namespace MetroidClone.Engine
             for (int i = 0; i < numberOfSolids; i++)
             {
                 //Ignore collisions with jumpthroughs when going up.
-                if (!(solids[i] is JumpThrough && Speed.Y < 0) && solids[i].CollidesWith(boundingbox) && !(solids[i] == this))
+                if (!(solids[i] is JumpThrough && (Speed.Y < 0 || IgnoreJumpThroughs)) && solids[i].CollidesWith(boundingbox) && !(solids[i] == this))
                 {
                     return true;
                 }
