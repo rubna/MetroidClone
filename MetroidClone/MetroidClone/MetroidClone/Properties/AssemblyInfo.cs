@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("MetroidClone")]
-[assembly: AssemblyProduct("MetroidClone")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyTitle("Space Aid")]
+[assembly: AssemblyProduct("Space Aid")]
+[assembly: AssemblyDescription("Space Aid")]
+[assembly: AssemblyCompany("Hidden Horse Entertainment")]
+[assembly: AssemblyCopyright("Copyright © Hidden Horse Entertainment 2015-2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

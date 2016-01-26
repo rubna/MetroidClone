@@ -37,6 +37,20 @@ namespace MetroidClone.Metroid.Player_Attacks
             {
                 World.Player.Speed = new Vector2((1 - off.X / radiusTarget) * 16 + 8, off.Y).ToCartesian();
             }
+
+            //Open doors
+            foreach (RocketDoor door in World.GameObjects.OfType<RocketDoor>())
+            {
+                if (door.Visible)
+                {
+                    Vector2 offset = (door.Position - Position).ToPolar();
+                    if (offset.X < radiusTarget + 10)
+                    {
+                        door.Activated = true;
+                        World.Tutorial.RocketDoorOpened = true;
+                    }
+                }
+            }
         }
 
         public override void Update(GameTime gameTime)

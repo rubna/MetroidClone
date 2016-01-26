@@ -43,11 +43,11 @@ namespace MetroidClone.Metroid
             spawnsEachWave.Add(new List<Monster>() { new MeleeMonster(), new MeleeMonster(), new MeleeMonster() });
             spawnsEachWave.Add(new List<Monster>() { new SlimeMonster(), new MeleeMonster(), new SlimeMonster(), new MeleeMonster(), new SlimeMonster() });
             spawnsEachWave.Add(new List<Monster>() { new MeleeMonster(), new SlimeMonster(), new ShootingMonster() });
-            spawnsEachWave.Add(new List<Monster>() { new ShootingMonster(), new MeleeMonster(), new ShootingMonster(), new SlimeMonster() });
-            spawnsEachWave.Add(new List<Monster>() { new ShootingMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new ShootingMonster() });
+            spawnsEachWave.Add(new List<Monster>() { new ShootingMonster(), new MeleeMonster(), new MeleeMonster(), new SlimeMonster() });
+            spawnsEachWave.Add(new List<Monster>() { new ShootingMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new SlimeMonster() });
             spawnsEachWave.Add(new List<Monster>() { new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster() });
             spawnsEachWave.Add(new List<Monster>() { new ShootingMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new ShootingMonster() });
-            spawnsEachWave.Add(new List<Monster>() { new ShootingMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new SlimeMonster(), new SlimeMonster(), new SlimeMonster() });
+            spawnsEachWave.Add(new List<Monster>() { new ShootingMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new SlimeMonster(), new SlimeMonster() });
             spawnsEachWave.Add(new List<Monster>() { new Boss() });
         }
 
@@ -126,7 +126,7 @@ namespace MetroidClone.Metroid
                     if (boss.HitPoints < 80 && bossHelpersCreated < 1)
                     {
                         bossHelpersCreated = 1;
-                        spawnsEachWave[wave] = new List<Monster>() { new SlimeMonster(), new SlimeMonster(), new SlimeMonster(), new SlimeMonster() };
+                        spawnsEachWave[wave] = new List<Monster>() { new SlimeMonster(), new SlimeMonster() };
                     }
                     else if (boss.HitPoints < 50 && bossHelpersCreated < 2)
                     {
@@ -136,11 +136,6 @@ namespace MetroidClone.Metroid
                     else if (boss.HitPoints < 20 && bossHelpersCreated < 3)
                     {
                         bossHelpersCreated = 3;
-                        spawnsEachWave[wave] = new List<Monster>() { new ShootingMonster() };
-                    }
-                    else if (boss.HitPoints < 10 && bossHelpersCreated < 4)
-                    {
-                        bossHelpersCreated = 4;
                         spawnsEachWave[wave] = new List<Monster>() { new ShootingMonster() };
                     }
                 }

@@ -47,8 +47,12 @@ namespace MetroidClone.Metroid.Player_Attacks
                 smokeTrailTime++;
             Speed += direction * 0.25f;
             base.Update(gameTime);
+
             if (HadHCollision || HadVCollision)
+            {
+                World.AddObject(new PlayerExplosion(), Position);
                 Destroy();
+            }
 
             if (World.PointOutOfView(Position, -10))
                 Destroy();
@@ -65,7 +69,7 @@ namespace MetroidClone.Metroid.Player_Attacks
         {
             base.Destroy();
             //Audio.Play("Audio/Combat/Gunshots/Rocket/Explosion");
-            World.AddObject(new PlayerExplosion(), Position);
+            
         }
     }
 }

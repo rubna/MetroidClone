@@ -75,7 +75,7 @@ namespace MetroidClone.Metroid
 
         string wrenchdoorNoWrench = "Hit red doors like this one with a wrench to open them.\n(You'll have to find a wrench first!)";
 
-        string rocketdoor = "Blast the door with a rocket launcher to open it.";
+        string rocketdoor = "Blast orange doors like this one with\na rocket launcher to open them.";
         public bool RocketDoorOpened = false;
 
         public override void Create()
@@ -133,21 +133,34 @@ namespace MetroidClone.Metroid
             else if (currentText == wrenchdoor || currentText == wrenchdoorNoWrench)
                 currentText = null;
 
-            /*if (!RocketDoorOpened)
+            if (!RocketDoorOpened)
+            {
+                bool doorInRange = false;
+
                 foreach (RocketDoor Door in World.GameObjects.OfType<RocketDoor>().ToList())
                 {
-                    if ((World.Player.Position - Door.Position).Length() <= tutorialRange)
+                    if ((World.Player.Position - Door.Position).Length() <= tutorialRange && !World.PointOutOfView(Door.Position) && !Door.Activated)
                     {
                         if (currentText != rocketdoor)
                             previousText = currentText;
                         currentText = rocketdoor;
+                        doorInRange = true;
                     }
-                    else
-                        if (previousText != null)
-                        currentText = previousText;
                 }
+
+                if (!doorInRange)
+                {
+                    if (currentText == rocketdoor)
+                    {
+                        if (previousText != null)
+                            currentText = previousText;
+                        else
+                            currentText = null;
+                    }
+                }
+            }
             else
-                currentText = null;*/
+                currentText = null;
 
             if (Moved && (currentText == kbmove || currentText == gpmove))
                 currentText = Input.ControllerInUse ? gpjump : kbjump;

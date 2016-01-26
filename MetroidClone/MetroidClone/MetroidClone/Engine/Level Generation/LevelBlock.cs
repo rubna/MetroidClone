@@ -168,10 +168,14 @@ namespace MetroidClone.Engine
                             possibleEnemyPositions.Add(new Vector2(centerX, centerY - World.TileHeight + 10));
                         }
                     }
+                    else if (data == 'T') //A tile
+                        world.AddObject(new WindowTile(stdCollisionRect));
                     else if (data == 'D') //A gun door
                         world.AddObject(new GunDoor(), baseX + World.TileWidth / 2, baseY);
                     else if (data == 'M') //A melee door
                         world.AddObject(new MeleeDoor(), baseX + World.TileWidth / 2, baseY);
+                    else if (data == 'C') //A rocket door
+                        world.AddObject(new RocketDoor(), baseX + World.TileWidth / 2, baseY);
                     else if (data == 'B') //A boss door
                         world.AddObject(new BossDoor(), baseX + World.TileWidth / 2, baseY);
                     else if (data == 'O')

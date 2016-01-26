@@ -27,7 +27,7 @@ namespace MetroidClone.Metroid.Monsters
             BoundingBox = new Rectangle((int)(-13 * baseScale), (int)(-37 * baseScale), 
                                         (int)(26 * baseScale), (int)(50 * baseScale));
             SpeedOnHit = new Vector2(3, -2);
-            HitPoints = 120;
+            HitPoints = 100;
             Damage = 5; //Damage of the monster itself
 
             SpriteScale = 0.2f * baseScale;

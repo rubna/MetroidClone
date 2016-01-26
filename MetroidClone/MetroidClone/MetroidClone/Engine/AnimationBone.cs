@@ -28,7 +28,7 @@ namespace MetroidClone.Engine
             }
         }
 
-        public float SpriteScale = 0;// = 0.08f;
+        public new float SpriteScale = 0;// = 0.08f;
         public float TargetRotation = 0;
         public float RotationLerpFactor = 0.3f;
         public float PositionLerpFactor = 0.9f;

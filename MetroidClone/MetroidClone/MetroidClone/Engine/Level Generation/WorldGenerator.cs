@@ -82,13 +82,15 @@ namespace MetroidClone.Engine
                     else
                         area[i, j] = 0;
 
-                    //Set the thema
+                    //Set the theme
                     if (World.Random.Next(100) < (isTopOrBottomArea ? 60 : 20)) //Generate cramped rooms. There are more of 'em at the top and bottom.
                         theme[i, j] = "Cramped";
                     else if (World.Random.Next(100) < 20) //Generate an open room
                         theme[i, j] = "Open";
                     else if (area[i, j] == 2 && World.Random.Next(100) < 50) //Generate a room with lots of spikes
                         theme[i, j] = "Spiky";
+                    else if (World.Random.Next(100) < 15) //Create a room with windows
+                        theme[i, j] = "Windowed";
 
                     //These areas have a normal amount of enemies, with more enemies in later areas.
                     if (area[i, j] == 0)
@@ -158,6 +160,7 @@ namespace MetroidClone.Engine
             //Add nine "normal tiles"
             for (int i = 0; i < 9; i++)
                 guaranteedSpecialBlocks[WorldWidth - 1, bossY].Add("NormalBossRoomTile");
+            guaranteedSpecialBlocks[WorldWidth - 2, bossY].Add("RightRocketBorder");  //Add a border so players must have the rocket launcher.
 
             //Place the exits
             for (int i = 0; i < WorldWidth; i++)
