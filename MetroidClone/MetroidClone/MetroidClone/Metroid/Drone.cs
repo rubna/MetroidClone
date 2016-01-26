@@ -30,6 +30,7 @@ namespace MetroidClone.Metroid
             WallBounce = Vector2.One * 0.9f;
             SetSprite("Items/dronesmall");
             IgnoreJumpThroughs = true;
+            Depth = 2;
         }
 
         public override void Update(GameTime gameTime)

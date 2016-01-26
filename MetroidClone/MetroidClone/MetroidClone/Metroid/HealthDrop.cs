@@ -11,14 +11,16 @@ namespace MetroidClone.Metroid
 
         public HealthDrop(int monsterDifficulty)
         {
-            hitPointsFromHealthDrop = monsterDifficulty;
+            hitPointsFromHealthDrop = Math.Max(5, monsterDifficulty);
         }
 
         public override void Create()
         {
             base.Create();
-            BoundingBox = new Rectangle(-5, -3, 10, 6);
+            BoundingBox = new Rectangle(-6, -9, 12, 20);
+            SetSprite("Pickups/healthdrop");
         }
+
         public override void Update(GameTime gameTime)
         {
             if (CollidesWith(Position, World.Player))
@@ -32,11 +34,6 @@ namespace MetroidClone.Metroid
             }
             base.Update(gameTime);
 
-        }
-        public override void Draw()
-        {
-            base.Draw();
-            Drawing.DrawRectangle(DrawBoundingBox, Color.Pink);
         }
     }
 }
