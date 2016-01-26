@@ -26,7 +26,7 @@ namespace MetroidClone.Metroid
         GraphicsDeviceManager graphics;
         InputHelper input;
         public bool Quit;
-        string sound = "SOUND", music = "MUSIC", controller = "CONTROLLER", fullscreen = "FULLSCREEN", quit = "EXIT";
+        string sound = "Sound", music = "Music", controller = "Controller", fullscreen = "Fullscreen", quit = "Main Menu";
         Rectangle soundButton, musicButton, controllerButton, fullscreenButton, quitButton, cursor;
         Color soundColor, musicColor, controllerColor, fullscreenColor, quitColor = Color.DarkSlateGray;
 

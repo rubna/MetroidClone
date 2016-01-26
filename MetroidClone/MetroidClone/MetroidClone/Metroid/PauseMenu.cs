@@ -19,7 +19,7 @@ namespace MetroidClone.Metroid
 
         DrawWrapper drawing;
         public bool Resume, Options, Quit;
-        string resume = "RESUME", options = "OPTIONS", quit = "QUIT";
+        string resume = "Resume", options = "Options", quit = "Quit";
         Rectangle resumeButton, optionsButton, quitButton, cursor;
         Color resumeColor = Color.DarkSlateGray, optionsColor = Color.DarkSlateGray, quitColor = Color.DarkSlateGray;
 

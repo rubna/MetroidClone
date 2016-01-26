@@ -27,13 +27,15 @@ namespace MetroidClone.Engine
             Playing,
             Paused,
             Options,
-            GameOver
+            GameOver,
+            Won
         }
         GameState currentState, previousState;
         MainMenu mainMenu;
         PauseMenu pauseMenu;
         OptionsMenu optionsMenu;
         GameOverMenu gameOverMenu;
+        WonMenu wonMenu;
 
         private World world;
 
@@ -135,6 +137,12 @@ namespace MetroidClone.Engine
                         currentState = GameState.GameOver;
                         gameOverMenu = new GameOverMenu(drawWrapper, world.Player.Score);
                     }
+                    //Win state
+                    if (world.Player.Position.X > World.TileWidth * (WorldGenerator.LevelWidth * WorldGenerator.WorldWidth - 0.5f))
+                    {
+                        currentState = GameState.Won;
+                        wonMenu = new WonMenu(drawWrapper, world.Player.Score);
+                    }
                     break;
                 //updates pause menu and all interactions
                 case GameState.Paused:
@@ -196,6 +204,27 @@ namespace MetroidClone.Engine
                         mainMenu = new MainMenu(drawWrapper);
                     }
                     break;
+                //updates won screen and all interactions
+                case GameState.Won:
+                    wonMenu.Update(gameTime, inputHelper);
+                    audioWrapper.StopOrPlayMusic(false);
+                    if (wonMenu.Restart)
+                    {
+                        world = new World();
+                        LoadContent();
+                        world.Initialize();
+                        currentState = GameState.Playing;
+                        wonMenu = null;
+                    }
+                    else if (wonMenu.Quit)
+                    {
+                        world = new World();
+                        LoadContent();
+                        currentState = GameState.MainMenu;
+                        wonMenu = null;
+                        mainMenu = new MainMenu(drawWrapper);
+                    }
+                    break;
             }
 
             Profiler.LogEventEnd("Update");
@@ -226,6 +255,9 @@ namespace MetroidClone.Engine
                     break;
                 case GameState.GameOver:
                     gameOverMenu.DrawGUI();
+                    break;
+                case GameState.Won:
+                    wonMenu.DrawGUI();
                     break;
             }
             drawWrapper.EndOfDraw(); //Stop drawing
