@@ -80,7 +80,7 @@ namespace MetroidClone.Metroid
                         spawnsEachWave[wave].Remove(newMonster);
                         World.AddObject(newMonster, new Vector2(Position.X + BoundingBox.Width / 2, Position.Y + BoundingBox.Height / 2 + 20));
                         spawns.Add(newMonster);
-                        nextEvent = 90;
+                        nextEvent = 30;
                     }
                     else
                     {

@@ -52,13 +52,27 @@ namespace MetroidClone.Engine
             //List for positions with enemies
             FairRandomCollection<Point> pointsThatCanHaveEnemies = new FairRandomCollection<Point>();
 
-            //By default, all sides are walls, unless this is an Open room, in which case all sides (except the walls) are open.
+            //By default, all sides are walls, unless this is the bossroom, in which case all sides (except the walls) are open.
             for (int i = 0; i < hBlocks; i++)
             {
                 for (int j = 0; j < vBlocks; j++)
                 {
-                    basicGrid[i, j] = new LevelBlockRequirements(SideType.Wall);
                     pointsThatCanHaveEnemies.Add(new Point(i, j));
+
+                    if (theme == "Boss")
+                    {
+                        basicGrid[i, j] = new LevelBlockRequirements(SideType.Exit);
+                        if (i == 0)
+                            basicGrid[i, j].LeftSideType = SideType.Wall;
+                        if (j == 0)
+                            basicGrid[i, j].TopSideType = SideType.Wall;
+                        if (i == hBlocks - 1)
+                            basicGrid[i, j].RightSideType = SideType.Wall;
+                        if (j == vBlocks - 1)
+                            basicGrid[i, j].BottomSideType = SideType.Wall;
+                    }
+                    else
+                        basicGrid[i, j] = new LevelBlockRequirements(SideType.Wall);
                 }
             }
 
@@ -83,16 +97,6 @@ namespace MetroidClone.Engine
 
             //Connect each now unconnected point to a connected point
             ConnectUnconnectedPoints(basicGrid);
-
-            //If this is the boss room, add some extra paths through the level.
-            if (theme == "Boss")
-            {
-                for (int i = 0; i < 5; i++)
-                {
-                    ConnectPoints(basicGrid, new List<Point>() { new Point(World.Random.Next(hBlocks), World.Random.Next(vBlocks)),
-                        new Point(World.Random.Next(hBlocks), World.Random.Next(vBlocks)) });
-                }
-            }
 
             //Prune unneeded walls
             PruneWalls(basicGrid);
@@ -121,6 +125,14 @@ namespace MetroidClone.Engine
                     //And make sure the block is placed there.
                     basicGrid[exit.Position.X, exit.Position.Y].Group = borderBlock;
                 }
+            }
+
+            //And get the boss portal and place it on the bottom
+            if (guaranteedSpecialBlocks.Contains("BossPortal"))
+            {
+                guaranteedSpecialBlocks.Remove("BossPortal");
+
+                basicGrid[World.Random.Next(1, hBlocks - 1), vBlocks - 1].Group = "BossPortal";
             }
 
             //Handle any other guaranteed blocks

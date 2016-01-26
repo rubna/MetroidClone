@@ -71,7 +71,9 @@ namespace MetroidClone.Metroid
                     gun.SetSprite("Items/gun");
             }
         }
+
         public bool hasGunUpgrade = false;
+
         public override void Create()
         {
             base.Create();

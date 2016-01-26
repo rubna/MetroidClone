@@ -20,11 +20,17 @@ namespace MetroidClone.Metroid.Monsters
         public override void Create()
         {
             BaseSpeed = 0.2f; //This monster is a bit slower
+            JumpSpeed = 5f; //It can't jump very high.
+            AvgJumpWaitTime = 40; //It doesn't jump very often, either.
+
+            //It drops less ammo and scrap.
+            AmmoDropModifier = 0.5f;
+            ScrapDropModifier = 0.5f;
 
             base.Create();
             BoundingBox = new Rectangle(-20, -20, 40, 23);
             SpeedOnHit = new Vector2(2, -1);
-            HitPoints = 7;
+            HitPoints = 9; //The monster has some more hitpoints than others.
             Damage = AttackDamage;
 
             SpriteScale = 0.15f;
@@ -71,12 +77,6 @@ namespace MetroidClone.Metroid.Monsters
                 if (World.PointOutOfView(Position, -50)) //If the position is very near the view edge, reset it.
                     Position = startingPos;
             }
-        }
-
-        public override void Draw()
-        {
-            Drawing.DrawRectangle(DrawBoundingBox, Color.Red);
-            base.Draw();
         }
 
         void PlayAnimations()
