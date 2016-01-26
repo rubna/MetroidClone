@@ -34,7 +34,7 @@ namespace MetroidClone.Metroid
         bool down = false;
 
         public Weapon CurrentWeapon = Weapon.Nothing;
-        public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
+        public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Gun, Weapon.Rocket, Weapon.Wrench };
         public int HitPoints = 100, MaxHitPoints = 100;
         public int RocketAmmo = 5;
         public int MaximumRocketAmmo = 5;
@@ -211,7 +211,8 @@ namespace MetroidClone.Metroid
             }
             else
                 up = false;
-
+            if (Input.KeyboardCheckPressed(Keys.S))
+                Position.Y++;
             if (Input.KeyboardCheckDown(Keys.S) || Input.KeyboardCheckDown(Keys.Down) || Input.ThumbStickCheckDirection(true).Y < 0)
                 down = true;
             else
@@ -266,7 +267,6 @@ namespace MetroidClone.Metroid
             }
             else
                 timeSinceLastJumpIntention++;
-
 
             //jump
             if (timeSinceLastJumpIntention < maxTimeSinceLastJumpIntention && timeSinceOnGround < maxFromPlatformTimeForJump && Speed.Y >= 0)

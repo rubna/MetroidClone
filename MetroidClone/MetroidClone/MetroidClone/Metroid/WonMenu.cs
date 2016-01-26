@@ -3,7 +3,7 @@ using MetroidClone.Engine;
 
 namespace MetroidClone.Metroid
 {
-    class GameOverMenu
+    class WonMenu
     //for extended comments, see MainMenu.cs, because these classes are very similar
 
     {
@@ -18,11 +18,11 @@ namespace MetroidClone.Metroid
 
         DrawWrapper drawing;
         public bool Restart, Quit;
-        string gameOver = "GAME OVER", restart = "Restart", score, quit = "Main Menu";
+        string gameOver = "Congratulations!\n You escaped!", restart = "Restart", score, quit = "Main Menu";
         Rectangle restartButton, scoreButton, quitButton, cursor;
         Color restartColor = Color.DarkSlateGray, quitColor = Color.DarkSlateGray, scoreColor = Color.DarkSlateGray;
 
-        public GameOverMenu(DrawWrapper Drawing, int Score)
+        public WonMenu(DrawWrapper Drawing, int Score)
         {
             drawing = Drawing;
             Restart = false;

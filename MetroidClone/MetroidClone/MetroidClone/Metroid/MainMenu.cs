@@ -19,7 +19,7 @@ namespace MetroidClone.Metroid
         
         //used to give signals to MainGame
         public bool Start, Options, ExitGame;
-        string start = "START", options = "OPTIONS", exit = "EXIT";
+        string start = "Start", options = "Options", exit = "Quit";
         Rectangle startButton, optionsButton, exitButton, cursor;
         Color startColor = Color.DarkSlateGray, optionsColor = Color.DarkSlateGray, exitColor = Color.DarkSlateGray;
 

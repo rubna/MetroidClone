@@ -82,7 +82,7 @@ namespace MetroidClone.Engine
                     else
                         area[i, j] = 0;
 
-                    //Set the thema
+                    //Set the theme
                     if (World.Random.Next(100) < (isTopOrBottomArea ? 60 : 20)) //Generate cramped rooms. There are more of 'em at the top and bottom.
                         theme[i, j] = "Cramped";
                     else if (World.Random.Next(100) < 20) //Generate an open room
