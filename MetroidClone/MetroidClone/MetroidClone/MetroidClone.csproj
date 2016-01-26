@@ -92,6 +92,9 @@
     <Compile Include="Engine\Level Generation\RoomExit.cs" />
     <Compile Include="Engine\Level Generation\SpecialTileGroupDefinition.cs" />
     <Compile Include="Engine\Collections\WeightedRandomCollection.cs" />
+    <Compile Include="Metroid\Monsters\Boss.cs" />
+    <Compile Include="Metroid\Monsters\BossAnimations.cs" />
+    <Compile Include="Metroid\Monsters\MonsterAttack\BossBullet.cs" />
     <Compile Include="Metroid\Monsters\SlimeMonster.cs" />
     <Compile Include="Metroid\Spikes.cs" />
     <Compile Include="Metroid\GunUpgrade.cs" />
@@ -131,7 +134,7 @@
     <Compile Include="Metroid\MeleeDoor.cs" />
     <Compile Include="Engine\A star\AStarLink.cs" />
     <Compile Include="Metroid\Monsters\MonsterAttack\MonsterBullet.cs" />
-    <Compile Include="Metroid\Monsters\MonsterAttack\MonsterAttack.cs" />
+    <Compile Include="Metroid\Monsters\MonsterAttack\IMonsterAttack.cs" />
     <Compile Include="Metroid\PauseMenu.cs" />
     <Compile Include="Metroid\Monsters\ShootingMonsterAnimations.cs" />
     <Compile Include="Metroid\Player Attacks\Smoke.cs" />

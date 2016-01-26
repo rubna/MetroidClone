@@ -32,7 +32,7 @@ namespace MetroidClone.Metroid.Player_Attacks
             }
             direction.Normalize();
 
-            Speed = direction;
+            Speed = direction * 2;
         }
 
         public override void Update(GameTime gameTime)
@@ -45,7 +45,7 @@ namespace MetroidClone.Metroid.Player_Attacks
             }
             else
                 smokeTrailTime++;
-            Speed += direction * 0.2f;
+            Speed += direction * 0.25f;
             base.Update(gameTime);
             if (HadHCollision || HadVCollision)
                 Destroy();
