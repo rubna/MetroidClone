@@ -84,6 +84,16 @@ namespace MetroidClone.Engine
             //Connect each now unconnected point to a connected point
             ConnectUnconnectedPoints(basicGrid);
 
+            //If this is the boss room, add some extra paths through the level.
+            if (theme == "Boss")
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    ConnectPoints(basicGrid, new List<Point>() { new Point(World.Random.Next(hBlocks), World.Random.Next(vBlocks)),
+                        new Point(World.Random.Next(hBlocks), World.Random.Next(vBlocks)) });
+                }
+            }
+
             //Prune unneeded walls
             PruneWalls(basicGrid);
 

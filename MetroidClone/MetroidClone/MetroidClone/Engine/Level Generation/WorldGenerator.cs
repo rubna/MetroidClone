@@ -12,7 +12,7 @@ namespace MetroidClone.Engine
     {
         LevelGenerator levelGenerator;
         public const int LevelWidth = 20, LevelHeight = 15;
-        public const int WorldWidth = 7, WorldHeight = 5;
+        public const int WorldWidth = 8, WorldHeight = 5;
 
         public WorldGenerator()
         {
@@ -52,7 +52,9 @@ namespace MetroidClone.Engine
                     enemies[i, j] = 0;
                 }
 
+            //Your own position and the position of the boss.
             int startingY = WorldHeight / 2 + World.Random.Next(-1, 1);
+            int bossY = WorldHeight / 2 + World.Random.Next(-1, 1);
 
             isRoom[0, startingY] = true; //Starting room
             guaranteedSpecialBlocks[0, startingY].Add("PlayerStart");
@@ -139,6 +141,17 @@ namespace MetroidClone.Engine
 
             //Add the special bonus gun upgrade
             guaranteedSpecialBlocks[0, 0].Add("GunUpgradePickup");
+
+            //Add the boss room.
+            CanHaveBottomExit[WorldWidth - 1, bossY - 1] = false; //The room above can't have a bottom exit.
+            CanHaveBottomExit[WorldWidth - 1, bossY] = false; //The boss room can't have a bottom exit.
+            enemies[WorldWidth - 1, bossY] = 0; //The boss room has no normal enemy spawns
+            theme[WorldWidth - 1, bossY] = "Boss"; //The theme is "boss"
+            //Add a right exit to it.
+            roomExits[WorldWidth - 1, bossY].Add(new RoomExit(new Point(LevelWidth / LevelGenerator.BlockWidth - 1, World.Random.Next(LevelHeight / LevelGenerator.BlockHeight)), Direction.Right));
+            guaranteedSpecialBlocks[WorldWidth - 1, bossY].Add("LeftBossDoorBorder");
+            guaranteedSpecialBlocks[WorldWidth - 1, bossY].Add("RightBossDoorBorder");
+            guaranteedSpecialBlocks[WorldWidth - 1, bossY].Add("BossPortal");
 
             //Place the exits
             for (int i = 0; i < WorldWidth; i++)
