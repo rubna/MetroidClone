@@ -72,3 +72,6 @@ Scrap middle 1x1
 Spikes topleft 1x1
 enemybullet middle 1x1
 Rocket 0.75x0.5 1x1
+portal topleft 1x1
+healthdrop middle 1x1
+ammopickup middle 1x1

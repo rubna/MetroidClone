@@ -26,6 +26,8 @@ namespace MetroidClone.Metroid
         JumpType jumpType;
         int previousXPos = 0;
 
+        //For the boss room
+        public bool HasUnlimitedLookingDistance = false;
 
         public Monster()
         {
@@ -108,7 +110,7 @@ namespace MetroidClone.Metroid
             float distance = (Position - World.Player.Position).Length();
 
             //if the player is quite near, move and/or attack the player.
-            if (distance <= 10 * World.TileWidth)
+            if (distance <= 10 * World.TileWidth || HasUnlimitedLookingDistance)
             {
                 if (State == MonsterState.Jumping)
                 {

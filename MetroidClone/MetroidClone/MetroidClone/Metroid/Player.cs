@@ -290,7 +290,7 @@ namespace MetroidClone.Metroid
 
             //attack
             if ((Input.MouseButtonCheckDown(true) || (Input.ThumbStickCheckDown(false))) && attackTimer == 0)
-                Attack();
+                    Attack();
 
             if (UnlockedWeapons.Contains(Weapon.Wrench))
             {
@@ -298,7 +298,7 @@ namespace MetroidClone.Metroid
                 if ((Input.MouseButtonCheckDown(false) || Input.MouseWheelPressed() || Input.GamePadCheckPressed(Buttons.B)) && attackTimer == 0)
                 {
                     meleeAnimationTimer = 1;
-                    FlipX = Input.MouseCheckPosition().X < DrawPosition.X;
+                    FlipX = Input.MouseCheckUnscaledPosition(Drawing).X < DrawPosition.X;
                 }
                 else
                 if (meleeAnimationTimer > 0)
@@ -314,11 +314,12 @@ namespace MetroidClone.Metroid
                 }
             }
 
-            //testing: adds monster
+            /*//testing: adds monster
             if (Input.KeyboardCheckPressed(Keys.F))
             {
-                World.AddObject(new SlimeMonster(), Input.MouseCheckUnscaledPosition(Drawing).ToVector2() + World.Camera);
-            }
+                World.AddObject(new Turret(), Input.MouseCheckUnscaledPosition(Drawing).ToVector2() + World.Camera);
+                Console.WriteLine("Monster Added");
+            }*/
 
             //switch weapons
             if (Input.KeyboardCheckPressed(Keys.Q) || Input.MouseWheelCheckScroll(true) || Input.MouseWheelCheckScroll(false) || Input.GamePadCheckPressed(Buttons.Y))
@@ -435,6 +436,10 @@ namespace MetroidClone.Metroid
                     OnGround = true;
                 }
             }
+
+            //DEBUG TODO REMOVE
+            if (Input.KeyboardCheckPressed(Keys.T))
+                Position = Input.MouseCheckUnscaledPosition(Drawing).ToVector2() + World.Camera;
         }
 
         void CreateDrone()
