@@ -8,12 +8,12 @@ using MetroidClone.Metroid.Abstract;
 
 namespace MetroidClone.Metroid
 {
-    class MonsterBullet : PhysicsObject, IMonsterAttack
+    class BossBullet : PhysicsObject, IMonsterAttack
     {
         public int Damage { get; }
         public const int baseSpeed = 5;
 
-        public MonsterBullet(int damage)
+        public BossBullet(int damage)
         {
             Damage = damage;
         }
@@ -27,7 +27,7 @@ namespace MetroidClone.Metroid
             Vector2 dir = World.Player.Position - Position;
             dir.Normalize();
             Speed = baseSpeed * dir;
-            SetSprite("Enemy1/enemybullet");
+            SetSprite("Boss/Bullet");
         }
         public override void Update(GameTime gameTime)
         {

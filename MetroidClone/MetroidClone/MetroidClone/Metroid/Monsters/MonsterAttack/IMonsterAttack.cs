@@ -8,6 +8,6 @@ namespace MetroidClone.Metroid.Abstract
 {
     interface IMonsterAttack
     {
-
+        int Damage {get;}
     }
 }

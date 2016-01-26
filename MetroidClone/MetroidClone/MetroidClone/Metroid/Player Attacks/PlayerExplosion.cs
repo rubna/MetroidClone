@@ -17,6 +17,7 @@ namespace MetroidClone.Metroid.Player_Attacks
         public override void Create()
         {
             base.Create();
+            Depth = -10;
             Gravity = 0;
             foreach (Monster monster in World.GameObjects.OfType<Monster>())
             {
@@ -29,6 +30,12 @@ namespace MetroidClone.Metroid.Player_Attacks
                         monster.Speed = new Vector2((1 - offset.X / radiusTarget) * 12 + 4, offset.Y).ToCartesian();
                     }
                 }
+            }
+            //push player away
+            Vector2 off = (World.Player.Position - Position).ToPolar();
+            if (off.X < radiusTarget)
+            {
+                World.Player.Speed = new Vector2((1 - off.X / radiusTarget) * 16 + 8, off.Y).ToCartesian();
             }
         }
 

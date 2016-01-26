@@ -1,5 +1,6 @@
 ﻿using MetroidClone.Engine;
 using MetroidClone.Engine.Asset;
+using MetroidClone.Metroid.Abstract;
 using MetroidClone.Metroid.Monsters;
 using MetroidClone.Metroid.Player_Attacks;
 using Microsoft.Xna.Framework;
@@ -98,7 +99,7 @@ namespace MetroidClone.Metroid
             gun = new AnimationBone(handRight, new Vector2(-2, 0)) { DepthOffset = -4 };
             gunNuzzle = new AnimationBone(gun, new Vector2(20, -4));
             launcher = new AnimationBone(handRight, new Vector2(-2, 0)) { DepthOffset = -4 };
-            launcherNuzzle = new AnimationBone(launcher, new Vector2(20, -12));
+            launcherNuzzle = new AnimationBone(launcher, new Vector2(30, -12));
             wrench = new AnimationBone(handLeft, new Vector2(2, 0)) { DepthOffset = 1 };
 
             antennaLeft1 = new AnimationBone(head, new Vector2(3, -18)) { DepthOffset = -1 };
@@ -317,7 +318,7 @@ namespace MetroidClone.Metroid
             //testing: adds monster
             if (Input.KeyboardCheckPressed(Keys.F))
             {
-                World.AddObject(new SlimeMonster(), Input.MouseCheckUnscaledPosition(Drawing).ToVector2() + World.Camera);
+                World.AddObject(new Boss(), Input.MouseCheckUnscaledPosition(Drawing).ToVector2() + World.Camera);
             }
 
             //switch weapons
@@ -353,14 +354,14 @@ namespace MetroidClone.Metroid
                             Hurt(Math.Sign(Position.X - spikes.Position.X), spikes.Damage);
                     }
 
-                List<MonsterBullet> destroyedBullets = new List<MonsterBullet>();
-                foreach (MonsterBullet bullet in World.GameObjects.OfType<MonsterBullet>())
+                List<GameObject> destroyedBullets = new List<GameObject>();
+                foreach (IMonsterAttack attack in World.GameObjects.OfType<IMonsterAttack>())
                 {
-                    if (TranslatedBoundingBox.Intersects(bullet.TranslatedBoundingBox))
+                    PhysicsObject att = attack as PhysicsObject;
+                    if (TranslatedBoundingBox.Intersects(att.TranslatedBoundingBox))
                     {
-                        if (bullet.Damage > 0)
-                        Hurt(Math.Sign(Position.X - bullet.Position.X), bullet.Damage);
-                        destroyedBullets.Add(bullet);
+                        Hurt(Math.Sign(Position.X - att.Position.X), attack.Damage);
+                        destroyedBullets.Add(att);
                     }
                 }
 
@@ -482,13 +483,13 @@ namespace MetroidClone.Metroid
                         Vector2 dir = Input.ThumbStickCheckDirection(false);
                         dir.Y = -dir.Y;
                         dir.Normalize();
-                        bullet.Speed = 5 * dir;
+                        bullet.Speed = 7 * dir;
                     }
                     else
                     {
                         bullet.Speed = Input.MouseCheckUnscaledPosition(Drawing).ToVector2() - DrawPosition;
                         bullet.Speed.Normalize();
-                        bullet.Speed *= 5;
+                        bullet.Speed *= 7;
                     }
                     break;
                 }
