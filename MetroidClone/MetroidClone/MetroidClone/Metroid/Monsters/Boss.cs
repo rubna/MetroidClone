@@ -27,7 +27,7 @@ namespace MetroidClone.Metroid.Monsters
             BoundingBox = new Rectangle((int)(-13 * baseScale), (int)(-37 * baseScale), 
                                         (int)(26 * baseScale), (int)(50 * baseScale));
             SpeedOnHit = new Vector2(3, -2);
-            HitPoints = 5;
+            HitPoints = 120;
             Damage = 5; //Damage of the monster itself
 
             SpriteScale = 0.2f * baseScale;
@@ -105,12 +105,6 @@ namespace MetroidClone.Metroid.Monsters
                 if (World.PointOutOfView(Position, -50)) //If the position is very near the view edge, reset it.
                     Position = startingPos;
             }
-        }
-
-        public override void Draw()
-        {
-            base.Draw();
-            Drawing.DrawRectangle(DrawBoundingBox, Color.Red);
         }
 
         protected override void Attack()

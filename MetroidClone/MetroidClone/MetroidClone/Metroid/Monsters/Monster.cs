@@ -13,9 +13,14 @@ namespace MetroidClone.Metroid
         public float HitPoints = 1;
         public int Damage = 10;
         protected Vector2 SpeedOnHit = Vector2.Zero;
-        const float jumpSpeed = 8f;
 
+        //Movement properties
+        protected float JumpSpeed = 8f;
         protected float BaseSpeed = 0.4f;
+        protected int AvgJumpWaitTime = 10;
+
+        //Some monsters drop less or more of some stuff than normal.
+        protected float AmmoDropModifier = 1, ScrapDropModifier = 1, HealthDropModifier = 1;
 
         //Basic AI variables
         protected MonsterState State;
@@ -28,6 +33,9 @@ namespace MetroidClone.Metroid
 
         //For the boss room
         public bool HasUnlimitedLookingDistance = false;
+
+        //Speed modifier for all monsters
+        public static float SpeedModifier = 1;
 
         public Monster()
         {
@@ -68,19 +76,23 @@ namespace MetroidClone.Metroid
 
         public override void Destroy()
         {
+            Vector2 dropPosition = Position;
+            if (this is SlimeMonster)
+                dropPosition -= new Vector2(0, 6);
+
             World.Tutorial.MonsterKilled = true;
             // When a monster is destroyed, you have a chance that a healthpack, rocket ammo, scrap metal or nothing will drop
             // The chance of dropping healthpacks and rocket ammo increases if the player is in need of these drops
-            float ammoChance = (1 - ((float)World.Player.RocketAmmo / (float)World.Player.MaximumRocketAmmo)) * 40;
-            float scrapChance = (this is Turret) ? 60 : 40; //Turrets drop more scrap
-            float healthChance = (1 - ((float)World.Player.HitPoints / (float)World.Player.MaxHitPoints)) * 40;
+            float ammoChance = (1 - ((float)World.Player.RocketAmmo / (float)World.Player.MaximumRocketAmmo)) * 25 * AmmoDropModifier;
+            float scrapChance = 40 * ScrapDropModifier; //Turrets drop more scrap
+            float healthChance = (1 - ((float)World.Player.HitPoints / (float)World.Player.MaxHitPoints)) * 40 * HealthDropModifier;
             float randomLoot = World.Random.Next(101);
             if (randomLoot <= healthChance)
-                World.AddObject(new HealthDrop(Damage * 2), Position);
+                World.AddObject(new HealthDrop(Damage * 2), dropPosition);
             else if (randomLoot <= ammoChance + healthChance)
-                World.AddObject(new RocketAmmo(), Position);
+                World.AddObject(new RocketAmmo(), dropPosition);
             else if (randomLoot <= scrapChance + ammoChance + healthChance)
-                World.AddObject(new Scrap(), Position);
+                World.AddObject(new Scrap(), dropPosition);
             base.Destroy();
         }
 
@@ -96,9 +108,9 @@ namespace MetroidClone.Metroid
                 emulatedBulletPos += MonsterBullet.baseSpeed * dir;
 
                 if (InsideWall(new Rectangle((int) emulatedBulletPos.X - 4, (int) emulatedBulletPos.Y - 4, 8, 8)))
-            {
+                {
                     return false;
-            }
+                }
             }
 
             return true;
@@ -136,6 +148,9 @@ namespace MetroidClone.Metroid
                             Attack();
 
                         StateTimer++;
+
+                        if (StateTimer > 60)
+                            StateTimer = 0;
                     }
                 }
                 else
@@ -179,15 +194,15 @@ namespace MetroidClone.Metroid
 
                         //Left
                         if (preferDir == Direction.Left && Position.X > World.Camera.X + 10) //Move left as long as we're not near the edge
-                            Speed.X -= BaseSpeed;
+                            Speed.X -= BaseSpeed * SpeedModifier;
                         //Right
                         else if (preferDir == Direction.Right && Position.X < World.Camera.X + (World.TileWidth * WorldGenerator.LevelWidth) - 10) //Move right as long as we're not near the edge
-                            Speed.X += BaseSpeed;
+                            Speed.X += BaseSpeed * SpeedModifier;
 
                         //Jump
-                        if ((World.Player.Position.Y < Position.Y - 20 || HadHCollision) && OnGround && World.Random.Next(10) == 1)
+                        if ((World.Player.Position.Y < Position.Y - 20 || HadHCollision) && OnGround && World.Random.Next(AvgJumpWaitTime) == 1)
                         {
-                            Speed.Y = -jumpSpeed;
+                            Speed.Y = -JumpSpeed;
                             State = MonsterState.Jumping;
                             jumpDirection = preferDir;
 

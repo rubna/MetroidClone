@@ -55,6 +55,7 @@ namespace MetroidClone.Metroid
 
         public float movementSpeedModifier; //This can be used to change the movement speed.
         public float jumpHeightModifier; //This can be used to change the jump height.
+        public float ShootingSpeedMod; //This can be used to change the shooting speed.
 
         const float jumpSpeed = 8f; //The base jumping speed. Was: 10f
         const float gravity = 0.2f; //The base gravity. Was: 0.3f
@@ -72,7 +73,9 @@ namespace MetroidClone.Metroid
                     gun.SetSprite("Items/gun");
             }
         }
+
         public bool hasGunUpgrade = false;
+
         public override void Create()
         {
             base.Create();
@@ -176,6 +179,7 @@ namespace MetroidClone.Metroid
 
             movementSpeedModifier = 1;
             jumpHeightModifier = 1;
+            ShootingSpeedMod = 1;
         }
 
         public override void Update(GameTime gameTime)
@@ -316,10 +320,10 @@ namespace MetroidClone.Metroid
             }
 
             //testing: adds monster
-            if (Input.KeyboardCheckPressed(Keys.F))
+            /*if (Input.KeyboardCheckPressed(Keys.F))
             {
                 World.AddObject(new Boss(), Input.MouseCheckUnscaledPosition(Drawing).ToVector2() + World.Camera);
-            }
+            }*/
 
             //switch weapons
             if (Input.KeyboardCheckPressed(Keys.Q) || Input.MouseWheelCheckScroll(true) || Input.MouseWheelCheckScroll(false) || Input.GamePadCheckPressed(Buttons.Y))
@@ -476,29 +480,29 @@ namespace MetroidClone.Metroid
                 case Weapon.Nothing:
                     break;
                 case Weapon.Gun:
-                {
-                    World.Tutorial.GunShot = true;
-                    attackTimer = 0.11f;
-                    Audio.Play("Audio/Combat/Gunshots/Laser/Laser_Shoot01");
-                    PlayerBullet bullet = new PlayerBullet();
-                    World.AddObject(bullet, gunNuzzle.Position);
-                    if (Input.ControllerInUse)
+                    if (ShootingSpeedMod != 0)
                     {
-                        Vector2 dir = Input.ThumbStickCheckDirection(false);
-                        dir.Y = -dir.Y;
-                        dir.Normalize();
-                        bullet.Speed = 7 * dir;
-                    }
-                    else
-                    {
-                        bullet.Speed = Input.MouseCheckUnscaledPosition(Drawing).ToVector2() - DrawPosition;
-                        bullet.Speed.Normalize();
-                        bullet.Speed *= 7;
+                        World.Tutorial.GunShot = true;
+                        attackTimer = 0.11f / ShootingSpeedMod;
+                        Audio.Play("Audio/Combat/Gunshots/Laser/Laser_Shoot01");
+                        PlayerBullet bullet = new PlayerBullet();
+                        World.AddObject(bullet, gunNuzzle.Position);
+                        if (Input.ControllerInUse)
+                        {
+                            Vector2 dir = Input.ThumbStickCheckDirection(false);
+                            dir.Y = -dir.Y;
+                            dir.Normalize();
+                            bullet.Speed = 7 * dir;
+                        }
+                        else
+                        {
+                            bullet.Speed = Input.MouseCheckUnscaledPosition(Drawing).ToVector2() - DrawPosition;
+                            bullet.Speed.Normalize();
+                            bullet.Speed *= 7;
+                        }
                     }
                     break;
-                }
                 case Weapon.Rocket:
-                {
                     World.Tutorial.RocketShot = true;
                     attackTimer = 0.5f;
                     if (RocketAmmo > 0)
@@ -508,7 +512,6 @@ namespace MetroidClone.Metroid
                         RocketAmmo --;
                     }
                     break;
-                }
             }
         }
 

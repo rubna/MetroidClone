@@ -32,6 +32,8 @@ namespace MetroidClone.Metroid.Monsters
             SetSprite("Turret/Turretbase");
 
             rotationSizeModVector = new Vector2(1f);
+
+            ScrapDropModifier = 1.5f;
         }
 
         public override void Update(GameTime gameTime)

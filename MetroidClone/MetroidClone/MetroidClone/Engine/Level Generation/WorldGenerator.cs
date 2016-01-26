@@ -26,9 +26,12 @@ namespace MetroidClone.Engine
 
             //Enemy types for each area
             List<List<Type>> enemyTypes = new List<List<Type>>();
-            enemyTypes.Add(new List<Type>() { typeof(MeleeMonster) });
+            enemyTypes.Add(new List<Type>() { typeof(SlimeMonster), typeof(MeleeMonster) });
+            enemyTypes.Add(new List<Type>() { typeof(SlimeMonster), typeof(ShootingMonster), typeof(MeleeMonster), typeof(Turret) });
             enemyTypes.Add(new List<Type>() { typeof(ShootingMonster), typeof(MeleeMonster), typeof(Turret) });
-            enemyTypes.Add(new List<Type>() { typeof(ShootingMonster), typeof(MeleeMonster), typeof(Turret) });
+
+            //The first part of the second area has no turrets yet.
+            List<Type> enemyTypesStartSecondArea = new List<Type>() { typeof(SlimeMonster), typeof(ShootingMonster), typeof(MeleeMonster) };
 
             //Define and initialize variables
             bool[,] isRoom = new bool[WorldWidth, WorldHeight]; //Whether this is a room.
@@ -148,10 +151,13 @@ namespace MetroidClone.Engine
             enemies[WorldWidth - 1, bossY] = 0; //The boss room has no normal enemy spawns
             theme[WorldWidth - 1, bossY] = "Boss"; //The theme is "boss"
             //Add a right exit to it.
-            roomExits[WorldWidth - 1, bossY].Add(new RoomExit(new Point(LevelWidth / LevelGenerator.BlockWidth - 1, World.Random.Next(LevelHeight / LevelGenerator.BlockHeight)), Direction.Right));
+            roomExits[WorldWidth - 1, bossY].Add(new RoomExit(new Point(LevelWidth / LevelGenerator.BlockWidth - 1, LevelHeight / LevelGenerator.BlockHeight - 1), Direction.Right));
             guaranteedSpecialBlocks[WorldWidth - 1, bossY].Add("LeftBossDoorBorder");
             guaranteedSpecialBlocks[WorldWidth - 1, bossY].Add("RightBossDoorBorder");
             guaranteedSpecialBlocks[WorldWidth - 1, bossY].Add("BossPortal");
+            //Add nine "normal tiles"
+            for (int i = 0; i < 9; i++)
+                guaranteedSpecialBlocks[WorldWidth - 1, bossY].Add("NormalBossRoomTile");
 
             //Place the exits
             for (int i = 0; i < WorldWidth; i++)
@@ -160,7 +166,11 @@ namespace MetroidClone.Engine
                     //Place exits.
                     if (i < WorldWidth - 1 && isRoom[i, j] && isRoom[i + 1, j] && CanHaveRightExit[i, j])
                     {
-                        int nextY = World.Random.Next(LevelHeight / LevelGenerator.BlockHeight);
+                        int nextY;
+                        if (j == bossY && i == WorldWidth - 2)
+                            nextY = LevelHeight / LevelGenerator.BlockHeight - 1;
+                        else
+                            nextY = World.Random.Next(LevelHeight / LevelGenerator.BlockHeight);
                         roomExits[i, j].Add(new RoomExit(new Point(LevelWidth / LevelGenerator.BlockWidth - 1, nextY), Direction.Right));
                         roomExits[i + 1, j].Add(new RoomExit(new Point(0, nextY), Direction.Left));
 
@@ -181,9 +191,13 @@ namespace MetroidClone.Engine
             for (int i = 0; i < WorldWidth; i++)
                 for (int j = 0; j < WorldHeight; j++)
                 {
+                    List<Type> levelEnemyTypes = enemyTypes[area[i, j]];
+                    if (i == 3 && area[i, j] == 1)
+                        levelEnemyTypes = enemyTypesStartSecondArea;
+
                     if (isRoom[i, j])
                         levelGenerator.Generate(world, new Vector2(LevelWidth * World.TileWidth * i, LevelHeight * World.TileHeight * j), roomExits[i, j],
-                            guaranteedSpecialBlocks[i, j], theme[i, j], enemies[i, j], enemyTypes[area[i, j]]);
+                            guaranteedSpecialBlocks[i, j], theme[i, j], enemies[i, j], levelEnemyTypes);
                 }
 
             //Add the "hack this game" object

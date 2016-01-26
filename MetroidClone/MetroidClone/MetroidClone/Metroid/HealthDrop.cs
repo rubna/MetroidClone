@@ -11,7 +11,7 @@ namespace MetroidClone.Metroid
 
         public HealthDrop(int monsterDifficulty)
         {
-            hitPointsFromHealthDrop = Math.Max(5, monsterDifficulty);
+            hitPointsFromHealthDrop = Math.Max(10, monsterDifficulty);
         }
 
         public override void Create()
