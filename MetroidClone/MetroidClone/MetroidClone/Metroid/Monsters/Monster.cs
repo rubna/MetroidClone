@@ -42,28 +42,26 @@ namespace MetroidClone.Metroid
                 PhysicsObject attack = attackInterface as PhysicsObject;
                 if (TranslatedBoundingBox.Intersects(attack.TranslatedBoundingBox))
                 {
-                    Hurt(Math.Sign(Position.X - attack.Position.X), true, attackInterface.Damage);
+                    Hurt(Math.Sign(Position.X - attack.Position.X), attackInterface.Damage);
                     attack.Destroy();
                 }
             }
+
+            if (HitPoints <= 0)
+            {
+                Destroy();
+                World.Player.Score += 20;
+                Console.Write("Score: ");
+                Console.WriteLine(World.Player.Score);
+            }
         }
 
-        void Hurt(int xDirection, bool hitByPlayer, float damage = 1f)
+        void Hurt(int xDirection, float damage = 1f)
         {
             // if an attack from the player hits
             HitPoints -= damage;
             if (SpeedOnHit != Vector2.Zero)
                 Speed = new Vector2(xDirection * SpeedOnHit.X, SpeedOnHit.Y);
-            if (HitPoints <= 0)
-            {
-                Destroy();
-                if (hitByPlayer)
-                {
-                    World.Player.Score += 20;
-                    Console.Write("Score: ");
-                    Console.WriteLine(World.Player.Score);
-                }
-            }
         }
 
         public override void Destroy()

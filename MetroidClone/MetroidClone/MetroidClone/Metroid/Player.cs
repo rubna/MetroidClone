@@ -32,11 +32,11 @@ namespace MetroidClone.Metroid
         bool upPressed = false;
         bool down = false;
 
-        public Weapon CurrentWeapon = Weapon.Nothing;
+        public Weapon CurrentWeapon = Weapon.Rocket;
         public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
         public int HitPoints = 100, MaxHitPoints = 100;
-        public int RocketAmmo = 5;
-        public int MaximumRocketAmmo = 5;
+        public int RocketAmmo = 1000;
+        public int MaximumRocketAmmo = 1000;
         public int Score = 0;
         public int Timer = 0;
 
@@ -289,30 +289,8 @@ namespace MetroidClone.Metroid
                 fellThroughTimer -= 0.075f;
 
             //attack
-            if (Input.MouseButtonCheckDown(true) || (Input.ThumbStickCheckDown(false)))
-            {
-                if (attackTimer == 0)
-                {
-                    Attack();
-                    switch ((int)CurrentWeapon)
-                    {
-                        case (int)Weapon.Nothing:
-                            break;
-                        case (int)Weapon.Gun:
-                            {
-                                World.Tutorial.GunShot = true;
-                                attackTimer = 0.11f;
-                                break;
-                            }
-                        case (int)Weapon.Rocket:
-                            {
-                                World.Tutorial.RocketShot = true;
-                                attackTimer = 0.22f;
-                                break;
-                            }
-                    }
-                }
-            }
+            if ((Input.MouseButtonCheckDown(true) || (Input.ThumbStickCheckDown(false))) && attackTimer == 0)
+                Attack();
 
             if (UnlockedWeapons.Contains(Weapon.Wrench))
             {
@@ -339,8 +317,7 @@ namespace MetroidClone.Metroid
             //testing: adds monster
             if (Input.KeyboardCheckPressed(Keys.F))
             {
-                World.AddObject(new Turret(), Input.MouseCheckUnscaledPosition(Drawing).ToVector2() + World.Camera);
-                Console.WriteLine("Monster Added");
+                World.AddObject(new SlimeMonster(), Input.MouseCheckUnscaledPosition(Drawing).ToVector2() + World.Camera);
             }
 
             //switch weapons
@@ -495,6 +472,8 @@ namespace MetroidClone.Metroid
                     break;
                 case Weapon.Gun:
                 {
+                    World.Tutorial.GunShot = true;
+                    attackTimer = 0.11f;
                     Audio.Play("Audio/Combat/Gunshots/Laser/Laser_Shoot01");
                     PlayerBullet bullet = new PlayerBullet();
                     World.AddObject(bullet, gunNuzzle.Position);
@@ -515,6 +494,8 @@ namespace MetroidClone.Metroid
                 }
                 case Weapon.Rocket:
                 {
+                    World.Tutorial.RocketShot = true;
+                    attackTimer = 0.5f;
                     if (RocketAmmo > 0)
                     {
                         Audio.Play("Audio/Combat/Gunshots/Rocket/Rocket_Shoot");

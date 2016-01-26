@@ -19,7 +19,7 @@ namespace MetroidClone.Metroid.Player_Attacks
             Gravity = 0f;
             Friction.X = 0.99f;
             BoundingBox = new Rectangle(-4, -2, 8, 4);
-
+            SetSprite("Robot/Rocket");
             //different methods set direction depending on the controls used
             if (Input.ControllerInUse)
             {
@@ -37,6 +37,7 @@ namespace MetroidClone.Metroid.Player_Attacks
 
         public override void Update(GameTime gameTime)
         {
+            ImageRotation = MathHelper.ToRadians(VectorExtensions.Angle(Speed));
             if (smokeTrailTime > 5)
             {
                 //World.AddObject(new Smoke(), Position);
@@ -56,7 +57,8 @@ namespace MetroidClone.Metroid.Player_Attacks
         public override void Draw()
         {
             Drawing.DrawRectangle(DrawBoundingBox, Color.Green);
-            base.Draw();
+            //base.Draw();
+            Drawing.DrawSprite(CurrentSprite, DrawPosition, 0, CurrentSprite.Size * new Vector2(GetFlip, 1) * 0.3f, null, ImageRotation);// ImageScaling, Color.White, ImageRotation);
         }
 
         public override void Destroy()

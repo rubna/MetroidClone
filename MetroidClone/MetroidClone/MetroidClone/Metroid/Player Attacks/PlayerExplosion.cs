@@ -1,34 +1,55 @@
 ﻿using MetroidClone.Engine;
 using MetroidClone.Metroid.Abstract;
 using Microsoft.Xna.Framework;
+using System.Linq;
 
 namespace MetroidClone.Metroid.Player_Attacks
 {
     class PlayerExplosion : PhysicsObject, IPlayerAttack
     {
-        public float Damage => 1;
-
-        float radius = 50;
+        public float Damage => 20;
+        float radiusTarget = 80;
+        float radius = 0;
+        float radiusSpeed = 0;
         float destroyTimer = 0f;
+        float flickerTimer = 0;
 
         public override void Create()
         {
             base.Create();
             Gravity = 0;
+            foreach (Monster monster in World.GameObjects.OfType<Monster>())
+            {
+                if (monster.Visible)
+                {
+                    Vector2 offset = (monster.Position - Position).ToPolar();
+                    if (offset.X < radiusTarget)
+                    {
+                        monster.HitPoints -= (1 - offset.X / radiusTarget) * Damage;
+                        monster.Speed = new Vector2((1 - offset.X / radiusTarget) * 12 + 4, offset.Y).ToCartesian();
+                    }
+                }
+            }
         }
 
         public override void Update(GameTime gameTime)
         {
+            radiusSpeed += (radiusTarget - radius) * 0.2f;
+            radius += radiusSpeed;
+            radiusSpeed *= 0.5f;
+
             base.Update(gameTime);
-            destroyTimer += 0.1f;
+            destroyTimer += 0.05f;
             if (destroyTimer >= 1)
                 Destroy();
         }
 
         public override void Draw()
         {
+            flickerTimer += 0.25f;
+            flickerTimer %= 2f;
             if (Visible)
-            Drawing.DrawCircle(Position, radius, Color.Black);
+            Drawing.DrawCircle(DrawPosition, radius, flickerTimer > 1 ? Color.Black : Color.White);
             base.Draw();
         }
     }
