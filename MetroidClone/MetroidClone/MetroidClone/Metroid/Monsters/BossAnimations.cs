@@ -51,7 +51,7 @@ namespace MetroidClone.Metroid.Monsters
         void PlayAnimationArmsWalking()
         {
             shoulderLeft.TargetRotation = 85 + VectorExtensions.LengthDirectionX(20, AnimationRotation * 2 + 180);
-            elbowLeft.TargetRotation = -100 - VectorExtensions.LengthDirectionX(30, AnimationRotation * 2 + 180);
+            elbowLeft.TargetRotation = -110 - VectorExtensions.LengthDirectionX(30, AnimationRotation * 2 + 180);
 
             shoulderRight.TargetRotation = -80 + VectorExtensions.LengthDirectionX(20, AnimationRotation * 2 + 180);
             elbowRight.TargetRotation = -110 - VectorExtensions.LengthDirectionX(30, AnimationRotation * 2 + 180);
@@ -61,7 +61,7 @@ namespace MetroidClone.Metroid.Monsters
         void PlayAnimationArmsIdle()
         {
             shoulderLeft.TargetRotation = 90 + VectorExtensions.LengthDirectionX(3, AnimationRotation + 180);
-            elbowLeft.TargetRotation = -90 - VectorExtensions.LengthDirectionX(1, AnimationRotation);
+            elbowLeft.TargetRotation = -100 - VectorExtensions.LengthDirectionX(1, AnimationRotation);
 
             shoulderRight.TargetRotation = -80 + VectorExtensions.LengthDirectionX(3, AnimationRotation + 180);
             elbowRight.TargetRotation = -100 - VectorExtensions.LengthDirectionX(1, AnimationRotation);
@@ -78,7 +78,7 @@ namespace MetroidClone.Metroid.Monsters
             float factor = MathHelper.Clamp(shotAnimationTimer, 0, 1);
 
             shoulderLeft.TargetRotation = 30 + VectorExtensions.AngleDifference(0, direction) +  factor * 100;
-            elbowLeft.TargetRotation = -50 - factor * 100;
+            elbowLeft.TargetRotation = -60 - factor * 100;
 
             shoulderRight.TargetRotation = -110 + direction + factor * 80;//120
             elbowRight.TargetRotation = -80 - factor * 80;

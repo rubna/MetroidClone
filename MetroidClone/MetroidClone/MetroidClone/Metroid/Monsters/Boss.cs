@@ -14,6 +14,7 @@ namespace MetroidClone.Metroid.Monsters
         public int AttackDamage = 10;
         float AnimationRotation = 0;
         float shotAnimationTimer = 0;
+        float baseScale = 1.5f;
 
         AnimationBone body, hipLeft, kneeLeft, hipRight, kneeRight, head,
             shoulderLeft, shoulderRight, elbowLeft, elbowRight, gun, gunNuzzle;
@@ -23,27 +24,28 @@ namespace MetroidClone.Metroid.Monsters
         public override void Create()
         {
             base.Create();
-            BoundingBox = new Rectangle(-13, -27, 26, 40);
+            BoundingBox = new Rectangle((int)(-13 * baseScale), (int)(-37 * baseScale), 
+                                        (int)(26 * baseScale), (int)(50 * baseScale));
             SpeedOnHit = new Vector2(3, -2);
             HitPoints = 5;
             Damage = 5; //Damage of the monster itself
 
-            SpriteScale = 0.2f;
+            SpriteScale = 0.2f * baseScale;
 
             //animation rig
-            body = new AnimationBone(this, new Vector2(0, -8));
-            head = new AnimationBone(body, new Vector2(0, -26)) { DepthOffset = -2 };
-            hipLeft = new AnimationBone(body, new Vector2(6, 4)) { DepthOffset = 2 };
-            kneeLeft = new AnimationBone(hipLeft, new Vector2(0, 8)) { DepthOffset = -1 };
-            hipRight = new AnimationBone(body, new Vector2(-6, 4)) { DepthOffset = 1 };
-            kneeRight = new AnimationBone(hipRight, new Vector2(0, 8)) { DepthOffset = -1 };
+            body = new AnimationBone(this, new Vector2(0, -8 * baseScale));
+            head = new AnimationBone(body, new Vector2(0, -30 * baseScale)) { DepthOffset = -2 };
+            hipLeft = new AnimationBone(body, new Vector2(6 * baseScale, 4 * baseScale)) { DepthOffset = 2 };
+            kneeLeft = new AnimationBone(hipLeft, new Vector2(0, 8 * baseScale)) { DepthOffset = -1 };
+            hipRight = new AnimationBone(body, new Vector2(-6 * baseScale, 4 * baseScale)) { DepthOffset = 1 };
+            kneeRight = new AnimationBone(hipRight, new Vector2(0, 8 * baseScale)) { DepthOffset = -1 };
 
-            shoulderLeft = new AnimationBone(body, new Vector2(8, -18)) { DepthOffset = 2 };
-            elbowLeft = new AnimationBone(shoulderLeft, new Vector2(13, 0)) { DepthOffset = -1 };
-            shoulderRight = new AnimationBone(body, new Vector2(-8, -18)) { DepthOffset = -1 };
-            elbowRight = new AnimationBone(shoulderRight, new Vector2(-13, 0)) { DepthOffset = -1 };
-            gun = new AnimationBone(elbowRight, new Vector2(-10, 0));
-            gunNuzzle = new AnimationBone(gun, new Vector2(15, -5));
+            shoulderLeft = new AnimationBone(body, new Vector2(8 * baseScale, -24 * baseScale)) { DepthOffset = 2 };
+            elbowLeft = new AnimationBone(shoulderLeft, new Vector2(13 * baseScale, 0)) { DepthOffset = -1 };
+            shoulderRight = new AnimationBone(body, new Vector2(-8 * baseScale, -24 * baseScale)) { DepthOffset = -1 };
+            elbowRight = new AnimationBone(shoulderRight, new Vector2(-13 * baseScale, 0)) { DepthOffset = -1 };
+            gun = new AnimationBone(elbowRight, new Vector2(-10 * baseScale, 0)) { DepthOffset = 1 };
+            gunNuzzle = new AnimationBone(gun, new Vector2(15 * baseScale, -5 * baseScale));
 
             World.AddObject(body);
             body.SetSprite("Boss/Body");
@@ -103,6 +105,12 @@ namespace MetroidClone.Metroid.Monsters
                 if (World.PointOutOfView(Position, -50)) //If the position is very near the view edge, reset it.
                     Position = startingPos;
             }
+        }
+
+        public override void Draw()
+        {
+            base.Draw();
+            Drawing.DrawRectangle(DrawBoundingBox, Color.Red);
         }
 
         protected override void Attack()
