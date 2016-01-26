@@ -64,7 +64,7 @@ namespace MetroidClone.Metroid
                 //Activate the door if the player is to the right of it
                 if (!World.PointOutOfView(Position, 0))
                 {
-                    if (World.Player.Position.X > Position.X + 25)
+                    if (World.Player.Position.X > Position.X + 28)
                     {
                         //Activate all boss doors
                         foreach (BossDoor door in World.GameObjects.OfType<BossDoor>())
@@ -72,6 +72,12 @@ namespace MetroidClone.Metroid
                             if (door.HasNeverBeenActivated)
                                 door.Activated = true;
                             door.HasNeverBeenActivated = false;
+                        }
+
+                        //Teleport drones to player (to avoid them being stuck in the door)
+                        foreach (Drone drone in World.GameObjects.OfType<Drone>())
+                        {
+                            drone.Position = World.Player.Position;
                         }
 
                         //Also activated boss portals

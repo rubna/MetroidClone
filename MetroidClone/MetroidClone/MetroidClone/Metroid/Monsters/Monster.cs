@@ -34,6 +34,9 @@ namespace MetroidClone.Metroid
         //For the boss room
         public bool HasUnlimitedLookingDistance = false;
 
+        //Speed modifier for all monsters
+        public static float SpeedModifier = 1;
+
         public Monster()
         {
             Depth = -1;
@@ -105,9 +108,9 @@ namespace MetroidClone.Metroid
                 emulatedBulletPos += MonsterBullet.baseSpeed * dir;
 
                 if (InsideWall(new Rectangle((int) emulatedBulletPos.X - 4, (int) emulatedBulletPos.Y - 4, 8, 8)))
-            {
+                {
                     return false;
-            }
+                }
             }
 
             return true;
@@ -145,6 +148,9 @@ namespace MetroidClone.Metroid
                             Attack();
 
                         StateTimer++;
+
+                        if (StateTimer > 60)
+                            StateTimer = 0;
                     }
                 }
                 else
@@ -188,10 +194,10 @@ namespace MetroidClone.Metroid
 
                         //Left
                         if (preferDir == Direction.Left && Position.X > World.Camera.X + 10) //Move left as long as we're not near the edge
-                            Speed.X -= BaseSpeed;
+                            Speed.X -= BaseSpeed * SpeedModifier;
                         //Right
                         else if (preferDir == Direction.Right && Position.X < World.Camera.X + (World.TileWidth * WorldGenerator.LevelWidth) - 10) //Move right as long as we're not near the edge
-                            Speed.X += BaseSpeed;
+                            Speed.X += BaseSpeed * SpeedModifier;
 
                         //Jump
                         if ((World.Player.Position.Y < Position.Y - 20 || HadHCollision) && OnGround && World.Random.Next(AvgJumpWaitTime) == 1)

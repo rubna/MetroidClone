@@ -186,6 +186,8 @@ namespace MetroidClone.Engine
                         world.AddObject(new WrenchPickup(), centerX, centerY);
                     else if (data == 'R') //A rocket pickup block
                         world.AddObject(new RocketPickup(), centerX, centerY);
+                    else if (data == 'H') //A health pickup block
+                        world.AddObject(new HealthDrop(10), centerX, centerY);
                     else if (data == 'P') //The player
                     {
                         world.Player = new Player();

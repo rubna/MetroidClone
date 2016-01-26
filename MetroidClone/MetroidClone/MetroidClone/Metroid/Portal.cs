@@ -23,6 +23,8 @@ namespace MetroidClone.Metroid
 
         float alpha = 1; //The transparancy of the portal.
 
+        int bossHelpersCreated = 0; //The number of extra monsters that have been created for the fight with the boss.
+
         public override void Create()
         {
             base.Create();
@@ -37,11 +39,16 @@ namespace MetroidClone.Metroid
             //All monster waves
             spawnsEachWave = new List<List<Monster>>();
             spawnsEachWave.Add(new List<Monster>());
+            spawnsEachWave.Add(new List<Monster>() { new SlimeMonster(), new SlimeMonster(), new SlimeMonster() });
             spawnsEachWave.Add(new List<Monster>() { new MeleeMonster(), new MeleeMonster(), new MeleeMonster() });
-            spawnsEachWave.Add(new List<Monster>() { new MeleeMonster(), new MeleeMonster(), new ShootingMonster() });
-            spawnsEachWave.Add(new List<Monster>() { new ShootingMonster(), new ShootingMonster(), new MeleeMonster() });
+            spawnsEachWave.Add(new List<Monster>() { new SlimeMonster(), new MeleeMonster(), new SlimeMonster(), new MeleeMonster(), new SlimeMonster() });
+            spawnsEachWave.Add(new List<Monster>() { new MeleeMonster(), new SlimeMonster(), new ShootingMonster() });
+            spawnsEachWave.Add(new List<Monster>() { new ShootingMonster(), new MeleeMonster(), new ShootingMonster(), new SlimeMonster() });
             spawnsEachWave.Add(new List<Monster>() { new ShootingMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new ShootingMonster() });
             spawnsEachWave.Add(new List<Monster>() { new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster() });
+            spawnsEachWave.Add(new List<Monster>() { new ShootingMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new ShootingMonster() });
+            spawnsEachWave.Add(new List<Monster>() { new ShootingMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new SlimeMonster(), new SlimeMonster(), new SlimeMonster() });
+            spawnsEachWave.Add(new List<Monster>() { new Boss() });
         }
 
         public override void Update(GameTime gameTime)
@@ -55,14 +62,19 @@ namespace MetroidClone.Metroid
             else if (Activated)
             {
                 int aliveMonsters = 0;
+                Boss boss = null;
                 foreach (Monster monster in spawns)
                 {
                     if (World.GameObjects.Contains(monster))
                     {
                         aliveMonsters++;
+
+                        if (monster is Boss)
+                            boss = monster as Boss;
                     }
                 }
 
+                //Check if we should do something and if so do that.
                 if (nextEvent > 0)
                     nextEvent--;
                 else
@@ -92,7 +104,7 @@ namespace MetroidClone.Metroid
                                 wave++;
                                 waveFinished = true;
 
-                                nextEvent = 120; //Give the player a short time to breathe.
+                                nextEvent = 150; //Give the player a short time to breathe.
                             }
                             else
                             {
@@ -105,6 +117,31 @@ namespace MetroidClone.Metroid
                                 }
                             }
                         }
+                    }
+                }
+
+                //Possibly spawn extra monsters to help the boss.
+                if (boss != null)
+                {
+                    if (boss.HitPoints < 80 && bossHelpersCreated < 1)
+                    {
+                        bossHelpersCreated = 1;
+                        spawnsEachWave[wave] = new List<Monster>() { new SlimeMonster(), new SlimeMonster(), new SlimeMonster(), new SlimeMonster() };
+                    }
+                    else if (boss.HitPoints < 50 && bossHelpersCreated < 2)
+                    {
+                        bossHelpersCreated = 2;
+                        spawnsEachWave[wave] = new List<Monster>() { new MeleeMonster(), new MeleeMonster(), new MeleeMonster() };
+                    }
+                    else if (boss.HitPoints < 20 && bossHelpersCreated < 3)
+                    {
+                        bossHelpersCreated = 3;
+                        spawnsEachWave[wave] = new List<Monster>() { new ShootingMonster() };
+                    }
+                    else if (boss.HitPoints < 10 && bossHelpersCreated < 4)
+                    {
+                        bossHelpersCreated = 4;
+                        spawnsEachWave[wave] = new List<Monster>() { new ShootingMonster() };
                     }
                 }
             }

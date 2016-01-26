@@ -476,7 +476,7 @@ BLOCK LRDU
 12222
 11cc2
 .B..2
-....2
+..H.2
 11122
 
 SPECIAL RightBossDoorBorder
@@ -484,12 +484,12 @@ BLOCK LRDU
 22221
 21.11
 2..B.
-2....
+2.H..
 11211
 
 SPECIAL BossPortal
 BLOCK LRDU
-22222
+222H2
 2..12
 2..O2
 2...2

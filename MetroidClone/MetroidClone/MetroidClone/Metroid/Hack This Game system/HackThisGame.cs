@@ -38,6 +38,8 @@ namespace MetroidClone.Metroid
 
         public override bool ShouldDrawGUI => true;
 
+        bool shouldStartChoice = false;
+
         public HackThisGame()
         {
             //Set variables
@@ -108,8 +110,16 @@ namespace MetroidClone.Metroid
                     List<IHackingOpportunity> possibleHackingOpportunities = hackingOpportunities.Where(h => h.CanUse(World)).ToList(); //Get the possible opportunities first.
                     currentFirstChoice = possibleHackingOpportunities.GetRandomItem();
                     currentSecondChoice = possibleHackingOpportunities.Where(h => h != currentFirstChoice).ToList().GetRandomItem();
+                    //currentFirstChoice = new Hack_This_Game_system.Hacking_opportunities.ExtraDrone(); DEBUG
                     SetOptions(currentFirstChoice.Text, currentSecondChoice.Text);
                 }
+            }
+
+            //Use the current hack if needed (this should be in update to guarantee correct handling)
+            if (shouldStartChoice)
+            {
+                winningChoice.Use(World);
+                shouldStartChoice = false;
             }
 
             //Stop any current hacks if needed.
@@ -217,7 +227,7 @@ namespace MetroidClone.Metroid
                         else //Choose a random winner.
                             winningChoice = new List<IHackingOpportunity> { currentFirstChoice, currentSecondChoice }.GetRandomItem();
                         hasWinner = true;
-                        winningChoice.Use(World);
+                        shouldStartChoice = true;
                         timeUntilChoiceEnd = winningChoice.Time;
                         timeLeftToDrawChoice = Math.Max(timeToDrawChoices, winningChoice.Time);
                     }
