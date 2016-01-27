@@ -171,7 +171,7 @@ namespace MetroidClone.Engine
                     GameObjectsToUpdate.Remove(gameObject);
 
             UpdateCamera(); //Update the position of the camera
-            }
+        }
 
         void UpdateCamera(bool jumpToGoal = false)
         {
