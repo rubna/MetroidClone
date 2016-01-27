@@ -3,7 +3,7 @@ using MetroidClone.Engine;
 
 namespace MetroidClone.Metroid
 {
-    class PauseMenu
+    class PauseMenu : Menu
     {
         //for extended comments, see MainMenu.cs, because these classes are very similar
 
@@ -21,7 +21,7 @@ namespace MetroidClone.Metroid
         public bool Resume, Options, Quit;
         string resume = "Resume", options = "Options", quit = "Main Menu";
         Rectangle resumeButton, optionsButton, quitButton, cursor;
-        Color resumeColor = Color.DarkSlateGray, optionsColor = Color.DarkSlateGray, quitColor = Color.DarkSlateGray;
+        Color resumeColor = StandardButtonColor, optionsColor = StandardButtonColor, quitColor = StandardButtonColor;
 
         public PauseMenu(DrawWrapper Drawing)
         {

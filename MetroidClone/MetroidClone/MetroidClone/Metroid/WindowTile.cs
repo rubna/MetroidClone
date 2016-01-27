@@ -15,6 +15,8 @@ namespace MetroidClone.Metroid
 
             size = new Vector2(BoundingBox.Width, BoundingBox.Height);
             quarterSize = new Vector2(BoundingBox.Width / 2f, BoundingBox.Height / 2f);
+
+            Depth = 1000;
         }
 
         public override void Create()

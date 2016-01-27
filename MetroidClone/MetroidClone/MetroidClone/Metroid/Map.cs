@@ -72,7 +72,34 @@ namespace MetroidClone.Metroid
                         drawColor = Color.DarkGreen;
                         position = gameObject.Position.ToPoint();
                     }
-                    else if (gameObject is Door)
+                    else if (gameObject is BossDoor) //Boss door
+                    {
+                        if ((gameObject as Door).Activated)
+                            drawColor = Color.Gray;
+                        else
+                            drawColor = Color.LawnGreen;
+                        position = gameObject.Position.ToPoint();
+                        vsizemod = 2;
+                    }
+                    else if (gameObject is MeleeDoor) //Melee door
+                    {
+                        if ((gameObject as Door).Activated)
+                            drawColor = Color.Gray;
+                        else
+                            drawColor = new Color(253, 91, 82);
+                        position = gameObject.Position.ToPoint();
+                        vsizemod = 2;
+                    }
+                    else if (gameObject is RocketDoor) //Rocket door
+                    {
+                        if ((gameObject as Door).Activated)
+                            drawColor = Color.Gray;
+                        else
+                            drawColor = new Color(238, 167, 3);
+                        position = gameObject.Position.ToPoint();
+                        vsizemod = 2;
+                    }
+                    else if (gameObject is Door) //Other doors
                     {
                         if ((gameObject as Door).Activated)
                             drawColor = Color.Gray;

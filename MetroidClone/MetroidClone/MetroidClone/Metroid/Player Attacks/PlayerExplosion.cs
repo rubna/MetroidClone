@@ -1,5 +1,6 @@
 ﻿using MetroidClone.Engine;
 using MetroidClone.Metroid.Abstract;
+using MetroidClone.Metroid.Monsters;
 using Microsoft.Xna.Framework;
 using System.Linq;
 
@@ -21,7 +22,7 @@ namespace MetroidClone.Metroid.Player_Attacks
             Gravity = 0;
             foreach (Monster monster in World.GameObjects.OfType<Monster>())
             {
-                if (monster.Visible)
+                if (monster.Visible && !(monster is Turret))
                 {
                     Vector2 offset = (monster.Position - Position).ToPolar();
                     if (offset.X < radiusTarget)

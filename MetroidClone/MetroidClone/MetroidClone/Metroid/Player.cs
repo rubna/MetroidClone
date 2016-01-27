@@ -211,8 +211,7 @@ namespace MetroidClone.Metroid
             }
             else
                 up = false;
-            if (Input.KeyboardCheckPressed(Keys.S))
-                Position.Y++;
+
             if (Input.KeyboardCheckDown(Keys.S) || Input.KeyboardCheckDown(Keys.Down) || Input.ThumbStickCheckDirection(true).Y < 0)
                 down = true;
             else
@@ -472,7 +471,7 @@ namespace MetroidClone.Metroid
                 Drawing.DrawRectangle(new Rectangle(Input.MouseCheckUnscaledPosition(Drawing).X - 5, Input.MouseCheckUnscaledPosition(Drawing).Y - 5, 10, 10), Color.DarkKhaki);
 
             //Drawing.DrawSprite(gun, handRight.DrawPosition, 0);
-            //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
+            //Drawing.DrawRectangle(DrawBoundingBox, Color.Red);
         }
 
         void Attack()

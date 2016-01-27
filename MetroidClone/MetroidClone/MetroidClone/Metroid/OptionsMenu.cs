@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace MetroidClone.Metroid
 {
-    class OptionsMenu
+    class OptionsMenu : Menu
     {
         //for extended comments see MainMenu.cs, because it is very similar
         
@@ -28,7 +28,7 @@ namespace MetroidClone.Metroid
         public bool Quit;
         string sound = "Sound", music = "Music", controller = "Controller", fullscreen = "Fullscreen", quit = "Back";
         Rectangle soundButton, musicButton, controllerButton, fullscreenButton, quitButton, cursor;
-        Color soundColor, musicColor, controllerColor, fullscreenColor, quitColor = Color.DarkSlateGray;
+        Color soundColor, musicColor, controllerColor, fullscreenColor, quitColor = StandardButtonColor;
 
         public OptionsMenu(DrawWrapper Drawing, GraphicsDeviceManager Graphics, AudioWrapper Audio, InputHelper Input)
         {

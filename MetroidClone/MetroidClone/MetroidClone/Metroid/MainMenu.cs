@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace MetroidClone.Metroid
 {
-    class MainMenu
+    class MainMenu : Menu
     {
         enum Buttons
         {
@@ -21,7 +21,7 @@ namespace MetroidClone.Metroid
         public bool Start, Options, ExitGame;
         string start = "Start", options = "Options", exit = "Quit";
         Rectangle startButton, optionsButton, exitButton, cursor;
-        Color startColor = Color.DarkSlateGray, optionsColor = Color.DarkSlateGray, exitColor = Color.DarkSlateGray;
+        Color startColor = StandardButtonColor, optionsColor = StandardButtonColor, exitColor = StandardButtonColor;
 
         public MainMenu(DrawWrapper Drawing)
         {
@@ -46,13 +46,13 @@ namespace MetroidClone.Metroid
             //if the cursor is over a button or the button is selected with a controller, the button will change color
             if (cursor.Intersects(startButton) || selectedButton == Buttons.Start)
             {
-                startColor.A = 200;
+                startColor.A = MouseOverAlpha;
                 if (Input.MouseButtonCheckPressed(true) || Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.A))
                 {
                     Start = true;
                 }
             }
-            else startColor.A = 255;
+            else startColor.A = StandardAlpha;
 
             if (cursor.Intersects(optionsButton) || selectedButton == Buttons.Options)
             {

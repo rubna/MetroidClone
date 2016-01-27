@@ -79,7 +79,10 @@ namespace MetroidClone.Engine
                     LastVCollisionDirection = Direction.Down;
                     HadVCollision = true;
                     if (solid is JumpThrough)
+                    {
                         OnJumpThrough = true;
+                        
+                    }
                     else
                     {
                         OnJumpThrough = false;
