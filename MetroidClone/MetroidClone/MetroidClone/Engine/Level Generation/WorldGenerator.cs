@@ -89,7 +89,7 @@ namespace MetroidClone.Engine
                         theme[i, j] = "Open";
                     else if (area[i, j] == 2 && World.Random.Next(100) < 50) //Generate a room with lots of spikes
                         theme[i, j] = "Spiky";
-                    else if (World.Random.Next(100) < 15) //Create a room with windows
+                    else if (World.Random.Next(100) < 10) //Create a room with windows
                         theme[i, j] = "Windowed";
 
                     //These areas have a normal amount of enemies, with more enemies in later areas.
@@ -110,8 +110,11 @@ namespace MetroidClone.Engine
             }
             while (Math.Abs(wrenchPos - startingY) < 1);
 
-            rocketPos = World.Random.Next(1, WorldHeight - 1);
-
+            if (World.Random.Next(2) == 0)
+                rocketPos = 0;
+            else
+                rocketPos = WorldHeight - 1;
+             
             guaranteedSpecialBlocks[areaTwoBorderStart + 1, wrenchPos].Add("WrenchPickup");
             guaranteedSpecialBlocks[areaThreeBorderStart + 1, rocketPos].Add("RocketPickup");
 
@@ -144,6 +147,11 @@ namespace MetroidClone.Engine
                     }
                 }
 
+            //Add three max health upgrades somewhere
+            guaranteedSpecialBlocks[World.Random.Next(3, WorldWidth - 1), World.Random.Next(0, WorldHeight - 1)].Add("MaxHPDropPickup");
+            guaranteedSpecialBlocks[WorldWidth - 1, World.Random.Next(bossY)].Add("MaxHPDropPickup");
+            guaranteedSpecialBlocks[WorldWidth - 1, World.Random.Next(bossY + 1, WorldHeight)].Add("MaxHPDropPickup");
+
             //Add the special bonus gun upgrade
             guaranteedSpecialBlocks[0, 0].Add("GunUpgradePickup");
 
@@ -151,7 +159,7 @@ namespace MetroidClone.Engine
             guaranteedSpecialBlocks[0, WorldHeight - 1].Add("HugeMaxHPDropPickup");
 
             //And the drone upgrade
-            guaranteedSpecialBlocks[0, WorldHeight - 1].Add("HugeMaxHPDropPickup");
+            guaranteedSpecialBlocks[1, WorldHeight - 1].Add("DroneUpgradePickup");
 
             //Add the boss room.
             CanHaveBottomExit[WorldWidth - 1, bossY - 1] = false; //The room above can't have a bottom exit.

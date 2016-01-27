@@ -40,7 +40,7 @@ namespace MetroidClone.Metroid
             if (CurrentState == DroneState.Following)
                 StateFollowing();
 
-            float finalAttentionRadius = attentionRadius + (World.Player.HasDroneAttentionRadiusUpgrade ? 200 : 0);
+            float finalAttentionRadius = attentionRadius + (World.Player.HasDroneAttentionRadiusUpgrade ? 500 : 0);
 
             if (target==null)
             {

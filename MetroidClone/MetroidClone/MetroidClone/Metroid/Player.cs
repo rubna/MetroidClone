@@ -34,7 +34,7 @@ namespace MetroidClone.Metroid
         bool down = false;
 
         public Weapon CurrentWeapon = Weapon.Nothing;
-        public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Gun, Weapon.Rocket, Weapon.Wrench };
+        public List<Weapon> UnlockedWeapons = new List<Weapon>() { Weapon.Nothing };
         public int HitPoints = 100, MaxHitPoints = 100;
         public int RocketAmmo = 5;
         public int MaximumRocketAmmo = 5;
@@ -446,8 +446,8 @@ namespace MetroidClone.Metroid
             }
 
             //DEBUG TODO REMOVE
-            if (Input.KeyboardCheckPressed(Keys.T))
-                Position = Input.MouseCheckUnscaledPosition(Drawing).ToVector2() + World.Camera;
+            //if (Input.KeyboardCheckPressed(Keys.T))
+            //    Position = Input.MouseCheckUnscaledPosition(Drawing).ToVector2() + World.Camera;
         }
 
         void CreateDrone()

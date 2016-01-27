@@ -29,13 +29,14 @@ namespace MetroidClone.Metroid
             Quit = false;
             selectedButton = Buttons.None;
             score = "Score: " + Score.ToString();
+
+            restartButton = new Rectangle((int)drawing.GUISize.X / 2 - 400, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
+            scoreButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
+            quitButton = new Rectangle((int)drawing.GUISize.X / 2 + 200, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
         }
 
         public void Update(GameTime gameTime, InputHelper Input)
         {
-            restartButton = new Rectangle((int)drawing.GUISize.X / 2 - 400, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
-            scoreButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
-            quitButton = new Rectangle((int)drawing.GUISize.X / 2 + 200, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
             cursor = Input.ControllerInUse ? new Rectangle(0, 0, 0, 0) : new Rectangle(Input.MouseCheckPosition().X, Input.MouseCheckPosition().Y, 1, 1);
 
             if (cursor.Intersects(restartButton) || selectedButton == Buttons.Restart)

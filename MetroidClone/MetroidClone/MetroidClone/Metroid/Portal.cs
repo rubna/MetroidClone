@@ -46,8 +46,9 @@ namespace MetroidClone.Metroid
             spawnsEachWave.Add(new List<Monster>() { new ShootingMonster(), new MeleeMonster(), new MeleeMonster(), new SlimeMonster() });
             spawnsEachWave.Add(new List<Monster>() { new ShootingMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new SlimeMonster() });
             spawnsEachWave.Add(new List<Monster>() { new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster() });
-            spawnsEachWave.Add(new List<Monster>() { new ShootingMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new ShootingMonster() });
-            spawnsEachWave.Add(new List<Monster>() { new ShootingMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new SlimeMonster(), new SlimeMonster() });
+            spawnsEachWave.Add(new List<Monster>() { new ShootingMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new ShootingMonster(), new MeleeMonster() });
+            spawnsEachWave.Add(new List<Monster>() { new ShootingMonster(), new MeleeMonster(), new MeleeMonster(), new MeleeMonster(), new SlimeMonster(), new SlimeMonster(), new MeleeMonster(),
+                new MeleeMonster(), new MeleeMonster()});
             spawnsEachWave.Add(new List<Monster>() { new Boss() });
         }
 
