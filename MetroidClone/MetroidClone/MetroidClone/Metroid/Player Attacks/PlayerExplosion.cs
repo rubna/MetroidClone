@@ -51,6 +51,9 @@ namespace MetroidClone.Metroid.Player_Attacks
                     }
                 }
             }
+
+            //Sound
+            Audio.Play("Audio/Combat/explosion2");
         }
 
         public override void Update(GameTime gameTime)

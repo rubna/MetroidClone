@@ -21,6 +21,7 @@ namespace MetroidClone.Metroid
         {
             if (CollidesWith(Position, World.Player))
             {
+                Audio.Play("Audio/PickUps/collectscraporrocket");
                 World.Tutorial.ScrapCollected = true;
                 World.Player.CollectedScrap += ScrapAmount;
                 Destroy();

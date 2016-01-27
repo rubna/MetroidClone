@@ -85,6 +85,9 @@
     <Compile Include="Engine\Collections\FairRandomCollection.cs" />
     <Compile Include="Engine\Collections\IRandomCollection.cs" />
     <Compile Include="Metroid\BossDoor.cs" />
+    <Compile Include="Metroid\UpgradePickup.cs" />
+    <Compile Include="Metroid\Upgrades\DroneRangeUpgrade.cs" />
+    <Compile Include="Metroid\Upgrades\MaxHPUpgrade.cs" />
     <Compile Include="Metroid\WonMenu.cs" />
     <Compile Include="Metroid\Hack This Game system\Hacking opportunities\MonsterMods.cs" />
     <Compile Include="Metroid\Hack This Game system\Hacking opportunities\ShootingMods.cs" />

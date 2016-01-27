@@ -56,6 +56,10 @@ namespace MetroidClone.Engine
 
         public void PlayLooping(string song)
         {
+            //Stop the current music
+            musicInstance?.Stop();
+
+            //And start some new music.
             PlayLooping(Assets.GetSong(song));
         }
     }

@@ -406,7 +406,7 @@ BLOCK ULRD 1
 12221
 2...2
 2c.c2
-2W.W2
+2w.w2
 11211
 
 THEMEEND
@@ -546,3 +546,27 @@ vvvvv
 .....
 .....
 11111
+
+SPECIAL MaxHPDropPickup
+BLOCK LRDU
+α222α
+2...2
+21.12
+α..Aα
+11j11
+
+SPECIAL HugeMaxHPDropPickup
+BLOCK LRDU
+α222α
+2E..2
+21.12
+α...α
+11j11
+
+SPECIAL DroneUpgradePickup
+BLOCK LRDU
+α222α
+2F..2
+21.12
+α...α
+11j11

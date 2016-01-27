@@ -141,6 +141,8 @@ namespace MetroidClone.Engine
                     if (world.Player.Position.X > World.TileWidth * (WorldGenerator.LevelWidth * WorldGenerator.WorldWidth - 0.5f))
                     {
                         currentState = GameState.Won;
+                        //Play a victory sound!
+                        audioWrapper.Play("Audio/GameSounds/win");
                         wonMenu = new WonMenu(drawWrapper, world.Player.Score);
                     }
                     break;

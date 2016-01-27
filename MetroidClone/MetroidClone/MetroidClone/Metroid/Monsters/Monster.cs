@@ -76,6 +76,8 @@ namespace MetroidClone.Metroid
 
         public override void Destroy()
         {
+            Audio.Play("Audio/Combat/monsterdied");
+
             Vector2 dropPosition = Position;
             if (this is SlimeMonster)
                 dropPosition -= new Vector2(0, 6);
@@ -85,7 +87,8 @@ namespace MetroidClone.Metroid
             // The chance of dropping healthpacks and rocket ammo increases if the player is in need of these drops
             float ammoChance = (1 - ((float)World.Player.RocketAmmo / (float)World.Player.MaximumRocketAmmo)) * 25 * AmmoDropModifier;
             float scrapChance = 40 * ScrapDropModifier; //Turrets drop more scrap
-            float healthChance = (1 - ((float)World.Player.HitPoints / (float)World.Player.MaxHitPoints)) * 40 * HealthDropModifier;
+            float healthChance = (1 - ((float)World.Player.HitPoints / (float)World.Player.MaxHitPoints)) * 35 * HealthDropModifier;
+            
             float randomLoot = World.Random.Next(101);
             if (randomLoot <= healthChance)
                 World.AddObject(new HealthDrop(Damage * 2), dropPosition);

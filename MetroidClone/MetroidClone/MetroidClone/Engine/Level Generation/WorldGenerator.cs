@@ -147,6 +147,12 @@ namespace MetroidClone.Engine
             //Add the special bonus gun upgrade
             guaranteedSpecialBlocks[0, 0].Add("GunUpgradePickup");
 
+            //Add the huge health upgrade
+            guaranteedSpecialBlocks[0, WorldHeight - 1].Add("HugeMaxHPDropPickup");
+
+            //And the drone upgrade
+            guaranteedSpecialBlocks[0, WorldHeight - 1].Add("HugeMaxHPDropPickup");
+
             //Add the boss room.
             CanHaveBottomExit[WorldWidth - 1, bossY - 1] = false; //The room above can't have a bottom exit.
             CanHaveBottomExit[WorldWidth - 1, bossY] = false; //The boss room can't have a bottom exit.

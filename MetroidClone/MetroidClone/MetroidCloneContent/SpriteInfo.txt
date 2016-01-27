@@ -88,3 +88,4 @@ Rocket 0.75x0.5 1x1
 portal topleft 1x1
 healthdrop middle 1x1
 ammopickup middle 1x1
+upgradedrop middle 1x1
