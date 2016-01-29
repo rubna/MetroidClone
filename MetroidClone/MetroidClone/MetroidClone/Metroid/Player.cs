@@ -1,4 +1,5 @@
-﻿using MetroidClone.Engine;
+﻿using CoraleCore = Corale.Colore.Core;
+using MetroidClone.Engine;
 using MetroidClone.Engine.Asset;
 using MetroidClone.Metroid.Abstract;
 using MetroidClone.Metroid.Monsters;
@@ -8,6 +9,8 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ColoreColor = Corale.Colore.Core.Color;
+using Corale.Colore.Razer.Mouse;
 
 namespace MetroidClone.Metroid
 {
@@ -447,6 +450,33 @@ namespace MetroidClone.Metroid
             //DEBUG TODO REMOVE
             //if (Input.KeyboardCheckPressed(Keys.T))
             //    Position = Input.MouseCheckUnscaledPosition(Drawing).ToVector2() + World.Camera;
+
+            //Colore
+            Color hpColor;
+            if ((float)HitPoints / MaxHitPoints > 0.5)
+                hpColor = Color.Lerp(Color.Green, Color.Orange, 1 - ((float)HitPoints / MaxHitPoints - 0.5f) * 2f);
+            else
+                hpColor = Color.Lerp(Color.Orange, Color.Red, 1 - ((float)HitPoints / MaxHitPoints) * 2f);
+
+            List<Led> hpLeds = new List<Led>() { Led.Backlight, Led.Logo, Led.Strip1, Led.Strip2, Led.Strip3, Led.Strip4, Led.Strip5,
+                Led.Strip5, Led.Strip6, Led.Strip7, Led.Strip8, Led.Strip9, Led.Strip10, Led.Strip11, Led.Strip12, Led.Strip13, Led.Strip14 };
+
+            foreach (Led led in hpLeds)
+                CoraleCore.Mouse.Instance.SetLed(led, new ColoreColor(hpColor.R, hpColor.G, hpColor.B));
+
+            ColoreColor weaponColor;
+            if (meleeAnimationTimer > 0f)
+                weaponColor = new ColoreColor(192, 180, 182);
+            else if (CurrentWeapon == Weapon.Rocket)
+                weaponColor = new ColoreColor(221, 116, 39);
+            else if (CurrentWeapon == Weapon.Gun && hasGunUpgrade)
+                weaponColor = new ColoreColor(9, 217, 212);
+            else if (CurrentWeapon == Weapon.Gun)
+                weaponColor = new ColoreColor(108, 217, 9);
+            else
+                weaponColor = ColoreColor.White;
+
+            CoraleCore.Mouse.Instance.SetLed(Led.ScrollWheel, weaponColor);
         }
 
         void CreateDrone()
