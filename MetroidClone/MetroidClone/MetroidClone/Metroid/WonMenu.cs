@@ -3,7 +3,7 @@ using MetroidClone.Engine;
 
 namespace MetroidClone.Metroid
 {
-    class GameOverMenu : Menu
+    class WonMenu : Menu
     //for extended comments, see MainMenu.cs, because these classes are very similar
 
     {
@@ -18,11 +18,11 @@ namespace MetroidClone.Metroid
 
         DrawWrapper drawing;
         public bool Restart, Quit;
-        string gameOver = "GAME OVER", restart = "Restart", score, quit = "Main Menu";
+        string gameOver = "Congratulations!\n You escaped!", restart = "Restart", score, quit = "Main Menu";
         Rectangle restartButton, scoreButton, quitButton, cursor;
         Color restartColor = StandardButtonColor, quitColor = StandardButtonColor, scoreColor = StandardButtonColor;
 
-        public GameOverMenu(DrawWrapper Drawing, int Score)
+        public WonMenu(DrawWrapper Drawing, int Score)
         {
             drawing = Drawing;
             Restart = false;
@@ -37,6 +37,10 @@ namespace MetroidClone.Metroid
 
         public void Update(GameTime gameTime, InputHelper Input)
         {
+            restartButton = new Rectangle((int)drawing.GUISize.X / 2 - 400, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
+            scoreButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
+            quitButton = new Rectangle((int)drawing.GUISize.X / 2 + 200, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
+
             cursor = Input.ControllerInUse ? new Rectangle(0, 0, 0, 0) : new Rectangle(Input.MouseCheckPosition().X, Input.MouseCheckPosition().Y, 1, 1);
 
             if (cursor.Intersects(restartButton) || selectedButton == Buttons.Restart)

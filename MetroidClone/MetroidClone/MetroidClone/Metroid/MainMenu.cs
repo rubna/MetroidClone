@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace MetroidClone.Metroid
 {
-    class MainMenu
+    class MainMenu : Menu
     {
         enum Buttons
         {
@@ -19,9 +19,9 @@ namespace MetroidClone.Metroid
         
         //used to give signals to MainGame
         public bool Start, Options, ExitGame;
-        string start = "START", options = "OPTIONS", exit = "EXIT";
+        string start = "Start", options = "Options", exit = "Quit";
         Rectangle startButton, optionsButton, exitButton, cursor;
-        Color startColor = Color.DarkSlateGray, optionsColor = Color.DarkSlateGray, exitColor = Color.DarkSlateGray;
+        Color startColor = StandardButtonColor, optionsColor = StandardButtonColor, exitColor = StandardButtonColor;
 
         public MainMenu(DrawWrapper Drawing)
         {
@@ -30,13 +30,15 @@ namespace MetroidClone.Metroid
             Start = false;
             Options = false;
             selectedButton = Buttons.None;
+
+            startButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 200, 200, 100);
+            optionsButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 50, 200, 100);
+            exitButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
         }
 
         public void Update(GameTime gameTime, InputHelper Input)
         {
-            startButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 200, 200, 100);
-            optionsButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 50, 200, 100);
-            exitButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
+            
 
             //otherwise it would be possible that the cursor rectangle is still on a button eventhough the controller is in use
             cursor = Input.ControllerInUse ? new Rectangle(0, 0, 0, 0) : new Rectangle(Input.MouseCheckPosition().X, Input.MouseCheckPosition().Y, 1, 1);
@@ -44,13 +46,13 @@ namespace MetroidClone.Metroid
             //if the cursor is over a button or the button is selected with a controller, the button will change color
             if (cursor.Intersects(startButton) || selectedButton == Buttons.Start)
             {
-                startColor.A = 200;
+                startColor.A = MouseOverAlpha;
                 if (Input.MouseButtonCheckPressed(true) || Input.GamePadCheckPressed(Microsoft.Xna.Framework.Input.Buttons.A))
                 {
                     Start = true;
                 }
             }
-            else startColor.A = 255;
+            else startColor.A = StandardAlpha;
 
             if (cursor.Intersects(optionsButton) || selectedButton == Buttons.Options)
             {

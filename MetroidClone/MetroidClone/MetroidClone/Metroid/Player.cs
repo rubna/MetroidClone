@@ -74,7 +74,7 @@ namespace MetroidClone.Metroid
             }
         }
 
-        public bool hasGunUpgrade = false;
+        public bool hasGunUpgrade = false, HasDroneAttentionRadiusUpgrade = false;
 
         public override void Create()
         {
@@ -267,7 +267,6 @@ namespace MetroidClone.Metroid
             else
                 timeSinceLastJumpIntention++;
 
-
             //jump
             if (timeSinceLastJumpIntention < maxTimeSinceLastJumpIntention && timeSinceOnGround < maxFromPlatformTimeForJump && Speed.Y >= 0)
             {
@@ -276,6 +275,9 @@ namespace MetroidClone.Metroid
 
                 hasMovedLeft = false;
                 hasMovedRight = false;
+
+                if (LastVCollisionDirection == Direction.Down)
+                    Audio.Play("Audio/Movement/Jump");
             }
 
             if ((Speed.Y < 0 && (!Input.KeyboardCheckDown(Keys.W) && !Input.KeyboardCheckDown(Keys.Up) && Input.ThumbStickCheckDirection(true).Y <= 0.75f && !Input.GamePadCheckDown(Buttons.A))) && (Speed.Y < -3 || startedSlowingDownJump))
@@ -316,6 +318,7 @@ namespace MetroidClone.Metroid
                     World.Tutorial.WrenchUsed = true;
                     World.AddObject(new PlayerMelee(), Position + GetFlip * Vector2.UnitX * 20);
                     attackTimer = 0.2f;
+                    Audio.Play("Audio/Combat/wrenchuse");
                 }
             }
 
@@ -442,8 +445,8 @@ namespace MetroidClone.Metroid
             }
 
             //DEBUG TODO REMOVE
-            if (Input.KeyboardCheckPressed(Keys.T))
-                Position = Input.MouseCheckUnscaledPosition(Drawing).ToVector2() + World.Camera;
+            //if (Input.KeyboardCheckPressed(Keys.T))
+            //    Position = Input.MouseCheckUnscaledPosition(Drawing).ToVector2() + World.Camera;
         }
 
         void CreateDrone()
@@ -453,6 +456,7 @@ namespace MetroidClone.Metroid
             World.AddObject(new Drone(), Position);
             CollectedScrap -= 25;
             Score += 10;
+            Audio.Play("Audio/Combat/Drone/builddrone");
         }
 
         public override void Draw()
@@ -467,7 +471,7 @@ namespace MetroidClone.Metroid
                 Drawing.DrawRectangle(new Rectangle(Input.MouseCheckUnscaledPosition(Drawing).X - 5, Input.MouseCheckUnscaledPosition(Drawing).Y - 5, 10, 10), Color.DarkKhaki);
 
             //Drawing.DrawSprite(gun, handRight.DrawPosition, 0);
-            //Drawing.DrawRectangle(TranslatedBoundingBox, Color.Red);
+            //Drawing.DrawRectangle(DrawBoundingBox, Color.Red);
         }
 
         void Attack()

@@ -192,6 +192,12 @@ namespace MetroidClone.Engine
                         world.AddObject(new RocketPickup(), centerX, centerY);
                     else if (data == 'H') //A health pickup block
                         world.AddObject(new HealthDrop(10), centerX, centerY);
+                    else if (data == 'A') //First health upgrade
+                        world.AddObject(new MaxHPUpgrade(), centerX, centerY);
+                    else if (data == 'E') //Huge health upgrade
+                        world.AddObject(new HugeMaxHPUpgrade(), centerX, centerY);
+                    else if (data == 'F') //Drone upgrade
+                        world.AddObject(new DroneRangeUpgrade(), centerX, centerY);
                     else if (data == 'P') //The player
                     {
                         world.Player = new Player();

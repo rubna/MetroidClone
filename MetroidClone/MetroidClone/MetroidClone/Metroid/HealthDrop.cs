@@ -27,6 +27,7 @@ namespace MetroidClone.Metroid
             {
                 if (World.Player.HitPoints < World.Player.MaxHitPoints)
                 {
+                    Audio.Play("Audio/PickUps/extralife");
                     World.Player.HitPoints = Math.Min(World.Player.HitPoints + hitPointsFromHealthDrop, World.Player.MaxHitPoints);
                     World.Tutorial.HealthBonusCollected = true;
                     Destroy();

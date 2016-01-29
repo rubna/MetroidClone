@@ -77,6 +77,8 @@ namespace MetroidClone.Engine
             UpdateSolidGrid();
             PathfindingGrid();
             //AStarMap = new AStarMap(PathfindingGrid());
+
+            Monster.SpeedModifier = 1;
         }
 
         public void UpdateSolidGrid()

@@ -11,6 +11,7 @@ namespace MetroidClone.Metroid
             BoundingBox = new Rectangle(-23, -12, 46, 24);
             SetSprite("Pickups/wrench");
         }
+
         public override void Update(GameTime gameTime)
         {
             if (CollidesWith(Position, World.Player))

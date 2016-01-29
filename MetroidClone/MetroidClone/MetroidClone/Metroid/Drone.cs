@@ -40,12 +40,14 @@ namespace MetroidClone.Metroid
             if (CurrentState == DroneState.Following)
                 StateFollowing();
 
+            float finalAttentionRadius = attentionRadius + (World.Player.HasDroneAttentionRadiusUpgrade ? 500 : 0);
+
             if (target==null)
             {
                 setTargetTimer += 0.01f;
                 if (setTargetTimer >= 1)
                 {
-                    float dist = attentionRadius;
+                    float dist = finalAttentionRadius;
                     foreach (Monster monster in World.GameObjects.OfType<Monster>())
                     {
                         float dst = (Position - monster.Position).Length();
@@ -71,7 +73,7 @@ namespace MetroidClone.Metroid
                     Audio.Play("Audio/Combat/Gunshots/Laser/Laser_Shoot01");
                 }
                 //lose target
-                if (World.PointOutOfView(target.Position) || target.HitPoints <= 0 || (Position - target.Position).Length() > attentionRadius)
+                if (World.PointOutOfView(target.Position) || target.HitPoints <= 0 || (Position - target.Position).Length() > finalAttentionRadius)
                     target = null;
             }
 

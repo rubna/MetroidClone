@@ -84,6 +84,9 @@ namespace MetroidClone.Metroid
                         foreach (Portal portal in World.GameObjects.OfType<Portal>())
                         {
                             portal.Activated = true;
+
+                            //Play boss music
+                            Audio.PlayLooping("Audio/Music/Boss Battle");
                         }
                     }
                 }

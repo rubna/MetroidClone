@@ -3,7 +3,7 @@ using MetroidClone.Engine;
 
 namespace MetroidClone.Metroid
 {
-    class PauseMenu
+    class PauseMenu : Menu
     {
         //for extended comments, see MainMenu.cs, because these classes are very similar
 
@@ -19,9 +19,9 @@ namespace MetroidClone.Metroid
 
         DrawWrapper drawing;
         public bool Resume, Options, Quit;
-        string resume = "RESUME", options = "OPTIONS", quit = "QUIT";
+        string resume = "Resume", options = "Options", quit = "Main Menu";
         Rectangle resumeButton, optionsButton, quitButton, cursor;
-        Color resumeColor = Color.DarkSlateGray, optionsColor = Color.DarkSlateGray, quitColor = Color.DarkSlateGray;
+        Color resumeColor = StandardButtonColor, optionsColor = StandardButtonColor, quitColor = StandardButtonColor;
 
         public PauseMenu(DrawWrapper Drawing)
         {
@@ -30,13 +30,15 @@ namespace MetroidClone.Metroid
             Options = false;
             Quit = false;
             selectedButton = Buttons.None;
+
+            resumeButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 200, 200, 100);
+            optionsButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 50, 200, 100);
+            quitButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
         }
 
         public void Update(GameTime gameTime, InputHelper Input)
         {
-            resumeButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 200, 200, 100);
-            optionsButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 50, 200, 100);
-            quitButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
+            
             cursor = Input.ControllerInUse ? new Rectangle(0, 0, 0, 0) : new Rectangle(Input.MouseCheckPosition().X, Input.MouseCheckPosition().Y, 1, 1);
 
             if (cursor.Intersects(resumeButton) || selectedButton == Buttons.Resume)

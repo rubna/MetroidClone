@@ -119,6 +119,7 @@ namespace MetroidClone.Metroid
             if (shouldStartChoice)
             {
                 winningChoice.Use(World);
+                Audio.Play("Audio/hacked");
                 shouldStartChoice = false;
             }
 

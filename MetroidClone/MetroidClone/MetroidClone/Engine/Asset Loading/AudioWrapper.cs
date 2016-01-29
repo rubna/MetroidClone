@@ -20,6 +20,8 @@ namespace MetroidClone.Engine
         //the music player
         private SoundEffectInstance musicInstance;
 
+        float standardVolume = 0.25f;
+
         public AudioWrapper(AssetManager assetsManager)
         {
             Assets = assetsManager;
@@ -28,7 +30,9 @@ namespace MetroidClone.Engine
         public void Play(Sound sound)
         {
             if (AudioIsEnabled)
-                sound.SoundEffect.Play();
+            {
+                sound.SoundEffect.Play(standardVolume, 0.0f, 0.0f);
+            }
         }
 
         public void Play(string sound)
@@ -56,6 +60,10 @@ namespace MetroidClone.Engine
 
         public void PlayLooping(string song)
         {
+            //Stop the current music
+            musicInstance?.Stop();
+
+            //And start some new music.
             PlayLooping(Assets.GetSong(song));
         }
     }

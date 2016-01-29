@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace MetroidClone.Metroid
 {
-    class OptionsMenu
+    class OptionsMenu : Menu
     {
         //for extended comments see MainMenu.cs, because it is very similar
         
@@ -26,9 +26,9 @@ namespace MetroidClone.Metroid
         GraphicsDeviceManager graphics;
         InputHelper input;
         public bool Quit;
-        string sound = "SOUND", music = "MUSIC", controller = "CONTROLLER", fullscreen = "FULLSCREEN", quit = "EXIT";
+        string sound = "Sound", music = "Music", controller = "Controller", fullscreen = "Fullscreen", quit = "Back";
         Rectangle soundButton, musicButton, controllerButton, fullscreenButton, quitButton, cursor;
-        Color soundColor, musicColor, controllerColor, fullscreenColor, quitColor = Color.DarkSlateGray;
+        Color soundColor, musicColor, controllerColor, fullscreenColor, quitColor = StandardButtonColor;
 
         public OptionsMenu(DrawWrapper Drawing, GraphicsDeviceManager Graphics, AudioWrapper Audio, InputHelper Input)
         {
@@ -43,16 +43,22 @@ namespace MetroidClone.Metroid
             musicColor = audio.MusicIsEnabled ? Color.DarkGreen : Color.DarkRed;
             controllerColor = input.ControllerInUse ? Color.DarkGreen : Color.DarkRed;
             fullscreenColor = graphics.IsFullScreen ? Color.DarkGreen : Color.DarkRed;
+
+            soundButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 300, 200, 100);
+            musicButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 150, 200, 100);
+            //controllerButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 50, 200, 100);
+            fullscreenButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2, 200, 100);
+            quitButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 + 150, 200, 100);
         }
 
         public void Update(GameTime gameTime)
         {
-            soundButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 350, 200, 100);
-            musicButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 200, 200, 100);
-            controllerButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 50, 200, 100);
-            fullscreenButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 + 100, 200, 100);
-            quitButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 + 250, 200, 100);
-            
+            soundButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 300, 200, 100);
+            musicButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 150, 200, 100);
+            //controllerButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 - 50, 200, 100);
+            fullscreenButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2, 200, 100);
+            quitButton = new Rectangle((int)drawing.GUISize.X / 2 - 100, (int)drawing.GUISize.Y / 2 + 150, 200, 100);
+
             cursor = input.ControllerInUse ? new Rectangle(0, 0, 0, 0) : new Rectangle(input.MouseCheckPosition().X, input.MouseCheckPosition().Y, 1, 1);
 
 
@@ -79,7 +85,7 @@ namespace MetroidClone.Metroid
             }
             else musicColor.A = 255;
 
-            if (cursor.Intersects(controllerButton) || selectedButton == MenuButton.Controller)
+            /*if (cursor.Intersects(controllerButton) || selectedButton == MenuButton.Controller)
             {
                 controllerColor.A = 200;
                 if (input.MouseButtonCheckPressed(true) || input.GamePadCheckPressed(Buttons.A))
@@ -89,7 +95,7 @@ namespace MetroidClone.Metroid
                     selectedButton = input.ControllerInUse ? MenuButton.Controller : MenuButton.None;
                 }
             }
-            else controllerColor.A = 255;
+            else controllerColor.A = 255;*/
 
             if (cursor.Intersects(fullscreenButton) || selectedButton == MenuButton.Fullscreen)
             {
@@ -142,8 +148,8 @@ namespace MetroidClone.Metroid
             drawing.DrawText("font18", music, musicButton.Center.ToVector2(), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
 
             //controller button
-            drawing.DrawRectangleUnscaled(controllerButton, controllerColor);
-            drawing.DrawText("font18", controller, controllerButton.Center.ToVector2(), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
+            //drawing.DrawRectangleUnscaled(controllerButton, controllerColor);
+            //drawing.DrawText("font18", controller, controllerButton.Center.ToVector2(), Color.White, alignment: Engine.Asset.Font.Alignment.MiddleCenter);
 
             //fullscreen button
             drawing.DrawRectangleUnscaled(fullscreenButton, fullscreenColor);

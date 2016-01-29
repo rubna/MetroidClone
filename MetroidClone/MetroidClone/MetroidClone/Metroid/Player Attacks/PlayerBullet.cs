@@ -22,14 +22,27 @@ namespace MetroidClone.Metroid
             CollideWithWalls = false;
 
             SetSprite("Robot/playergunbullet");
+
+            DoCollisions();
         }
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
             ImageRotation = MathHelper.ToRadians(VectorExtensions.Angle(Speed));
 
+            DoCollisions();
+        }
+
+        public override void Draw()
+        {
+            if (CurrentSprite != null && Visible)
+                Drawing.DrawSprite(CurrentSprite, DrawPosition, (int)CurrentImage, size: new Vector2(13, 6), rotation: ImageRotation); //Draw the current image of the sprite.
+        }
+
+        public void DoCollisions()
+        {
             ISolid doorCollision = GetCollisionWithSolid<GunDoor>(TranslatedBoundingBox);
-            
+
             if (doorCollision != null)
             {
                 if (!(doorCollision as Door).Activated)
@@ -45,12 +58,6 @@ namespace MetroidClone.Metroid
 
             if (World.PointOutOfView(Position, -10))
                 Destroy();
-        }
-
-        public override void Draw()
-        {
-            if (CurrentSprite != null && Visible)
-                Drawing.DrawSprite(CurrentSprite, DrawPosition, (int)CurrentImage, size: new Vector2(13, 6), rotation: ImageRotation); //Draw the current image of the sprite.
         }
     }
 }

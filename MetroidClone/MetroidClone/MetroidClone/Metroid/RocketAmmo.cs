@@ -20,6 +20,7 @@ namespace MetroidClone.Metroid
                 //The ammo limit is a soft limit, not a hard one.
                 //if (World.Player.RocketAmmo < World.Player.MaximumRocketAmmo)
                 {
+                    Audio.Play("Audio/PickUps/collectscraporrocket");
                     World.Tutorial.AmmoCollected = true;
                     World.Player.RocketAmmo++;
                     Destroy();

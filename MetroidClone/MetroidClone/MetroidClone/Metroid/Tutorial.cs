@@ -13,9 +13,12 @@ namespace MetroidClone.Metroid
         //the range between the player and the object for its instruction to appear
         int tutorialRange = 500;
 
-        Vector2 textSize;
         string currentText, previousText;
-        
+
+        //In addition to the normal tutorial texts, the tutorial can show a message.
+        string message = "";
+        int messageTimeLeft = 0;
+
         //all instructions for the tutorial. kb => keyboard and gp => gamepad
         string kbmove = "Use A and D or Left and Right to move.";
         string gpmove = "Use the Left Thumbstick to move.";
@@ -244,13 +247,33 @@ namespace MetroidClone.Metroid
             }
             else
                 currentText = null;
+
+            if (messageTimeLeft > 0)
+                messageTimeLeft--;
+        }
+
+        public void ShowMessage(string message)
+        {
+            this.message = message;
+            messageTimeLeft = 240;
         }
 
         public override void DrawGUI()
         {
+            Vector2 textSize;
+            Color guiColor = new Color(0, 0, 0, 150);
+
+            //Show a message if needed
+            if (messageTimeLeft > 0)
+            {
+                textSize = Drawing.MeasureText("font18", message);
+                Drawing.DrawRectangleUnscaled(new Rectangle(((int)Drawing.GUISize.X - (int)textSize.X) / 2 - 15, 10, (int)textSize.X + 30, (int)textSize.Y + 20), guiColor);
+                Drawing.DrawText("font18", message, new Vector2(Drawing.GUISize.X / 2, 20), color: Color.White, alignment: Engine.Asset.Font.Alignment.TopCenter);
+            }
+
             if (currentText == null)
                 return;
-            Color guiColor = new Color(0, 0, 0, 50);
+
             textSize = Drawing.MeasureText("font18", currentText);
             Drawing.DrawRectangleUnscaled(new Rectangle(((int)Drawing.GUISize.X - (int)textSize.X) / 2 - 10, (int)Drawing.GUISize.Y - 16 - (int)textSize.Y, (int)textSize.X + 20, (int)textSize.Y + 6), guiColor);
             Drawing.DrawText("font18", currentText, new Vector2((int)Drawing.GUISize.X / 2, Drawing.GUISize.Y - 10), Color.White, alignment: Engine.Asset.Font.Alignment.BottomCenter);
