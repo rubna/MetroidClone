@@ -452,7 +452,7 @@ namespace MetroidClone.Metroid
             //    Position = Input.MouseCheckUnscaledPosition(Drawing).ToVector2() + World.Camera;
 
             //Colore
-            Color hpColor;
+            /*Color hpColor;
             if ((float)HitPoints / MaxHitPoints > 0.5)
                 hpColor = Color.Lerp(Color.Green, Color.Orange, 1 - ((float)HitPoints / MaxHitPoints - 0.5f) * 2f);
             else
@@ -476,7 +476,7 @@ namespace MetroidClone.Metroid
             else
                 weaponColor = ColoreColor.White;
 
-            CoraleCore.Mouse.Instance.SetLed(Led.ScrollWheel, weaponColor);
+            CoraleCore.Mouse.Instance.SetLed(Led.ScrollWheel, weaponColor);*/
         }
 
         void CreateDrone()
