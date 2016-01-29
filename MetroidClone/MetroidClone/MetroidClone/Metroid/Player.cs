@@ -1,4 +1,4 @@
-﻿using CoraleCore = Corale.Colore.Core;
+﻿//using CoraleCore = Corale.Colore.Core;
 using MetroidClone.Engine;
 using MetroidClone.Engine.Asset;
 using MetroidClone.Metroid.Abstract;
@@ -9,8 +9,8 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ColoreColor = Corale.Colore.Core.Color;
-using Corale.Colore.Razer.Mouse;
+//using ColoreColor = Corale.Colore.Core.Color;
+//using Corale.Colore.Razer.Mouse;
 
 namespace MetroidClone.Metroid
 {
